@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:id="@+id/main_content"
+             xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:fitsSystemWindows="true"
+             tools:context="software_engineering.whatnow.MainActivity">
+
+    <View
+        android:id="@+id/colored_background_view"
+        android:layout_width="wrap_content"
+        android:layout_height="192dp"
+        android:background="#00AA00"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="120dp"/>
+
+    <LinearLayout
+        android:id="@+id/toolbar_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f16b0c"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/abc_action_bar_default_height_material"/>
+
+        <TextView
+            android:id="@+id/fake_tab"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:text="Fake tab"
+            android:textAllCaps="true"
+            android:textStyle="bold"/>
+    </LinearLayout>
+</FrameLayout>
+
