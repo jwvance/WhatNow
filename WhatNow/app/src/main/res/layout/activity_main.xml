@@ -11,8 +11,8 @@
     <View
         android:id="@+id/colored_background_view"
         android:layout_width="wrap_content"
-        android:layout_height="192dp"
-        android:background="#00AA00"/>
+        android:layout_height="200dp"
+        android:background="#bdbdbd"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
@@ -27,7 +27,7 @@
         android:id="@+id/toolbar_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#f16b0c"
+        android:background="#9e9e9e"
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
@@ -37,7 +37,7 @@
 
         <TextView
             android:id="@+id/fake_tab"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:gravity="center_vertical"
             android:padding="16dp"

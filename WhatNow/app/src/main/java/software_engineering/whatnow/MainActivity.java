@@ -1,14 +1,14 @@
 package software_engineering.whatnow;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity {
 	@Override
@@ -23,18 +23,17 @@ public class MainActivity extends AppCompatActivity {
 		setSupportActionBar(toolbar);
 	}
 	private void setupRecyclerView() {
-		RecyclerView recyclerView = (RecyclerView)       findViewById(R.id.recyclerview);
-		// Let’s a grid with 2 columns.
-		recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+		RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+		recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayout.VERTICAL, false));
 		populateRecyclerView(recyclerView);
 	}
 	private void populateRecyclerView(RecyclerView recyclerView) {
 		recyclerView.setAdapter(new RecyclerView.Adapter() {
-			private final static int DUMMY_ITEM_COUNT = 30;
+			private final static int DUMMY_ITEM_COUNT = 10;
 			@Override
 			public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
 				View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_layout, viewGroup, false);
-				return new TextHolder(itemView);
+				return new CardHolder(itemView);
 			}
 			@Override
 			public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
@@ -44,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
 			public int getItemCount() {
 				return DUMMY_ITEM_COUNT;
 			}
-			class TextHolder extends RecyclerView.ViewHolder {
-				public TextHolder(View itemView) {
+			class CardHolder extends RecyclerView.ViewHolder {
+				public CardHolder(View itemView) {
 					super(itemView);
 				}
 			}
