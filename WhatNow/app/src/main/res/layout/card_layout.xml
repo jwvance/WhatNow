@@ -23,39 +23,39 @@
             android:layout_height="250dp">
 
             <ImageView
-                android:id="@+id/image"
+                android:id="@+id/card_image"
                 android:layout_width="match_parent"
                 android:layout_height="125dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/img_ex" />
 
             <TextView
-                android:id="@+id/event"
+                android:id="@+id/card_event_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Event Name"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textColor="#000000"
-                android:layout_below="@+id/image"
-                android:layout_alignLeft="@+id/description"
-                android:layout_alignStart="@+id/description"
+                android:layout_below="@+id/card_image"
+                android:layout_alignLeft="@+id/card_description"
+                android:layout_alignStart="@+id/card_description"
                 android:layout_marginTop="10dp"/>
 
             <TextView
-                android:id="@+id/description"
+                android:id="@+id/card_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Brief Description"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:textColor="#616161"
-                android:layout_below="@+id/event"
-                android:layout_alignLeft="@+id/imageView"
-                android:layout_alignStart="@+id/imageView"
+                android:layout_below="@+id/card_event_name"
+                android:layout_alignLeft="@+id/card_pin_image"
+                android:layout_alignStart="@+id/card_pin_image"
                 android:layout_marginTop="5dp"/>
 
             <ImageButton
-                android:id="@+id/share_button"
+                android:id="@+id/card_share_button"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/ic_share_black_24dp"
@@ -63,11 +63,11 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:layout_alignParentBottom="true"
-                android:layout_toLeftOf="@+id/bookmark_button"
-                android:layout_toStartOf="@+id/bookmark_button"/>
+                android:layout_toLeftOf="@+id/card_bookmark_button"
+                android:layout_toStartOf="@+id/card_bookmark_button"/>
 
             <ImageButton
-                android:id="@+id/bookmark_button"
+                android:id="@+id/card_bookmark_button"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/ic_bookmark_border_black_24dp"
@@ -75,60 +75,58 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:layout_alignParentBottom="true"
-                android:layout_alignRight="@+id/description"
-                android:layout_alignEnd="@+id/description"/>
+                android:layout_alignRight="@+id/card_description"
+                android:layout_alignEnd="@+id/card_description"/>
 
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:id="@+id/imageView"
+                android:id="@+id/card_pin_image"
                 android:src="@drawable/ic_pin_drop_black_24dp"
-                android:layout_above="@+id/imageView3"
-                android:layout_alignLeft="@+id/imageView3"
-                android:layout_alignStart="@+id/imageView3"
+                android:layout_above="@+id/card_people_image"
+                android:layout_alignLeft="@+id/card_people_image"
+                android:layout_alignStart="@+id/card_people_image"
                 />
 
             <TextView
+                android:id="@+id/card_distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Distance"
-                android:id="@+id/distance"
                 android:textColor="#757575"
-                android:layout_alignBottom="@+id/imageView"
-                android:layout_toRightOf="@+id/imageView"
-                android:layout_toEndOf="@+id/imageView"
+                android:layout_alignBottom="@+id/card_pin_image"
+                android:layout_toRightOf="@+id/card_pin_image"
+                android:layout_toEndOf="@+id/card_pin_image"
                 android:layout_marginLeft="5dp"
                 />
 
             <ImageView
+                android:id="@+id/card_clock_image"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:id="@+id/imageView2"
                 android:src="@drawable/ic_access_time_black_24dp"
-                android:layout_alignBottom="@+id/distance"
-                android:layout_toRightOf="@+id/distance"
-                android:layout_toEndOf="@+id/distance"
+                android:layout_alignBottom="@+id/card_distance"
+                android:layout_toRightOf="@+id/card_distance"
+                android:layout_toEndOf="@+id/card_distance"
                 android:layout_marginLeft="20dp"
                 />
 
             <TextView
+                android:id="@+id/card_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Time"
-                android:id="@+id/time"
                 android:textColor="#757575"
-                android:layout_alignBottom="@+id/imageView2"
-                android:layout_toRightOf="@+id/imageView2"
-                android:layout_toEndOf="@+id/imageView2"
-                android:layout_marginLeft="5dp"
-                />
+                android:layout_above="@+id/card_people_image"
+                android:layout_toRightOf="@+id/card_date"
+                android:layout_toEndOf="@+id/card_date"/>
 
             <ImageView
+                android:id="@+id/card_people_image"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:id="@+id/imageView3"
                 android:src="@drawable/ic_people_black_24dp"
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="10dp"
@@ -136,24 +134,24 @@
                 />
 
             <TextView
+                android:id="@+id/card_participants"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Participants"
-                android:id="@+id/participants"
                 android:textColor="#757575"
-                android:layout_alignBottom="@+id/imageView3"
-                android:layout_toRightOf="@+id/imageView3"
-                android:layout_toEndOf="@+id/imageView3"
+                android:layout_alignBottom="@+id/card_people_image"
+                android:layout_toRightOf="@+id/card_people_image"
+                android:layout_toEndOf="@+id/card_people_image"
                 android:layout_marginLeft="10dp"
                 />
 
             <TextView
+                android:id="@+id/card_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Price"
-                android:id="@+id/price"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
@@ -163,6 +161,19 @@
                 android:textColor="#424242"
                 android:padding="5dp"
                 android:textSize="13dp"/>
+
+            <TextView
+                android:id="@+id/card_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Date"
+                android:textColor="#757575"
+                android:layout_above="@+id/card_people_image"
+                android:layout_toRightOf="@+id/card_clock_image"
+                android:layout_toEndOf="@+id/card_clock_image"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="10dp"/>
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>

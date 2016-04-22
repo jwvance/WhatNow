@@ -14,104 +14,105 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/listed_event_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Brief Description"
-            android:id="@+id/description"
             android:layout_margin="10dp"
             />
 
         <ImageView
+            android:id="@+id/listed_event_pin_image"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:id="@+id/imageView4"
             android:src="@drawable/ic_pin_drop_black_24dp"
-            android:layout_below="@+id/imageView5"
-            android:layout_alignLeft="@+id/imageView5"
-            android:layout_alignStart="@+id/imageView5"
+            android:layout_below="@+id/listed_event_clock_image"
+            android:layout_alignLeft="@+id/listed_event_clock_image"
+            android:layout_alignStart="@+id/listed_event_clock_image"
             android:layout_marginBottom="10dp"
             android:layout_marginRight="20dp"/>
 
         <TextView
+            android:id="@+id/listed_event_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Address"
-            android:id="@+id/textView"
             android:textColor="#757575"
-            android:layout_alignTop="@+id/imageView4"
-            android:layout_toRightOf="@+id/imageView4"
-            android:layout_toEndOf="@+id/imageView4"
-            android:layout_marginRight="20dp"/>
+            android:layout_alignTop="@+id/listed_event_pin_image"
+            android:layout_toRightOf="@+id/listed_event_pin_image"
+            android:layout_toEndOf="@+id/listed_event_pin_image"
+            android:layout_marginRight="20dp"
+            android:onClick="searchMap"/>
 
         <TextView
+            android:id="@+id/listed_event_distance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Distance"
-            android:id="@+id/textView2"
             android:textColor="#757575"
-            android:layout_alignTop="@+id/textView"
-            android:layout_toRightOf="@+id/textView"
-            android:layout_toEndOf="@+id/textView"
+            android:layout_alignTop="@+id/listed_event_address"
+            android:layout_toRightOf="@+id/listed_event_address"
+            android:layout_toEndOf="@+id/listed_event_address"
             android:layout_marginRight="20dp"/>
 
         <ImageView
+            android:id="@+id/listed_event_clock_image"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:id="@+id/imageView5"
             android:src="@drawable/ic_access_time_black_24dp"
-            android:layout_below="@+id/description"
-            android:layout_alignLeft="@+id/description"
-            android:layout_alignStart="@+id/description"
+            android:layout_below="@+id/listed_event_description"
+            android:layout_alignLeft="@+id/listed_event_description"
+            android:layout_alignStart="@+id/listed_event_description"
             android:layout_marginBottom="10dp"
             android:layout_marginRight="20dp"/>
 
         <TextView
+            android:id="@+id/listed_event_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Date"
-            android:id="@+id/date"
             android:textColor="#757575"
-            android:layout_below="@+id/description"
-            android:layout_toRightOf="@+id/imageView5"
-            android:layout_toEndOf="@+id/imageView5"
+            android:layout_below="@+id/listed_event_description"
+            android:layout_toRightOf="@+id/listed_event_clock_image"
+            android:layout_toEndOf="@+id/listed_event_clock_image"
             android:layout_marginRight="20dp"/>
 
         <ImageView
+            android:id="@+id/listed_event_people_image"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/imageView6"
             android:src="@drawable/ic_people_black_24dp"
-            android:layout_below="@+id/imageView4"
+            android:layout_below="@+id/listed_event_pin_image"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"/>
 
         <TextView
+            android:id="@+id/listed_event_participants"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Participants"
-            android:id="@+id/textView4"
             android:textColor="#757575"
             android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/imageView6"
-            android:layout_toStartOf="@+id/imageView6"/>
+            android:layout_toLeftOf="@+id/listed_event_people_image"
+            android:layout_toStartOf="@+id/listed_event_people_image"/>
 
         <TextView
+            android:id="@+id/listed_event_times"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Times"
-            android:id="@+id/times"
             android:textColor="#757575"
-            android:layout_alignBottom="@+id/date"
-            android:layout_toRightOf="@+id/date"
-            android:layout_toEndOf="@+id/date"
+            android:layout_alignBottom="@+id/listed_event_date"
+            android:layout_toRightOf="@+id/listed_event_date"
+            android:layout_toEndOf="@+id/listed_event_date"
             android:layout_marginRight="20dp"/>
     </RelativeLayout>
 

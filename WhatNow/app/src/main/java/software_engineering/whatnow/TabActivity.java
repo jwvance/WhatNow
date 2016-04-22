@@ -3,7 +3,6 @@ package software_engineering.whatnow;
 /**
  * Created by Steve on 4/20/16.
  */
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -15,8 +14,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +23,28 @@ public class TabActivity extends AppCompatActivity {
 	private TabLayout tabLayout;
 	private ViewPager viewPager;
 	private RecyclerView recyclerView;
-	String[] categories = new String[]{"ALL","BARS","CLUBS","FOOD","SHOPS","OTHERS"};
+	ArrayList<String> categoriesAL;
+	//String[] categories = new String[{"ALL","BARS","CLUBS","FOOD","SHOPS","OTHERS"}];
+
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab_layout);
+
+		categoriesAL = new ArrayList<String>();	// THESE WILL BE DOWNLOADED FROM OUR SERVER
+		categoriesAL.add("ALL");
+		categoriesAL.add("BARS");
+		categoriesAL.add("CLUBS");
+		categoriesAL.add("FOOD");
+		categoriesAL.add("SHOPS");
+		categoriesAL.add("OTHERS");
 
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -45,33 +58,26 @@ public class TabActivity extends AppCompatActivity {
 		tabLayout = (TabLayout) findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(viewPager);
 
-		//	setupTabIcons();
+		//	setupTabIcons();	// TO ADD AN ICON INSIDE THE TAB NAME
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
+		// PROBABLY WORK IN HERE TO ADD ICONS IN THE TOP BAR (SEARCH, PROFILE, ORDER, ETC)
 		getMenuInflater().inflate(R.menu.menu_main, menu);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 
-		//noinspection SimplifiableIfStatement
 		if (id == R.id.action_settings) {
 			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
 	}
-
-
-
 
 /*	private void setupTabIcons() {
 		for (int i = 0; i < 6; i++) {
@@ -81,13 +87,12 @@ public class TabActivity extends AppCompatActivity {
 
 	private void setupViewPager(ViewPager viewPager) {
 		ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-		OneFragment fragment;
-		for (int i = 0; i < categories.length; i++) {
-			fragment = new OneFragment();
+		TabFragment fragment;
+		for (int i = 0; i < categoriesAL.size(); i++) {
+			fragment = new TabFragment();
 			fragment.setContext(this);
-		//	fragment.setData(events);
-			//fragment.setRecyclerView(recyclerView);
-			adapter.addFragment(fragment, categories[i]);
+			fragment.setCategory(categoriesAL.get(i));	//EITHER THIS OR DOWNLOAD EVENTS HERE AND USE setEvents(events)
+			adapter.addFragment(fragment, categoriesAL.get(i));
 		}
 		viewPager.setAdapter(adapter);
 	}

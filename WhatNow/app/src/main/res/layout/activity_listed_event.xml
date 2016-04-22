@@ -37,7 +37,7 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/imageView7"
+                    android:id="@+id/listed_event_image"
                     android:src="@drawable/img_ex"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"/>
@@ -50,7 +50,7 @@
         />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabEvent"
+        android:id="@+id/listed_event_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"

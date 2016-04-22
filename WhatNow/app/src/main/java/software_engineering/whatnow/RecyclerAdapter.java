@@ -7,15 +7,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
-	private String[] dataSource;
-	public RecyclerAdapter(String[] dataArgs){
-		dataSource = dataArgs;
+import java.util.ArrayList;
 
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+	private ArrayList<String/*Event*/> eventDataSource;
+
+	public RecyclerAdapter(ArrayList<String/*Event*/> dataArgs){
+		eventDataSource = dataArgs;
 	}
+
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		// create a new view
 		View view = LayoutInflater.from(parent.getContext())
 				.inflate(R.layout.card_layout, parent, false);
 
@@ -25,24 +27,41 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
 	@Override
 	public void onBindViewHolder(ViewHolder holder, int position) {
-		holder.textView.setText(dataSource[position]);
+		// EDIT HERE CARD FIELDS
+		holder.cardEventName.setText(eventDataSource.get(position));
+	/*	holder.cardDescription.setText("");
+		holder.cardDate.setText("");
+		holder.cardTimes.setText("");
+		holder.cardParticipants.setText("");
+		holder.cardDistance.setText("");*/
 	}
 
 	@Override
 	public int getItemCount() {
-		return dataSource.length;
+		return eventDataSource.size();
 	}
 
 	public static class ViewHolder extends RecyclerView.ViewHolder{
-		protected TextView textView;
-		public ViewHolder(View itemView) {
-			super(itemView);
-			textView =  (TextView) itemView.findViewById(R.id.event);
+		protected TextView cardEventName;
+		protected TextView cardDescription;
+		protected TextView cardDate;
+		protected TextView cardTimes;
+		protected TextView cardParticipants;
+		protected TextView cardDistance;
 
-			itemView.findViewById(R.id.card_view).setOnClickListener(new View.OnClickListener() {
+		public ViewHolder(View cardLayuot) {
+			super(cardLayuot);
+			cardEventName = (TextView) cardLayuot.findViewById(R.id.card_event_name);
+			cardDescription = (TextView) cardLayuot.findViewById(R.id.card_description);
+			cardDate = (TextView) cardLayuot.findViewById(R.id.card_date);
+			cardTimes = (TextView) cardLayuot.findViewById(R.id.card_time);
+			cardParticipants = (TextView) cardLayuot.findViewById(R.id.card_participants);
+			cardDistance = (TextView) cardLayuot.findViewById(R.id.card_distance);
+
+			cardLayuot.findViewById(R.id.card_view).setOnClickListener(new View.OnClickListener() {
 				@Override public void onClick(View v) {
 					Intent intent = new Intent(v.getContext(), ListedEventActivity.class);
-					intent.putExtra("Name", ((TextView) v.findViewById(R.id.event)).getText());
+					intent.putExtra("Name", ((TextView) v.findViewById(R.id.card_event_name)).getText());
 					v.getContext().startActivity(intent);
 				}
 			});
