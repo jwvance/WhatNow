@@ -27,8 +27,7 @@ public class ListedEventActivity extends AppCompatActivity {
 			}
 		});
 
-		TextView eventName = (TextView) findViewById(R.id.eventNameDetail);
-		eventName.setText(getIntent().getStringExtra("Name"));
-		
+		this.setTitle(getIntent().getStringExtra("Name"));
+
 	}
 }

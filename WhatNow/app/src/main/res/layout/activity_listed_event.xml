@@ -12,8 +12,7 @@
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/app_bar_height"
-        android:fitsSystemWindows="true"
-        android:theme="@style/WhatNowTheme.AppBarOverlay">
+        android:fitsSystemWindows="true">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
@@ -35,16 +34,13 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Event Name"
-                    android:id="@+id/eventNameDetail"
-                    android:textColor="#000000"
-                    android:textSize="40dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="30dp"/>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/imageView7"
+                    android:src="@drawable/img_ex"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"/>
             </RelativeLayout>
 
         </android.support.design.widget.CollapsingToolbarLayout>
@@ -58,7 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email"
+        android:src="@drawable/ic_person_add_black_24dp"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"/>
 
