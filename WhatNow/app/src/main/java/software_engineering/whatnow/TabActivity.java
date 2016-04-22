@@ -3,6 +3,7 @@ package software_engineering.whatnow;
 /**
  * Created by Steve on 4/20/16.
  */
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +85,7 @@ public class TabActivity extends AppCompatActivity {
 		for (int i = 0; i < categories.length; i++) {
 			fragment = new OneFragment();
 			fragment.setContext(this);
+		//	fragment.setData(events);
 			//fragment.setRecyclerView(recyclerView);
 			adapter.addFragment(fragment, categories[i]);
 		}

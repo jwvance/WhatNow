@@ -1,5 +1,6 @@
 package software_engineering.whatnow;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +21,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
 		ViewHolder viewHolder = new ViewHolder(view);
 		return viewHolder;
-
-
 	}
 
 	@Override
@@ -40,6 +39,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 			super(itemView);
 			textView =  (TextView) itemView.findViewById(R.id.event);
 
+			itemView.findViewById(R.id.card_view).setOnClickListener(new View.OnClickListener() {
+				@Override public void onClick(View v) {
+					Intent intent = new Intent(v.getContext(), ListedEventActivity.class);
+					intent.putExtra("Name", ((TextView) v.findViewById(R.id.event)).getText());
+					v.getContext().startActivity(intent);
+				}
+			});
 		}
 
 
