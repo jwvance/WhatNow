@@ -21,6 +21,10 @@
             android:name=".ListedEventActivity"
             android:label="Event">
         </activity>
+        <activity
+            android:name=".EventTestCreatorActivity"
+            android:label="New Event">
+        </activity>
     </application>
 
 </manifest>

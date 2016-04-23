@@ -3,6 +3,7 @@ package software_engineering.whatnow;
 /**
  * Created by Steve on 4/20/16.
  */
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,28 +25,22 @@ public class TabActivity extends AppCompatActivity {
 	private TabLayout tabLayout;
 	private ViewPager viewPager;
 	private RecyclerView recyclerView;
-	ArrayList<String> categoriesAL;
+	ArrayList<String> categories;
 	//String[] categories = new String[{"ALL","BARS","CLUBS","FOOD","SHOPS","OTHERS"}];
 
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab_layout);
 
-		categoriesAL = new ArrayList<String>();	// THESE WILL BE DOWNLOADED FROM OUR SERVER
-		categoriesAL.add("ALL");
-		categoriesAL.add("BARS");
-		categoriesAL.add("CLUBS");
-		categoriesAL.add("FOOD");
-		categoriesAL.add("SHOPS");
-		categoriesAL.add("OTHERS");
+		categories = new ArrayList<String>();	// THESE WILL BE DOWNLOADED FROM OUR SERVER
+		categories.add("ALL");
+		categories.add("BARS");
+		categories.add("CLUBS");
+		categories.add("FOOD");
+		categories.add("SHOPS");
+		categories.add("OTHERS");
 
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -59,6 +55,13 @@ public class TabActivity extends AppCompatActivity {
 		tabLayout.setupWithViewPager(viewPager);
 
 		//	setupTabIcons();	// TO ADD AN ICON INSIDE THE TAB NAME
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		setupViewPager(viewPager);
+		tabLayout.setupWithViewPager(viewPager);
 	}
 
 	@Override
@@ -88,11 +91,11 @@ public class TabActivity extends AppCompatActivity {
 	private void setupViewPager(ViewPager viewPager) {
 		ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 		TabFragment fragment;
-		for (int i = 0; i < categoriesAL.size(); i++) {
+		for (int i = 0; i < categories.size(); i++) {
 			fragment = new TabFragment();
 			fragment.setContext(this);
-			fragment.setCategory(categoriesAL.get(i));	//EITHER THIS OR DOWNLOAD EVENTS HERE AND USE setEvents(events)
-			adapter.addFragment(fragment, categoriesAL.get(i));
+			fragment.setCategory(categories.get(i));	//EITHER THIS OR DOWNLOAD EVENTS HERE AND USE setEvents(events)
+			adapter.addFragment(fragment, categories.get(i));
 		}
 		viewPager.setAdapter(adapter);
 	}
@@ -124,5 +127,10 @@ public class TabActivity extends AppCompatActivity {
 		public CharSequence getPageTitle(int position) {
 			return mFragmentTitleList.get(position);
 		}
+	}
+
+	public void newEvent(View view){
+		Intent intent = new Intent(view.getContext(), EventTestCreatorActivity.class);
+		view.getContext().startActivity(intent);
 	}
 }

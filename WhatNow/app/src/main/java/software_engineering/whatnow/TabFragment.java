@@ -20,7 +20,7 @@ public class TabFragment extends Fragment{
 	private RecyclerView recyclerView;
 	private Context context;
 	private String category;
-	private ArrayList<String/*Event*/> cardsEventData;
+	private ArrayList<Event> cardsEventData;
 	//private String[] cardsEventData = new String[]{"Event 1","Event 2","Event 3","Event 4","Event 5","Event 6","Event 7","Event 8","Event 9"};
 	//private ArrayList<Event> events;
 
@@ -39,9 +39,9 @@ public class TabFragment extends Fragment{
 		recyclerView.setHasFixedSize(true);
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-		cardsEventData = new ArrayList<String/*Event*/>();
+		cardsEventData = EventTestCreatorActivity.loadEvents(rootView.getContext());
 		// PLACE HERE CALL TO THE SERVER TO GET EVENTS FROM THE SPECIFIC CATEGORY
-		cardsEventData.add("Event 1");
+		/*cardsEventData.add("Event 1");
 		cardsEventData.add("Event 2");
 		cardsEventData.add("Event 3");
 		cardsEventData.add("Event 4");
@@ -49,7 +49,7 @@ public class TabFragment extends Fragment{
 		cardsEventData.add("Event 6");
 		cardsEventData.add("Event 7");
 		cardsEventData.add("Event 8");
-		cardsEventData.add("Event 9");
+		cardsEventData.add("Event 9");*/
 
 		recyclerView.setAdapter(new RecyclerAdapter(cardsEventData));	// GIVES TO THE ADAPTER ONLY THE EVENTS RELEVANT TO THIS FRAGMENT
 

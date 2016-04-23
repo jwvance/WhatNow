@@ -1,25 +1,22 @@
 package software_engineering.whatnow;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Random;
 import java.util.StringTokenizer;
-import java.util.prefs.Preferences;
 
-public class Test extends AppCompatActivity {
+public class EventTestCreatorActivity extends AppCompatActivity {
 
 	private EditText[] tv = new EditText[5];
 	private DatePicker dp;
@@ -27,34 +24,36 @@ public class Test extends AppCompatActivity {
 	private Button addEvent;
 	private Event event;
 	private ArrayList<Event> events;
-	private SharedPreferences preferences;
-    private SharedPreferences.Editor editor;
+
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_test);
+		setContentView(R.layout.event_test_creator);
 
 		initialize();
-		preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        editor = preferences.edit();
 
-		events = loadEvents();
-
-
+		events = loadEvents(this);
 	}
 
-	private ArrayList<Event> loadEvents() {
+	public static ArrayList<Event> loadEvents(Context context) {
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = preferences.edit();
+
 		ArrayList<Event> output = new ArrayList<Event>();
 		int size = preferences.getInt("EventsArray_size", 0);
 		StringTokenizer st;
 		for (int i = 0; i < size; i++) {
 			st = new StringTokenizer(preferences.getString("EventArray_" + i, null), ":::");
-			output.add(new Event(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
+			try{
+				output.add(new Event(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
 					Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), st.nextToken(),
 					new Host(st.nextToken()), st.nextToken(), st.nextToken(), new Category(st.nextToken()),
 					Long.parseLong(st.nextToken())));
+			}catch(Exception e){
+				Log.wtf("LOAD", "Problem loading events: " + e.getMessage());
+			}
 		}
 		return output;
 	}
@@ -71,15 +70,16 @@ public class Test extends AppCompatActivity {
 	}
 
 	public void addEvent(View v) {
-		event = new Event(tp.getCurrentHour(), tp.getCurrentMinute(), tp.getCurrentHour(), tp.getCurrentMinute(),
+		event = new Event(new Random().nextInt(1000), tp.getCurrentHour(), tp.getCurrentMinute(), tp.getCurrentHour(), tp.getCurrentMinute(),
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), tv[0].getText().toString(),
 				tv[1].getText().toString(), new Category(tv[4].getText().toString()), dp.getMaxDate());
 
 		events.add(event);
 
-		saveEvents(events, events.size() - 1);
+		saveEvents(getApplicationContext(), events, events.size() - 1);
 
-		reinitializeUI();
+		//reinitializeUI();
+		finish();
 	}
 
 	private void reinitializeUI() {
@@ -88,7 +88,10 @@ public class Test extends AppCompatActivity {
 		}
 	}
 
-	private void saveEvents(ArrayList<Event> events, int oldSize) {
+	public static void saveEvents(Context context, ArrayList<Event> events, int oldSize) {
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = preferences.edit();
+
 		editor.remove("EventsArray_size");
 		editor.putInt("EventsArray_size", events.size());
 

@@ -10,7 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import java.util.ArrayList;
 
 public class ListedEventActivity extends AppCompatActivity {
 	private TextView description;
@@ -19,6 +19,9 @@ public class ListedEventActivity extends AppCompatActivity {
 	private TextView participants;
 	private TextView address;
 	private TextView distance;
+	private ArrayList<Event> events;
+	private int eventID;
+	private Event event;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +40,8 @@ public class ListedEventActivity extends AppCompatActivity {
 			}
 		});
 
-		this.setTitle(getIntent().getStringExtra("Name"));
+	//	this.setTitle(getIntent().getStringExtra("Name"));
+		eventID = getIntent().getIntExtra("Event_ID", -1);
 
 		description = (TextView) findViewById(R.id.listed_event_description);
 		date = (TextView) findViewById(R.id.listed_event_date);
@@ -46,7 +50,21 @@ public class ListedEventActivity extends AppCompatActivity {
 		address = (TextView) findViewById(R.id.listed_event_address);
 		distance = (TextView) findViewById(R.id.listed_event_distance);
 
-		address.setText("Santa Cruz");
+		events = EventTestCreatorActivity.loadEvents(getApplicationContext());
+		event = null;
+
+		for (int i = 0; i < events.size(); i++) {
+			if(events.get(i).getId() == eventID)
+				event = events.get(i);
+		}
+
+		this.setTitle(event.getName());
+		description.setText(event.getDescription());
+		date.setText(event.getDateString());
+		times.setText(event.getStartTime());
+		address.setText(event.getLocation());
+
+	//	address.setText("Santa Cruz");
 	}
 
 	public void searchMap(View view){

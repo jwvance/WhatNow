@@ -3,6 +3,7 @@ package software_engineering.whatnow;
 import android.location.Location;
 
 import java.sql.Time;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -10,6 +11,7 @@ import java.util.Date;
  */
 public class Event {
 
+	private int id;
     private int hourStart;
     private int minuteStart;
     private int hourEnd;
@@ -20,10 +22,14 @@ public class Event {
     private String description;
     private Category category;
     private long date;
+    private int month;
+    private int year;
+    private int day;
 
-    public Event(int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
+    public Event(int id, int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
                  Host host, String name, String description, Category category, long date) {
-        this.hourStart = hourStart;
+        this.id = id;
+		this.hourStart = hourStart;
         this.minuteStart = minuteStart;
         this.hourEnd = hourEnd;
         this.minuteEnd = minuteEnd;
@@ -33,6 +39,13 @@ public class Event {
         this.description = description;
         this.category = category;
         this.date = date;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(date);
+
+        this.year = calendar.get(Calendar.YEAR);
+        this.month = calendar.get(Calendar.MONTH);
+        this.day = calendar.get(Calendar.DAY_OF_MONTH);
     }
 
     public long getDate() {
@@ -115,11 +128,31 @@ public class Event {
         this.category = category;
     }
 
-    @Override
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@Override
     public String toString() {
-        return ""+ hourStart + ":::" + minuteStart + ":::" +
+        return id + ":::" + hourStart + ":::" + minuteStart + ":::" +
                  hourEnd + ":::" + minuteEnd + ":::" + location + ":::" +
                 host.getName() + ":::" + name + ":::" +description + ":::"
                 + category.getName() + ":::" + date;
     }
+
+	public String getDateString(){
+		return month + "-" + (day < 10 ? 0 : "") + day + "-" + year;
+	}
+
+	public String getStartTime(){
+		return "" + (hourStart < 10 ? 0 : "") + hourStart + " : " + (minuteStart < 10 ? 0 : "") + minuteStart;
+	}
+
+	public String getEndTime(){
+		return "" + (hourEnd < 10 ? 0 : "") + hourEnd + " : " + (minuteEnd < 10 ? 0 : "") + minuteEnd;
+	}
 }

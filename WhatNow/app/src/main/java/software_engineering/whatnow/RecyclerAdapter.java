@@ -8,11 +8,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
-	private ArrayList<String/*Event*/> eventDataSource;
+	private ArrayList<Event> eventDataSource;
 
-	public RecyclerAdapter(ArrayList<String/*Event*/> dataArgs){
+	public RecyclerAdapter(ArrayList<Event> dataArgs){
 		eventDataSource = dataArgs;
 	}
 
@@ -28,12 +29,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 	@Override
 	public void onBindViewHolder(ViewHolder holder, int position) {
 		// EDIT HERE CARD FIELDS
-		holder.cardEventName.setText(eventDataSource.get(position));
-	/*	holder.cardDescription.setText("");
-		holder.cardDate.setText("");
-		holder.cardTimes.setText("");
-		holder.cardParticipants.setText("");
-		holder.cardDistance.setText("");*/
+		Event event = eventDataSource.get(position);
+		holder.setID(event.getId());
+		holder.cardEventName.setText(event.getName());
+		holder.cardDescription.setText(event.getDescription());
+		holder.cardDate.setText(event.getDateString());
+		holder.cardTimes.setText(event.getStartTime());
+	//	holder.cardParticipants.setText("");
+	//	holder.cardDistance.setText("");
 	}
 
 	@Override
@@ -48,6 +51,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 		protected TextView cardTimes;
 		protected TextView cardParticipants;
 		protected TextView cardDistance;
+		protected int id;
 
 		public ViewHolder(View cardLayuot) {
 			super(cardLayuot);
@@ -61,12 +65,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 			cardLayuot.findViewById(R.id.card_view).setOnClickListener(new View.OnClickListener() {
 				@Override public void onClick(View v) {
 					Intent intent = new Intent(v.getContext(), ListedEventActivity.class);
-					intent.putExtra("Name", ((TextView) v.findViewById(R.id.card_event_name)).getText());
+				//	intent.putExtra("Name", ((TextView) v.findViewById(R.id.card_event_name)).getText());
+					intent.putExtra("Event_ID", id);
 					v.getContext().startActivity(intent);
 				}
 			});
 		}
 
-
+		public void setID(int id){
+			this.id = id;
+		}
 	}
 }
