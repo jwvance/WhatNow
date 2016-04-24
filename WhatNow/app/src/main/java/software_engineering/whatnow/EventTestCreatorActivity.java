@@ -1,5 +1,7 @@
 package software_engineering.whatnow;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -13,10 +15,11 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Random;
 import java.util.StringTokenizer;
 
-public class EventTestCreatorActivity extends AppCompatActivity {
+public class EventTestCreatorActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
 
 	private EditText[] tv = new EditText[5];
 	private DatePicker dp;
@@ -24,7 +27,13 @@ public class EventTestCreatorActivity extends AppCompatActivity {
 	private Button addEvent;
 	private Event event;
 	private ArrayList<Event> events;
-
+	private EditText date;
+	private EditText time;
+	private int mYear;
+	private int mMonth;
+	private int mDay;
+	private int mHour;
+	private int mMinute;
 
 
 	@Override
@@ -35,6 +44,16 @@ public class EventTestCreatorActivity extends AppCompatActivity {
 		initialize();
 
 		events = loadEvents(this);
+		date = (EditText) findViewById(R.id.dateText);
+		Calendar mcurrentDate = Calendar.getInstance();
+		mYear = mcurrentDate.get(Calendar.YEAR);
+		mMonth = mcurrentDate.get(Calendar.MONTH);
+		mDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
+		date.setText(mMonth + "-" + mDay + "-" + mYear);
+		time = (EditText) findViewById(R.id.timeText);
+		mHour = mcurrentDate.get(Calendar.HOUR_OF_DAY);
+		mMinute = mcurrentDate.get(Calendar.MINUTE);
+		time.setText(mHour + ":" + mMinute);
 	}
 
 	public static ArrayList<Event> loadEvents(Context context) {
@@ -64,15 +83,17 @@ public class EventTestCreatorActivity extends AppCompatActivity {
 		tv[2]= (EditText) findViewById(R.id.editText3);
 		tv[3]= (EditText) findViewById(R.id.editText4);
 		tv[4]= (EditText) findViewById(R.id.editText5);
-		dp = (DatePicker) findViewById(R.id.datePicker);
-		tp = (TimePicker) findViewById(R.id.timePicker);
+		//dp = (DatePicker) findViewById(R.id.datePicker);
+		//tp = (TimePicker) findViewById(R.id.timePicker);
 		addEvent = (Button) findViewById(R.id.button);
 	}
 
 	public void addEvent(View v) {
-		event = new Event(new Random().nextInt(1000), tp.getCurrentHour(), tp.getCurrentMinute(), tp.getCurrentHour(), tp.getCurrentMinute(),
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(mYear, mMonth, mDay);
+		event = new Event(new Random().nextInt(1000), mHour, mMinute, mHour, mMinute,
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), tv[0].getText().toString(),
-				tv[1].getText().toString(), new Category(tv[4].getText().toString()), dp.getMaxDate());
+				tv[1].getText().toString(), new Category(tv[4].getText().toString()), calendar.getTimeInMillis());
 
 		events.add(event);
 
@@ -103,5 +124,34 @@ public class EventTestCreatorActivity extends AppCompatActivity {
         }
 
         editor.commit();
+	}
+
+	@Override
+	public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+		mMonth = monthOfYear + 1;
+		mDay = dayOfMonth;
+		mYear = year;
+		date.setText("" + monthOfYear + "-" + dayOfMonth + "-" + year);
+	}
+
+	public void chooseDate(View v) {
+		DatePickerDialog mDatePicker;
+		mDatePicker = new DatePickerDialog(this, this, mYear, mMonth, mDay);
+		mDatePicker.setTitle("Select Date");
+		mDatePicker.show();
+	}
+
+	public void chooseTime(View v){
+		TimePickerDialog mTimePicker;
+		mTimePicker = new TimePickerDialog(this, this, mHour, mMinute, false);
+		mTimePicker.setTitle("Select Time");
+		mTimePicker.show();
+	}
+
+	@Override
+	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+		mHour = hourOfDay;
+		mMinute = minute;
+		time.setText(hourOfDay + ":" + minute);
 	}
 }
