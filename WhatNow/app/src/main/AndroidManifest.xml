@@ -25,6 +25,12 @@
             android:name=".EventTestCreatorActivity"
             android:label="New Event">
         </activity>
+
+        <activity
+            android:name=".MyProfileActivity"
+            android:label="My Profile">
+        </activity>
+
     </application>
 
 </manifest>

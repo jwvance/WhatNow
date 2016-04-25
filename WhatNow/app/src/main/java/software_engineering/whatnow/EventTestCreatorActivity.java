@@ -3,8 +3,11 @@ package software_engineering.whatnow;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import java.util.ArrayList;
@@ -19,22 +23,22 @@ import java.util.Calendar;
 import java.util.Random;
 import java.util.StringTokenizer;
 
-public class EventTestCreatorActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
+public class EventTestCreatorActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, DialogInterface.OnClickListener{
 
 	private EditText[] tv = new EditText[5];
-	private DatePicker dp;
-	private TimePicker tp;
-	private Button addEvent;
+	//private DatePicker dp;
+	//private TimePicker tp;
 	private Event event;
 	private ArrayList<Event> events;
-	private EditText date;
-	private EditText time;
+	private Button date;
+	private Button time;
 	private int mYear;
 	private int mMonth;
 	private int mDay;
 	private int mHour;
 	private int mMinute;
-
+	private String category;
+	private String[] categories = {"BARS","CLUBS","FOOD","SHOPS","OTHERS"};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +48,18 @@ public class EventTestCreatorActivity extends AppCompatActivity implements DateP
 		initialize();
 
 		events = loadEvents(this);
-		date = (EditText) findViewById(R.id.dateText);
+		date = (Button) findViewById(R.id.dateDisplay);
 		Calendar mcurrentDate = Calendar.getInstance();
 		mYear = mcurrentDate.get(Calendar.YEAR);
 		mMonth = mcurrentDate.get(Calendar.MONTH);
 		mDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
 		date.setText(mMonth + "-" + mDay + "-" + mYear);
-		time = (EditText) findViewById(R.id.timeText);
+		time = (Button) findViewById(R.id.timeDisplay);
 		mHour = mcurrentDate.get(Calendar.HOUR_OF_DAY);
 		mMinute = mcurrentDate.get(Calendar.MINUTE);
 		time.setText(mHour + ":" + mMinute);
+
+		category = null;
 	}
 
 	public static ArrayList<Event> loadEvents(Context context) {
@@ -82,10 +88,10 @@ public class EventTestCreatorActivity extends AppCompatActivity implements DateP
 		tv[1]= (EditText) findViewById(R.id.editText2);
 		tv[2]= (EditText) findViewById(R.id.editText3);
 		tv[3]= (EditText) findViewById(R.id.editText4);
-		tv[4]= (EditText) findViewById(R.id.editText5);
+		//tv[4]= (EditText) findViewById(R.id.editText5);
 		//dp = (DatePicker) findViewById(R.id.datePicker);
 		//tp = (TimePicker) findViewById(R.id.timePicker);
-		addEvent = (Button) findViewById(R.id.button);
+		//addEvent = (Button) findViewById(R.id.button);
 	}
 
 	public void addEvent(View v) {
@@ -93,7 +99,7 @@ public class EventTestCreatorActivity extends AppCompatActivity implements DateP
 		calendar.set(mYear, mMonth, mDay);
 		event = new Event(new Random().nextInt(1000), mHour, mMinute, mHour, mMinute,
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), tv[0].getText().toString(),
-				tv[1].getText().toString(), new Category(tv[4].getText().toString()), calendar.getTimeInMillis());
+				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category), calendar.getTimeInMillis());
 
 		events.add(event);
 
@@ -153,5 +159,21 @@ public class EventTestCreatorActivity extends AppCompatActivity implements DateP
 		mHour = hourOfDay;
 		mMinute = minute;
 		time.setText(hourOfDay + ":" + minute);
+	}
+
+	public void chooseCategory(View v){
+		AlertDialog levelDialog;
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Sort by...");
+		builder.setSingleChoiceItems(categories, -1, this);
+		levelDialog = builder.create();
+		levelDialog.show();
+	}
+
+	@Override
+	public void onClick(DialogInterface dialog, int which) {
+		category = categories[which];
+		((Button) findViewById(R.id.category_picker)).setText(category);
+		dialog.dismiss();
 	}
 }
