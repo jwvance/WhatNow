@@ -56,6 +56,43 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/editText2" />
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:id="@+id/event_image"
+                    android:visibility="gone"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:onClick="chooseImage"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Click to choose a picture"
+                    android:id="@+id/textViewPic"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/choose_image"
+                    android:layout_toEndOf="@+id/choose_image"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Choose Image"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:id="@+id/choose_image"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:onClick="chooseImage"/>
+
+            </RelativeLayout>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

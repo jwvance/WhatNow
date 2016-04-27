@@ -4,8 +4,13 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,9 +20,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
@@ -25,6 +33,7 @@ import java.util.StringTokenizer;
 
 public class EventTestCreatorActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, DialogInterface.OnClickListener{
 
+	private static final int RESULT_LOAD_IMG = 1;
 	private EditText[] tv = new EditText[5];
 	//private DatePicker dp;
 	//private TimePicker tp;
@@ -39,6 +48,8 @@ public class EventTestCreatorActivity extends AppCompatActivity implements DateP
 	private int mMinute;
 	private String category;
 	private String[] categories = {"BARS","CLUBS","FOOD","SHOPS","OTHERS"};
+	private String imagePath;
+	private Bitmap image;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +86,7 @@ public class EventTestCreatorActivity extends AppCompatActivity implements DateP
 				output.add(new Event(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
 					Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), st.nextToken(),
 					new Host(st.nextToken()), st.nextToken(), st.nextToken(), new Category(st.nextToken()),
-					Long.parseLong(st.nextToken())));
+					Long.parseLong(st.nextToken()), st.nextToken()));
 			}catch(Exception e){
 				Log.wtf("LOAD", "Problem loading events: " + e.getMessage());
 			}
@@ -99,7 +110,7 @@ public class EventTestCreatorActivity extends AppCompatActivity implements DateP
 		calendar.set(mYear, mMonth, mDay);
 		event = new Event(new Random().nextInt(1000), mHour, mMinute, mHour, mMinute,
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), tv[0].getText().toString(),
-				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category), calendar.getTimeInMillis());
+				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category), calendar.getTimeInMillis(), imagePath);
 
 		events.add(event);
 
@@ -176,4 +187,58 @@ public class EventTestCreatorActivity extends AppCompatActivity implements DateP
 		((Button) findViewById(R.id.category_picker)).setText(category);
 		dialog.dismiss();
 	}
+
+
+	public void chooseImage(View v){
+		// Create intent to Open Image applications like Gallery, Google Photos
+		Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+// Start the Intent
+		startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if (requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK && data != null && data.getData() != null) {
+
+			Uri uri = data.getData();
+
+			try {
+				Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+				// Log.d(TAG, String.valueOf(bitmap));
+
+				imagePath = getRealPathFromURI(this, uri);
+				image = bitmap;
+				Log.wtf("IMAGE", uri.getPath());
+
+				ImageView imageView = (ImageView) findViewById(R.id.event_image);
+				imageView.setImageBitmap(bitmap);
+				imageView.setVisibility(View.VISIBLE);
+				imageView.bringToFront();
+				findViewById(R.id.choose_image).setVisibility(View.INVISIBLE);
+				((TextView) findViewById(R.id.textViewPic)).setText("Click image to change it");
+			} catch (IOException e) {
+				e.printStackTrace();
+				Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
+			}
+		}
+	}
+
+	public String getRealPathFromURI(Context context, Uri contentUri) {
+		Cursor cursor = null;
+		try {
+			String[] proj = { MediaStore.Images.Media.DATA };
+			cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+			int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			cursor.moveToFirst();
+			return cursor.getString(column_index);
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
+		}
+	}
+
 }
