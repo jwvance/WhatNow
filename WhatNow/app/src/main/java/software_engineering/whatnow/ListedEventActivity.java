@@ -1,6 +1,8 @@
 package software_engineering.whatnow;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,8 +10,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class ListedEventActivity extends AppCompatActivity {
@@ -19,6 +23,7 @@ public class ListedEventActivity extends AppCompatActivity {
 	private TextView participants;
 	private TextView address;
 	private TextView distance;
+	private ImageView image;
 	private ArrayList<Event> events;
 	private int eventID;
 	private Event event;
@@ -50,6 +55,7 @@ public class ListedEventActivity extends AppCompatActivity {
 		participants = (TextView) findViewById(R.id.listed_event_participants);
 		address = (TextView) findViewById(R.id.listed_event_address);
 		distance = (TextView) findViewById(R.id.listed_event_distance);
+		image = (ImageView) findViewById(R.id.listed_event_image);
 
 		events = EventTestCreatorActivity.loadEvents(getApplicationContext());
 		event = null;
@@ -64,6 +70,10 @@ public class ListedEventActivity extends AppCompatActivity {
 		date.setText(event.getDateString());
 		times.setText(event.getStartTime());
 		address.setText(event.getLocation());
+
+		/*Bitmap bitmap = BitmapFactory.decodeFile(event.getImagePath());
+		image.setImageBitmap(bitmap);*/
+		//image.setImageURI(Uri.fromFile(new File(event.getImagePath())));
 
 	//	address.setText("Santa Cruz");
 	}

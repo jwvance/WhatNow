@@ -35,13 +35,17 @@ public class Event {
     private int month;
     private int year;
     private int day;
+
     //Location stuff
     private LatLng myLoc;
 
+    private String imagePath;
+
+
     public Event(int id, int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
-                 Host host, String name, String description, Category category, long date) {
+                 Host host, String name, String description, Category category, long date, String imagePath) {
         this.id = id;
-		this.hourStart = hourStart;
+        this.hourStart = hourStart;
         this.minuteStart = minuteStart;
         this.hourEnd = hourEnd;
         this.minuteEnd = minuteEnd;
@@ -51,7 +55,11 @@ public class Event {
         this.description = description;
         this.category = category;
         this.date = date;
+
         this.myLoc = getLocationFromAddress(EventTestCreatorActivity.conEvent, this.location);
+
+        this.imagePath = imagePath;
+
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date);
@@ -152,29 +160,37 @@ public class Event {
         this.category = category;
     }
 
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	@Override
-    public String toString() {
-        return id + ":::" + hourStart + ":::" + minuteStart + ":::" +
-                 hourEnd + ":::" + minuteEnd + ":::" + location + ":::" +
-                host.getName() + ":::" + name + ":::" +description + ":::"
-                + category.getName() + ":::" + date;
+    public int getId() {
+        return id;
     }
 
-	public String getDateString(){
-		return month + "-" + (day < 10 ? 0 : "") + day + "-" + year;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public String getStartTime(){
-		return "" + (hourStart < 10 ? 0 : "") + hourStart + " : " + (minuteStart < 10 ? 0 : "") + minuteStart;
-	}
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    @Override
+    public String toString() {
+        return id + ":::" + hourStart + ":::" + minuteStart + ":::" +
+                hourEnd + ":::" + minuteEnd + ":::" + location + ":::" +
+                host.getName() + ":::" + name + ":::" +description + ":::"
+                + category.getName() + ":::" + date + ":::" + imagePath;
+    }
+
+    public String getDateString(){
+        return month + "-" + (day < 10 ? 0 : "") + day + "-" + year;
+    }
+
+    public String getStartTime(){
+        return "" + (hourStart < 10 ? 0 : "") + hourStart + " : " + (minuteStart < 10 ? 0 : "") + minuteStart;
+    }
 
 	public String getEndTime(){
 		return "" + (hourEnd < 10 ? 0 : "") + hourEnd + " : " + (minuteEnd < 10 ? 0 : "") + minuteEnd;
@@ -204,5 +220,4 @@ public class Event {
 
         return p1;
     }
-
 }

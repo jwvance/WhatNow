@@ -3,6 +3,7 @@ package software_engineering.whatnow;
 /**
  * Created by Steve on 4/20/16.
  */
+
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -11,6 +12,11 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+
+import android.content.DialogInterface;
+import android.graphics.drawable.BitmapDrawable;
+
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
@@ -20,13 +26,23 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+
 import android.util.Log;
+
+import android.view.Gravity;
+import android.view.LayoutInflater;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,12 +87,14 @@ public class TabActivity extends AppCompatActivity {
 		//locListener = locTool.getLocationListener();
 
 
+
 		if(locationData.getLocation() != null){
 			LocationToolBox.storedLatitude= locationData.getLocation().getLatitude();
 			LocationToolBox.storedLongitude =  locationData.getLocation().getLongitude();
 		}
 		//-------------------------------------------------
 		categories = new ArrayList<String>();	// THESE WILL BE DOWNLOADED FROM OUR SERVER
+
 		categories.add("ALL");
 		categories.add("BARS");
 		categories.add("CLUBS");
@@ -125,9 +143,49 @@ public class TabActivity extends AppCompatActivity {
 
 		if (id == R.id.action_settings) {
 			return true;
+		} else if (id == R.id.action_sort) {
+			showSortDialog();
+
+			return true;
+		} else if (id == R.id.action_profile) {
+			startActivity(new Intent(this, MyProfileActivity.class));
+
+			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void showSortDialog() {
+		AlertDialog levelDialog;
+		final CharSequence[] items = {" Popularity ", " Incoming ", " Distance ", " Recent "};
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Sort by...");
+		builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int item) {
+				switch (item) {
+					// PROBABLY THE BEST OPTION TO SOLVE THIS IS THAT EVENT IS COMPARABLE OR COMPARATOR
+					// AND THEN INSIDE COMPARETO THERE IS AN INT CHECK (BASED ON THIS, DEFAULT RECENT)
+					// SO THAT IT CAN APPLY DIFFERENT CRITERIA
+					case 0:
+						// popularity
+						break;
+					case 1:
+						// incoming
+						break;
+					case 2:
+						// distance
+						break;
+					case 3:
+						// recent
+						break;
+				}
+				dialog.dismiss();
+			}
+		});
+		levelDialog = builder.create();
+		levelDialog.show();
 	}
 
 /*	private void setupTabIcons() {
@@ -142,7 +200,7 @@ public class TabActivity extends AppCompatActivity {
 		for (int i = 0; i < categories.size(); i++) {
 			fragment = new TabFragment();
 			fragment.setContext(this);
-			fragment.setCategory(categories.get(i));	//EITHER THIS OR DOWNLOAD EVENTS HERE AND USE setEvents(events)
+			fragment.setCategory(categories.get(i));    //EITHER THIS OR DOWNLOAD EVENTS HERE AND USE setEvents(events)
 			adapter.addFragment(fragment, categories.get(i));
 		}
 		viewPager.setAdapter(adapter);
@@ -177,9 +235,9 @@ public class TabActivity extends AppCompatActivity {
 		}
 	}
 
-	public void newEvent(View view){
-		Intent intent = new Intent(view.getContext(), EventTestCreatorActivity.class);
-		view.getContext().startActivity(intent);
+	public void newEvent(View view) {
+		Intent intent = new Intent(this, EventTestCreatorActivity.class);
+		startActivity(intent);
 	}
 
 	//-------------------------------------------------

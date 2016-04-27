@@ -1,12 +1,17 @@
 package software_engineering.whatnow;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -35,6 +40,24 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 		holder.cardDescription.setText(event.getDescription());
 		holder.cardDate.setText(event.getDateString());
 		holder.cardTimes.setText(event.getStartTime());
+
+	/*	File sd = Environment.getExternalStorageDirectory();
+		File image = new File(sd+event.getImagePath(), imageName);
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
+		bitmap = Bitmap.createScaledBitmap(bitmap,parent.getWidth(),parent.getHeight(),true);
+		imageView.setImageBitmap(bitmap);*/
+
+		/*File imgFile = new File(event.getImagePath());
+
+		if(imgFile.exists()) {
+			Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+			holder.cardImage.setImageBitmap(bitmap);
+		}*/
+
+		/*Bitmap bitmap = BitmapFactory.decodeFile(event.getImagePath());
+		holder.cardImage.setImageBitmap(bitmap);*/
+	//	holder.cardImage.setImageURI(Uri.fromFile(new File(event.getImagePath())));
 	//	holder.cardParticipants.setText("");
 		holder.cardDistance.setText(event.getDistance()); //test
 	}
@@ -51,6 +74,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 		protected TextView cardTimes;
 		protected TextView cardParticipants;
 		protected TextView cardDistance;
+		protected ImageView cardImage;
 		protected int id;
 
 		public ViewHolder(View cardLayuot) {
@@ -61,6 +85,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 			cardTimes = (TextView) cardLayuot.findViewById(R.id.card_time);
 			cardParticipants = (TextView) cardLayuot.findViewById(R.id.card_participants);
 			cardDistance = (TextView) cardLayuot.findViewById(R.id.card_distance);
+			cardImage = (ImageView) cardLayuot.findViewById(R.id.card_image);
 
 			cardLayuot.findViewById(R.id.card_view).setOnClickListener(new View.OnClickListener() {
 				@Override public void onClick(View v) {
