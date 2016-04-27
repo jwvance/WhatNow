@@ -1,15 +1,25 @@
 package software_engineering.whatnow;
 
+import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import com.google.android.gms.maps.model.LatLng;
+
 
 import java.sql.Time;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Francesco on 4/14/2016.
  */
 public class Event {
+
+    //test
+    LocationToolBox locationIs;
+    //
 
 	private int id;
     private int hourStart;
@@ -25,6 +35,8 @@ public class Event {
     private int month;
     private int year;
     private int day;
+    //Location stuff
+    private LatLng myLoc;
 
     public Event(int id, int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
                  Host host, String name, String description, Category category, long date) {
@@ -39,6 +51,7 @@ public class Event {
         this.description = description;
         this.category = category;
         this.date = date;
+        this.myLoc = getLocationFromAddress(EventTestCreatorActivity.conEvent, this.location);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date);
@@ -90,6 +103,17 @@ public class Event {
 
     public String getLocation() {
         return location;
+    }
+
+    //Carlos's test for getting distance.
+    public String getDistance() {
+
+        Double storedLatitude = LocationToolBox.storedLatitude;
+        Double storedLongitude = LocationToolBox.storedLongitude;
+        StringBuilder isKM = new StringBuilder("no");
+        Integer dis = locationIs.distance(storedLatitude, storedLongitude, this.myLoc.latitude, this.myLoc.longitude, isKM);
+        String disIs = ((isKM.toString().equals("yes")) ? dis.toString() + "km" : dis.toString() + "m");
+        return disIs;
     }
 
     public void setLocation(String location) {
@@ -155,4 +179,30 @@ public class Event {
 	public String getEndTime(){
 		return "" + (hourEnd < 10 ? 0 : "") + hourEnd + " : " + (minuteEnd < 10 ? 0 : "") + minuteEnd;
 	}
+
+    public LatLng getLocationFromAddress(Context context, String strAddress) {
+
+        Geocoder coder = new Geocoder(context);
+        List<Address> address;
+        LatLng p1 = null;
+
+        try {
+            address = coder.getFromLocationName(strAddress, 5);
+            if (address == null) {
+                return null;
+            }
+            Address location = address.get(0);
+            location.getLatitude();
+            location.getLongitude();
+
+            p1 = new LatLng(location.getLatitude(), location.getLongitude() );
+
+        } catch (Exception ex) {
+
+            ex.printStackTrace();
+        }
+
+        return p1;
+    }
+
 }

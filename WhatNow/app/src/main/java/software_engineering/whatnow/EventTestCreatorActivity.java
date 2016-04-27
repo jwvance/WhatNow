@@ -25,16 +25,20 @@ public class EventTestCreatorActivity extends AppCompatActivity {
 	private Event event;
 	private ArrayList<Event> events;
 
+	//Stuff
+	public static Context conEvent;
+
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event_test_creator);
-
+		EventTestCreatorActivity.conEvent = this;
 		initialize();
 
 		events = loadEvents(this);
+
 	}
 
 	public static ArrayList<Event> loadEvents(Context context) {

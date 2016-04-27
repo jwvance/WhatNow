@@ -36,7 +36,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 		holder.cardDate.setText(event.getDateString());
 		holder.cardTimes.setText(event.getStartTime());
 	//	holder.cardParticipants.setText("");
-	//	holder.cardDistance.setText("");
+		holder.cardDistance.setText(event.getDistance()); //test
 	}
 
 	@Override
