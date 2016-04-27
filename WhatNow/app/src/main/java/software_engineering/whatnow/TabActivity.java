@@ -7,8 +7,10 @@ package software_engineering.whatnow;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,8 +30,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
+import com.firebase.client.Firebase;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import software_engineering.whatnow.ui.MainActivity;
+import software_engineering.whatnow.ui.login.LoginActivity;
 
 public class TabActivity extends AppCompatActivity {
 	private Toolbar toolbar;
@@ -44,6 +51,15 @@ public class TabActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab_layout);
+
+		Firebase.setAndroidContext(this);
+
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean alreadyLoggedIn = preferences.getBoolean("AlreadyLoggedIn", false);
+		if(!alreadyLoggedIn){
+			startActivity(new Intent(this, MainActivity.class));
+		//	finish();
+		}
 
 		categories = new ArrayList<String>();    // THESE WILL BE DOWNLOADED FROM OUR SERVER
 		categories.add("ALL");
