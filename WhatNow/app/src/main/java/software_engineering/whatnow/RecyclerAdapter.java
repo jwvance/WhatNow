@@ -59,7 +59,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 		holder.cardImage.setImageBitmap(bitmap);*/
 	//	holder.cardImage.setImageURI(Uri.fromFile(new File(event.getImagePath())));
 	//	holder.cardParticipants.setText("");
-	//	holder.cardDistance.setText("");
+		holder.cardDistance.setText(event.getDistance()); //test
 	}
 
 	@Override

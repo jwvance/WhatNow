@@ -39,6 +39,11 @@ public class EventTestCreatorActivity extends AppCompatActivity implements DateP
 	//private TimePicker tp;
 	private Event event;
 	private ArrayList<Event> events;
+
+
+	//Stuff
+	public static Context conEvent;
+
 	private Button date;
 	private Button time;
 	private int mYear;
@@ -51,14 +56,16 @@ public class EventTestCreatorActivity extends AppCompatActivity implements DateP
 	private String imagePath;
 	private Bitmap image;
 
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event_test_creator);
-
+		EventTestCreatorActivity.conEvent = this;
 		initialize();
 
 		events = loadEvents(this);
+
 		date = (Button) findViewById(R.id.dateDisplay);
 		Calendar mcurrentDate = Calendar.getInstance();
 		mYear = mcurrentDate.get(Calendar.YEAR);

@@ -9,6 +9,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -19,15 +20,20 @@ import java.util.ArrayList;
  * Created by Charly on 4/23/16.
  */
 public class LocationToolBox {
+    //public attributes
     public static String LOG_TAG = "MyLocationApplication";
-    private Context c;
+    public static Double storedLatitude = 0.00;
+    public static Double storedLongitude = 0.00;
     public LocationListener locationListener;
-    private LocationData locationData;
-    private boolean hasLocation = false;
+
+    //private attributes
+    private Context c;
+    private LocationData locationData = LocationData.getLocationData();
+    boolean hasLocation = false;
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 1;
 
     public LocationListener getLocationListener() {
-        return locationListener;
+        return this.locationListener;
     }
 
     public LocationToolBox(Context c){
@@ -109,4 +115,27 @@ public class LocationToolBox {
             c.startActivity(gpsOptionsIntent);
         }
     }
+
+
+    //Gets the distance between two (Lat, Lon) points. Should return it in Km. Still have to figure out how to return in english units.
+    public static Integer distance(Double origLat, Double origLon, Double destLat, Double destLon, StringBuilder inKM){
+        Double disLon = Math.toRadians(destLon - origLon);
+        Double disLat = Math.toRadians(destLat - origLat);
+        Double a = ((Math.sin(disLat/2))*(Math.sin(disLat/2))) + (Math.cos(Math.toRadians(origLat)) * Math.cos(Math.toRadians(destLat)) * Math.sin(disLon/2) * Math.sin(disLon/2) );
+        Double c = 2* Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        Double dis = 6371000 * c;
+        //return simpler values
+        Integer distance = dis.intValue();
+        if(distance > 1000){
+            //inKM = new String("yes");
+            inKM.delete(0, inKM.length());
+            inKM.append("yes");
+            distance = distance/1000;
+            return distance;
+        }
+        else return distance;//inKM = false;
+        //return distance;
+    }
+
+
 }

@@ -45,6 +45,7 @@ public class ListedEventActivity extends AppCompatActivity {
 			}
 		});
 
+
 	//	this.setTitle(getIntent().getStringExtra("Name"));
 		eventID = getIntent().getIntExtra("Event_ID", -1);
 
