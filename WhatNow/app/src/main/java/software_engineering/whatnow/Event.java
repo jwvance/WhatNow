@@ -3,13 +3,11 @@ package software_engineering.whatnow;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
+
 import com.google.android.gms.maps.model.LatLng;
 
 
-import java.sql.Time;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -56,7 +54,7 @@ public class Event {
         this.category = category;
         this.date = date;
 
-        this.myLoc = getLocationFromAddress(EventTestCreatorActivity.conEvent, this.location);
+        this.myLoc = getLocationFromAddress(AddEventActivity.conEvent, this.location);
 
         this.imagePath = imagePath;
 

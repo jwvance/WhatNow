@@ -39,7 +39,7 @@ public class TabFragment extends Fragment{
 		recyclerView.setHasFixedSize(true);
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-		cardsEventData = EventTestCreatorActivity.loadEvents(rootView.getContext());
+		cardsEventData = AddEventActivity.loadEvents(rootView.getContext());
 		// PLACE HERE CALL TO THE SERVER TO GET EVENTS FROM THE SPECIFIC CATEGORY
 		/*cardsEventData.add("Event 1");
 		cardsEventData.add("Event 2");

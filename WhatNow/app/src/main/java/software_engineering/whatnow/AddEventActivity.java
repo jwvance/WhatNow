@@ -11,10 +11,12 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -31,7 +33,7 @@ import java.util.Calendar;
 import java.util.Random;
 import java.util.StringTokenizer;
 
-public class EventTestCreatorActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, DialogInterface.OnClickListener{
+public class AddEventActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, DialogInterface.OnClickListener{
 
 	private static final int RESULT_LOAD_IMG = 1;
 	private EditText[] tv = new EditText[5];
@@ -39,6 +41,7 @@ public class EventTestCreatorActivity extends AppCompatActivity implements DateP
 	//private TimePicker tp;
 	private Event event;
 	private ArrayList<Event> events;
+	private String name;
 
 
 	//Stuff
@@ -60,8 +63,11 @@ public class EventTestCreatorActivity extends AppCompatActivity implements DateP
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.event_test_creator);
-		EventTestCreatorActivity.conEvent = this;
+		setContentView(R.layout.activity_add_event);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.new_event_toolbar);
+		setSupportActionBar(toolbar);
+
+		AddEventActivity.conEvent = this;
 		initialize();
 
 		events = loadEvents(this);
@@ -72,7 +78,7 @@ public class EventTestCreatorActivity extends AppCompatActivity implements DateP
 		mMonth = mcurrentDate.get(Calendar.MONTH);
 		mDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
 		date.setText(mMonth + "-" + mDay + "-" + mYear);
-		time = (Button) findViewById(R.id.timeDisplay);
+		time = (Button) findViewById(R.id.initialTime);
 		mHour = mcurrentDate.get(Calendar.HOUR_OF_DAY);
 		mMinute = mcurrentDate.get(Calendar.MINUTE);
 		time.setText(mHour + ":" + mMinute);
@@ -102,21 +108,42 @@ public class EventTestCreatorActivity extends AppCompatActivity implements DateP
 	}
 
 	private void initialize(){
-		tv[0]= (EditText) findViewById(R.id.editText);
-		tv[1]= (EditText) findViewById(R.id.editText2);
-		tv[2]= (EditText) findViewById(R.id.editText3);
-		tv[3]= (EditText) findViewById(R.id.editText4);
+		tv[0]= (EditText) findViewById(R.id.new_event_name);
+		tv[1]= (EditText) findViewById(R.id.new_event_description);
+		tv[2]= (EditText) findViewById(R.id.new_event_location);
+		tv[3]= (EditText) findViewById(R.id.new_event_host);
 		//tv[4]= (EditText) findViewById(R.id.editText5);
 		//dp = (DatePicker) findViewById(R.id.datePicker);
 		//tp = (TimePicker) findViewById(R.id.timePicker);
 		//addEvent = (Button) findViewById(R.id.button);
+		final AddEventActivity addEventActivity = this;
+		tv[0].addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				name = s.toString();
+				addEventActivity.setTitle(name);
+				((TextView) findViewById(R.id.textView)).setText(s);
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				name = s.toString();
+				addEventActivity.setTitle(name);
+				((TextView) findViewById(R.id.textView)).setText(s);
+			}
+		});
 	}
 
 	public void addEvent(View v) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(mYear, mMonth, mDay);
 		event = new Event(new Random().nextInt(1000), mHour, mMinute, mHour, mMinute,
-				tv[2].getText().toString(), new Host(tv[3].getText().toString()), tv[0].getText().toString(),
+				tv[2].getText().toString(), new Host(tv[3].getText().toString()), name,
 				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category), calendar.getTimeInMillis(), imagePath);
 
 		events.add(event);
@@ -218,14 +245,15 @@ public class EventTestCreatorActivity extends AppCompatActivity implements DateP
 
 				imagePath = getRealPathFromURI(this, uri);
 				image = bitmap;
-				Log.wtf("IMAGE", uri.getPath());
+				Log.wtf("IMAGE", imagePath);
 
-				ImageView imageView = (ImageView) findViewById(R.id.event_image);
+				ImageView imageView = (ImageView) findViewById(R.id.new_event_image);
 				imageView.setImageBitmap(bitmap);
-				imageView.setVisibility(View.VISIBLE);
-				imageView.bringToFront();
-				findViewById(R.id.choose_image).setVisibility(View.INVISIBLE);
-				((TextView) findViewById(R.id.textViewPic)).setText("Click image to change it");
+			//	imageView.setVisibility(View.VISIBLE);
+			//	imageView.bringToFront();
+			//	findViewById(R.id.choose_image).setVisibility(View.INVISIBLE);
+			//	((TextView) findViewById(R.id.textViewPic)).setText("Click image to change it");
+				((Button) findViewById(R.id.choose_image)).setText("Change image");
 			} catch (IOException e) {
 				e.printStackTrace();
 				Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();

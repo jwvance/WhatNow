@@ -27,7 +27,7 @@
             android:label="Event">
         </activity>
         <activity
-            android:name=".EventTestCreatorActivity"
+            android:name=".AddEventActivity"
             android:label="New Event">
         </activity>
 

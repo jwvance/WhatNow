@@ -1,8 +1,6 @@
 package software_engineering.whatnow;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,7 +11,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class ListedEventActivity extends AppCompatActivity {
@@ -57,7 +54,7 @@ public class ListedEventActivity extends AppCompatActivity {
 		distance = (TextView) findViewById(R.id.listed_event_distance);
 		image = (ImageView) findViewById(R.id.listed_event_image);
 
-		events = EventTestCreatorActivity.loadEvents(getApplicationContext());
+		events = AddEventActivity.loadEvents(getApplicationContext());
 		event = null;
 
 		for (int i = 0; i < events.size(); i++) {
