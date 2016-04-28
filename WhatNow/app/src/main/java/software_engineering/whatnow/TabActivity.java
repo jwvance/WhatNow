@@ -5,9 +5,11 @@ package software_engineering.whatnow;
  */
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -19,6 +21,7 @@ import android.graphics.drawable.BitmapDrawable;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -164,7 +167,12 @@ public class TabActivity extends AppCompatActivity {
 		builder.setTitle("Sort by...");
 		builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
-				switch (item) {
+				SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+				SharedPreferences.Editor editor = preferences.edit();
+				editor.putInt("itemSelected", item);
+				editor.commit();
+				/*switch (item) {
+
 					// PROBABLY THE BEST OPTION TO SOLVE THIS IS THAT EVENT IS COMPARABLE OR COMPARATOR
 					// AND THEN INSIDE COMPARETO THERE IS AN INT CHECK (BASED ON THIS, DEFAULT RECENT)
 					// SO THAT IT CAN APPLY DIFFERENT CRITERIA
@@ -180,7 +188,7 @@ public class TabActivity extends AppCompatActivity {
 					case 3:
 						// recent
 						break;
-				}
+				}*/
 				dialog.dismiss();
 			}
 		});

@@ -21,7 +21,8 @@ public class TabFragment extends Fragment{
 	private Context context;
 	private String category;
 	private ArrayList<Event> cardsEventData;
-	//private String[] cardsEventData = new String[]{"Event 1","Event 2","Event 3","Event 4","Event 5","Event 6","Event 7","Event 8","Event 9"};
+	//private String[] cardsEventData = new String[]{"Event 1","Event 2","Event 3","Event 4",
+	// "Event 5","Event 6","Event 7","Event 8","Event 9"};
 	//private ArrayList<Event> events;
 
 	public TabFragment() {}
@@ -63,6 +64,12 @@ public class TabFragment extends Fragment{
 	/*public void setEvents(ArrayList<Event> events) {
 		this.events = events;
 	}*/
+
+	public void SetSortingCriteria(int sortingCriteria){
+		for (int i=0; i<cardsEventData.size(); i++){
+			cardsEventData.get(i).setSortingCriteria(sortingCriteria);
+		}
+	}
 
 	public void setCategory(String category){
 		this.category = category;
