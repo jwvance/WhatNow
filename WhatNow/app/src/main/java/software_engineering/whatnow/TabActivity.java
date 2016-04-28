@@ -8,25 +8,19 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-<<<<<<< HEAD
 import android.content.SharedPreferences;
-=======
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 
 import android.content.DialogInterface;
->>>>>>> master
 import android.graphics.drawable.BitmapDrawable;
 
 
 import android.os.Bundle;
-<<<<<<< HEAD
 import android.preference.PreferenceManager;
-=======
 import android.os.Handler;
->>>>>>> master
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -99,16 +93,12 @@ public class TabActivity extends AppCompatActivity {
 		locTool.requestLocationUpdate();
 		//locListener = locTool.getLocationListener();
 
-
-
 		if(locationData.getLocation() != null){
 			LocationToolBox.storedLatitude= locationData.getLocation().getLatitude();
 			LocationToolBox.storedLongitude =  locationData.getLocation().getLongitude();
 		}
 		//-------------------------------------------------
-		categories = new ArrayList<String>();	// THESE WILL BE DOWNLOADED FROM OUR SERVER
 
-<<<<<<< HEAD
 		Firebase.setAndroidContext(this);
 
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -119,8 +109,6 @@ public class TabActivity extends AppCompatActivity {
 		}
 
 		categories = new ArrayList<String>();    // THESE WILL BE DOWNLOADED FROM OUR SERVER
-=======
->>>>>>> master
 		categories.add("ALL");
 		categories.add("BARS");
 		categories.add("CLUBS");
