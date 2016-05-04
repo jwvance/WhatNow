@@ -38,8 +38,13 @@ public class TabFragment extends Fragment{
 		recyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view);
 		recyclerView.setHasFixedSize(true);
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));
-
 		cardsEventData = AddEventActivity.loadEvents(rootView.getContext());
+
+		ArrayList<Event> appropriate = new ArrayList<Event>();
+
+		for(int i = 0; i<cardsEventData.size(); i++){
+			if(cardsEventData.get(i).getCategory().getName().equals(category)) appropriate.add(cardsEventData.get(i));
+		}
 		// PLACE HERE CALL TO THE SERVER TO GET EVENTS FROM THE SPECIFIC CATEGORY
 		/*cardsEventData.add("Event 1");
 		cardsEventData.add("Event 2");
@@ -51,8 +56,9 @@ public class TabFragment extends Fragment{
 		cardsEventData.add("Event 8");
 		cardsEventData.add("Event 9");*/
 
-		recyclerView.setAdapter(new RecyclerAdapter(cardsEventData));	// GIVES TO THE ADAPTER ONLY THE EVENTS RELEVANT TO THIS FRAGMENT
-
+		//recyclerView.setAdapter(new RecyclerAdapter(cardsEventData));	// GIVES TO THE ADAPTER ONLY THE EVENTS RELEVANT TO THIS FRAGMENT
+		//Attempt this and see if it fixes where the things appear first.
+		recyclerView.setAdapter(new RecyclerAdapter(appropriate));
 		return rootView;
 	}
 
