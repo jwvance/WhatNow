@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class TabFragment extends Fragment{
@@ -65,10 +66,12 @@ public class TabFragment extends Fragment{
 		this.events = events;
 	}*/
 
-	public void SetSortingCriteria(int sortingCriteria){
+	public void setSortingCriteria(int sortingCriteria, Context tabActivity){
+		cardsEventData = AddEventActivity.loadEvents(tabActivity);
 		for (int i=0; i<cardsEventData.size(); i++){
 			cardsEventData.get(i).setSortingCriteria(sortingCriteria);
 		}
+		Collections.sort(cardsEventData);
 	}
 
 	public void setCategory(String category){

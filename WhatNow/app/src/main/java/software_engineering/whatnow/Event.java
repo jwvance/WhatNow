@@ -59,12 +59,8 @@ public class Event implements Comparable {
         this.name = name;
         this.description = description;
         this.category = category;
-<<<<<<< HEAD
         this.dateStart = dateStart;
-=======
-        this.date = date;
         this.timestamp = System.currentTimeMillis();
->>>>>>> flaco
 
         this.myLoc = getLocationFromAddress(AddEventActivity.conEvent, this.location);
 
@@ -257,7 +253,6 @@ public class Event implements Comparable {
 		return "" + (hourEnd < 10 ? 0 : "") + hourEnd + " : " + (minuteEnd < 10 ? 0 : "") + minuteEnd;
 	}
 
-<<<<<<< HEAD
 	public static String getTimeString(int hour, int minute){
 		return "" + (hour < 10 ? 0 : "") + hour + " : " + (minute < 10 ? 0 : "") + minute;
 	}
@@ -265,11 +260,9 @@ public class Event implements Comparable {
 	public static String getDateString(int year, int month, int day){
 		return month + "-" + (day < 10 ? 0 : "") + day + "-" + year;
 	}
-=======
     public void setSortingCriteria(int sortingCriteria) {
         this.sortingCriteria = sortingCriteria;
     }
->>>>>>> flaco
 
     public LatLng getLocationFromAddress(Context context, String strAddress) {
 
