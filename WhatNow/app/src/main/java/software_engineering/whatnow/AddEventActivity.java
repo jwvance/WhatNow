@@ -23,7 +23,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -43,17 +42,24 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 	private ArrayList<Event> events;
 	private String name;
 
-
 	//Stuff
 	public static Context conEvent;
 
-	private Button date;
-	private Button time;
-	private int mYear;
-	private int mMonth;
-	private int mDay;
-	private int mHour;
-	private int mMinute;
+	private Button initialDate;
+	private Button finalDate;
+	private Button initialTime;
+	private Button finalTime;
+	private int iYear;
+	private int iMonth;
+	private int iDay;
+	private int iHour;
+	private int iMinute;
+	private boolean initial;
+	private int fYear;
+	private int fMonth;
+	private int fDay;
+	private int fHour;
+	private int fMinute;
 	private String category;
 	private String[] categories = {"BARS","CLUBS","FOOD","SHOPS","OTHERS"};
 	private String imagePath;
@@ -72,16 +78,28 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 
 		events = loadEvents(this);
 
-		date = (Button) findViewById(R.id.dateDisplay);
 		Calendar mcurrentDate = Calendar.getInstance();
-		mYear = mcurrentDate.get(Calendar.YEAR);
-		mMonth = mcurrentDate.get(Calendar.MONTH);
-		mDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
-		date.setText(mMonth + "-" + mDay + "-" + mYear);
-		time = (Button) findViewById(R.id.initialTime);
-		mHour = mcurrentDate.get(Calendar.HOUR_OF_DAY);
-		mMinute = mcurrentDate.get(Calendar.MINUTE);
-		time.setText(mHour + ":" + mMinute);
+
+		initialDate = (Button) findViewById(R.id.new_event_initialDate);
+		iYear = mcurrentDate.get(Calendar.YEAR);
+		iMonth = mcurrentDate.get(Calendar.MONTH);
+		iDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
+		initialDate.setText(Event.getDateString(iYear,iMonth,iDay));
+		initialTime = (Button) findViewById(R.id.new_event_initialTime);
+		iHour = mcurrentDate.get(Calendar.HOUR_OF_DAY);
+		iMinute = mcurrentDate.get(Calendar.MINUTE);
+		initialTime.setText(Event.getTimeString(iHour, iMinute));
+
+		mcurrentDate.add(Calendar.HOUR_OF_DAY, 2);
+		finalDate = (Button) findViewById(R.id.new_event_finalDate);
+		fYear = mcurrentDate.get(Calendar.YEAR);
+		fMonth = mcurrentDate.get(Calendar.MONTH);
+		fDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
+		finalDate.setText(Event.getDateString(fYear,fMonth,fDay));
+		finalTime = (Button) findViewById(R.id.new_event_finalTime);
+		fHour = mcurrentDate.get(Calendar.HOUR_OF_DAY);
+		fMinute = mcurrentDate.get(Calendar.MINUTE);
+		finalTime.setText(Event.getTimeString(fHour, fMinute));
 
 		category = null;
 	}
@@ -127,22 +145,22 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				name = s.toString();
 				addEventActivity.setTitle(name);
-				((TextView) findViewById(R.id.textView)).setText(s);
+			//	((TextView) findViewById(R.id.textView)).setText(s);
 			}
 
 			@Override
 			public void afterTextChanged(Editable s) {
 				name = s.toString();
 				addEventActivity.setTitle(name);
-				((TextView) findViewById(R.id.textView)).setText(s);
+			//	((TextView) findViewById(R.id.textView)).setText(s);
 			}
 		});
 	}
 
 	public void addEvent(View v) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(mYear, mMonth, mDay);
-		event = new Event(new Random().nextInt(1000), mHour, mMinute, mHour, mMinute,
+		calendar.set(iYear, iMonth, iDay);
+		event = new Event(new Random().nextInt(1000), iHour, iMinute, fHour, fMinute,
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), name,
 				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category), calendar.getTimeInMillis(), imagePath);
 
@@ -179,31 +197,58 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 
 	@Override
 	public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-		mMonth = monthOfYear + 1;
-		mDay = dayOfMonth;
-		mYear = year;
-		date.setText("" + monthOfYear + "-" + dayOfMonth + "-" + year);
+		if(initial){
+			iMonth = monthOfYear + 1;
+			iDay = dayOfMonth;
+			iYear = year;
+			initialDate.setText(Event.getDateString(iYear,iMonth,iDay));
+		}else{
+			fMonth = monthOfYear + 1;
+			fDay = dayOfMonth;
+			fYear = year;
+			finalDate.setText(Event.getDateString(fYear,fMonth,fDay));
+		}
 	}
 
 	public void chooseDate(View v) {
 		DatePickerDialog mDatePicker;
-		mDatePicker = new DatePickerDialog(this, this, mYear, mMonth, mDay);
-		mDatePicker.setTitle("Select Date");
+		if(v.getId() == R.id.new_event_initialDate){
+			mDatePicker = new DatePickerDialog(this, this, iYear, iMonth, iDay);
+			initial = true;
+			mDatePicker.setTitle("Select Initial Date");
+		}else{
+			mDatePicker = new DatePickerDialog(this, this, fYear, fMonth, fDay);
+			initial = false;
+			mDatePicker.setTitle("Select Final Date");
+		}
 		mDatePicker.show();
 	}
 
-	public void chooseTime(View v){
+	public void chooseTime(View v) {
 		TimePickerDialog mTimePicker;
-		mTimePicker = new TimePickerDialog(this, this, mHour, mMinute, false);
-		mTimePicker.setTitle("Select Time");
+		if (v.getId() == R.id.new_event_initialTime){
+			mTimePicker = new TimePickerDialog(this, this, iHour, iMinute, false);
+			mTimePicker.setTitle("Select Initial Time");
+			initial = true;
+		}else{
+			mTimePicker = new TimePickerDialog(this, this, fHour, fMinute, false);
+			mTimePicker.setTitle("Select Final Time");
+			initial = false;
+		}
 		mTimePicker.show();
 	}
 
 	@Override
 	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-		mHour = hourOfDay;
-		mMinute = minute;
-		time.setText(hourOfDay + ":" + minute);
+		if(initial){
+			iHour = hourOfDay;
+			iMinute = minute;
+			initialTime.setText(Event.getTimeString(iHour,iMinute));
+		}else{
+			fHour = hourOfDay;
+			fMinute = minute;
+			finalTime.setText(Event.getTimeString(fHour,fMinute));
+		}
 	}
 
 	public void chooseCategory(View v){

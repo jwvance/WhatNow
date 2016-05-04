@@ -29,7 +29,8 @@ public class Event {
     private String name;
     private String description;
     private Category category;
-    private long date;
+    private long dateStart;
+    private long dateEnd;
     private int month;
     private int year;
     private int day;
@@ -41,7 +42,7 @@ public class Event {
 
 
     public Event(int id, int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
-                 Host host, String name, String description, Category category, long date, String imagePath) {
+                 Host host, String name, String description, Category category, long dateStart, String imagePath) {
         this.id = id;
         this.hourStart = hourStart;
         this.minuteStart = minuteStart;
@@ -52,7 +53,7 @@ public class Event {
         this.name = name;
         this.description = description;
         this.category = category;
-        this.date = date;
+        this.dateStart = dateStart;
 
         this.myLoc = getLocationFromAddress(AddEventActivity.conEvent, this.location);
 
@@ -60,19 +61,19 @@ public class Event {
 
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(date);
+        calendar.setTimeInMillis(dateStart);
 
         this.year = calendar.get(Calendar.YEAR);
         this.month = calendar.get(Calendar.MONTH);
         this.day = calendar.get(Calendar.DAY_OF_MONTH);
     }
 
-    public long getDate() {
-        return date;
+    public long getDateStart() {
+        return dateStart;
     }
 
-    public void setDate(long date) {
-        this.date = date;
+    public void setDateStart(long dateStart) {
+        this.dateStart = dateStart;
     }
 
     public int getHourStart() {
@@ -179,7 +180,7 @@ public class Event {
         return id + ":::" + hourStart + ":::" + minuteStart + ":::" +
                 hourEnd + ":::" + minuteEnd + ":::" + location + ":::" +
                 host.getName() + ":::" + name + ":::" +description + ":::"
-                + category.getName() + ":::" + date + ":::" + imagePath;
+                + category.getName() + ":::" + dateStart + ":::" + imagePath;
     }
 
     public String getDateString(){
@@ -192,6 +193,14 @@ public class Event {
 
 	public String getEndTime(){
 		return "" + (hourEnd < 10 ? 0 : "") + hourEnd + " : " + (minuteEnd < 10 ? 0 : "") + minuteEnd;
+	}
+
+	public static String getTimeString(int hour, int minute){
+		return "" + (hour < 10 ? 0 : "") + hour + " : " + (minute < 10 ? 0 : "") + minute;
+	}
+
+	public static String getDateString(int year, int month, int day){
+		return month + "-" + (day < 10 ? 0 : "") + day + "-" + year;
 	}
 
     public LatLng getLocationFromAddress(Context context, String strAddress) {

@@ -41,7 +41,7 @@
                     android:id="@+id/new_event_image"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
-                    android:background="#bdbdbd"/>
+                    android:background="@color/material_deep_teal_200"/>
             </RelativeLayout>
 
         </android.support.design.widget.CollapsingToolbarLayout>

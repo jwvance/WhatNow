@@ -28,31 +28,32 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Name"
-                    android:id="@+id/textView" />
+                android:orientation="vertical"
+                >
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/new_event_name" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Description"
-                    android:id="@+id/textView3" />
+                    android:id="@+id/new_event_name"
+                    android:textSize="24dp"
+                    android:singleLine="true"
+                    android:hint="Event Name..."
+                    android:textColorHint="#bdbdbd"
+                    android:textColor="#000000"/>
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/new_event_description" />
+                    android:id="@+id/new_event_description"
+                    android:textColor="#616161"
+                    android:hint="Description..."
+                    android:textColorHint="#bdbdbd"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="#e0e0e0"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -62,7 +63,7 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Choose Image"
+                        android:text="Add Image"
                         style="?android:attr/borderlessButtonStyle"
                         android:id="@+id/choose_image"
                         android:onClick="chooseImage"
@@ -87,6 +88,33 @@
                     android:layout_gravity="center_horizontal">
 
                     <ImageView
+                        android:id="@+id/imageView3"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_business_black_24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/new_event_host"
+                        android:hint="Host Name..."
+                        android:textColorHint="#bdbdbd"
+                        android:layout_alignParentBottom="true"
+                        android:layout_toRightOf="@+id/imageView3"
+                        android:layout_toEndOf="@+id/imageView3"
+                        android:layout_marginLeft="10dp"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center_horizontal">
+
+                    <ImageView
                         android:id="@+id/imageView2"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
@@ -102,20 +130,37 @@
                         android:layout_alignParentBottom="true"
                         android:layout_toRightOf="@+id/imageView2"
                         android:layout_toEndOf="@+id/imageView2"
-                        android:layout_marginLeft="10dp"/>
+                        android:layout_marginLeft="10dp"
+                        android:hint="Address..."
+                        android:textColorHint="#bdbdbd"/>
                 </RelativeLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Host"
-                    android:id="@+id/textView7" />
-
-                <EditText
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/new_event_host" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center_horizontal">
+
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_phone_black_24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/new_event_phone"
+                        android:hint="Telephone..."
+                        android:textColorHint="#bdbdbd"
+                        android:layout_alignParentBottom="true"
+                        android:layout_toRightOf="@+id/imageView"
+                        android:layout_toEndOf="@+id/imageView"
+                        android:layout_marginLeft="10dp"/>
+                </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -135,13 +180,18 @@
 
                 </RelativeLayout>
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="#e0e0e0"/>
+
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:id="@+id/listed_event_clock_image"
+                        android:id="@+id/imageView4"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/ic_event_black_24dp"
@@ -149,18 +199,74 @@
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"/>
 
-                    <Button
-                        android:layout_width="wrap_content"
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Date Display"
-                        android:id="@+id/dateDisplay"
-                        style="?android:attr/borderlessButtonStyle"
-                        android:onClick="chooseDate"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:gravity="center"/>
+                        android:orientation="horizontal"
+                        android:id="@+id/relativeLayout3"
+                        android:layout_below="@+id/relativeLayout4"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true">
 
+                        <Button
+                            style="?android:attr/borderlessButtonStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="End"
+                            android:id="@+id/new_event_finalDate"
+                            android:onClick="chooseDate"
+                            android:gravity="center"
+                            android:layout_centerHorizontal="true"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="End"
+                            android:id="@+id/textView"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_toLeftOf="@+id/new_event_finalDate"
+                            android:layout_centerVertical="true"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:id="@+id/relativeLayout4">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="Start"
+                            android:id="@+id/textView3"
+                            android:layout_centerVertical="true"
+                            android:layout_toLeftOf="@+id/new_event_initialDate"
+                            android:layout_toStartOf="@+id/new_event_initialDate"/>
+
+                        <Button
+                            style="?android:attr/borderlessButtonStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Start"
+                            android:id="@+id/new_event_initialDate"
+                            android:onClick="chooseDate"
+                            android:gravity="center"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"
+                            />
+                    </RelativeLayout>
                 </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#e0e0e0"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -190,7 +296,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="End"
-                            android:id="@+id/finalTime"
+                            android:id="@+id/new_event_finalTime"
                             android:onClick="chooseTime"
                             android:gravity="center"
                             android:layout_centerHorizontal="true"/>
@@ -203,7 +309,7 @@
                             android:id="@+id/textView2"
                             android:layout_marginLeft="5dp"
                             android:layout_marginTop="10dp"
-                            android:layout_toLeftOf="@+id/finalTime"
+                            android:layout_toLeftOf="@+id/new_event_finalTime"
                             android:layout_centerVertical="true"/>
                     </RelativeLayout>
 
@@ -223,14 +329,14 @@
                             android:text="Start"
                             android:id="@+id/textView4"
                             android:layout_centerVertical="true"
-                            android:layout_toLeftOf="@+id/initialTime"
-                            android:layout_toStartOf="@+id/initialTime"/>
+                            android:layout_toLeftOf="@+id/new_event_initialTime"
+                            android:layout_toStartOf="@+id/new_event_initialTime"/>
                         <Button
                             style="?android:attr/borderlessButtonStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Start"
-                            android:id="@+id/initialTime"
+                            android:id="@+id/new_event_initialTime"
                             android:onClick="chooseTime"
                             android:gravity="center"
                             android:layout_alignParentTop="true"
