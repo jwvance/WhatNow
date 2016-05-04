@@ -1,11 +1,14 @@
 package software_engineering.whatnow;
 
+import android.app.Activity;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import android.content.*;
+import android.preference.PreferenceManager;
 
 import java.util.Calendar;
 import java.util.List;
@@ -13,7 +16,7 @@ import java.util.List;
 /**
  * Created by Francesco on 4/14/2016.
  */
-public class Event {
+public class Event implements Comparable {
 
     //test
     LocationToolBox locationIs;
@@ -34,6 +37,9 @@ public class Event {
     private int month;
     private int year;
     private int day;
+    private int numberOfGuests = 0;
+    private long timestamp;
+    private int sortingCriteria=0;
 
     //Location stuff
     private LatLng myLoc;
@@ -53,7 +59,12 @@ public class Event {
         this.name = name;
         this.description = description;
         this.category = category;
+<<<<<<< HEAD
         this.dateStart = dateStart;
+=======
+        this.date = date;
+        this.timestamp = System.currentTimeMillis();
+>>>>>>> flaco
 
         this.myLoc = getLocationFromAddress(AddEventActivity.conEvent, this.location);
 
@@ -123,6 +134,15 @@ public class Event {
         return disIs;
     }
 
+    public int getDistanceInMeters(){
+        Double storedLatitude = LocationToolBox.storedLatitude;
+        Double storedLongitude = LocationToolBox.storedLongitude;
+        StringBuilder isKM = new StringBuilder("no");
+        Integer dis = locationIs.distance(storedLatitude, storedLongitude, this.myLoc.latitude, this.myLoc.longitude, isKM);
+
+        return dis;
+    }
+
     public void setLocation(String location) {
         this.location = location;
     }
@@ -141,6 +161,30 @@ public class Event {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
     }
 
     public String getDescription() {
@@ -175,6 +219,24 @@ public class Event {
         this.imagePath = imagePath;
     }
 
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public void setNumberOfGuests(int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void increaseGuests(){
+        this.numberOfGuests++;
+    }
+
+    public void decreaseGuests(){ this.numberOfGuests--; }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
     @Override
     public String toString() {
         return id + ":::" + hourStart + ":::" + minuteStart + ":::" +
@@ -195,6 +257,7 @@ public class Event {
 		return "" + (hourEnd < 10 ? 0 : "") + hourEnd + " : " + (minuteEnd < 10 ? 0 : "") + minuteEnd;
 	}
 
+<<<<<<< HEAD
 	public static String getTimeString(int hour, int minute){
 		return "" + (hour < 10 ? 0 : "") + hour + " : " + (minute < 10 ? 0 : "") + minute;
 	}
@@ -202,6 +265,11 @@ public class Event {
 	public static String getDateString(int year, int month, int day){
 		return month + "-" + (day < 10 ? 0 : "") + day + "-" + year;
 	}
+=======
+    public void setSortingCriteria(int sortingCriteria) {
+        this.sortingCriteria = sortingCriteria;
+    }
+>>>>>>> flaco
 
     public LatLng getLocationFromAddress(Context context, String strAddress) {
 
@@ -226,5 +294,92 @@ public class Event {
         }
 
         return p1;
+    }
+
+    //returns 1 if this is before the other event, 0 if they are at the same time
+    //and -1 if the second event is before this one
+    public int compareToByTime(Event event){
+        if (this.getYear()<event.getYear())
+            return 1;
+        else if (this.getYear()>event.getYear())
+            return -1;
+        if (this.getMonth()<event.getMonth())
+            return 1;
+        else if (this.getMonth()>event.getMonth())
+            return -1;
+        if (this.getDay()<event.getDay())
+            return 1;
+        else if (this.getDay()>event.getDay())
+            return -1;
+        if (this.getHourStart()<event.getHourStart())
+            return 1;
+        else if (this.getHourStart()<event.getHourStart())
+            return -1;
+        if (this.getMinuteStart()<event.getMinuteStart())
+            return 1;
+        else if (this.getMinuteStart()<event.getMinuteStart())
+            return -1;
+
+        return 0;
+    }
+
+
+    //returns 1 if this is closer than the other event, 0 if they are at the same distance
+    //and -1 if the second event is closer to this one
+    public int compareToByDistance(Event event){
+        if (this.getDistanceInMeters()>event.getDistanceInMeters())
+            return 1;
+        else if (this.getDistanceInMeters()<event.getDistanceInMeters())
+            return -1;
+        return 0;
+    }
+
+    //returns 1 if this has more attendences than the other event, 0 if they have the same
+    //and -1 if the second event has more attendences this one
+    public int compareToByPopularity(Event event){
+        if (this.getNumberOfGuests()>event.getNumberOfGuests())
+            return 1;
+        else if (this.getNumberOfGuests()<event.getNumberOfGuests())
+            return -1;
+        return 0;
+    }
+
+    //returns 1 if this has been created more recently than the other event, 0 if they have
+    //been created at the same time and -1 if the second event is more recent than this one
+    public int compareToByCreationTime(Event event){
+        if (this.getTimestamp()>event.getTimestamp())
+            return 1;
+        else if (this.getTimestamp()<event.getTimestamp())
+            return -1;
+        return 0;
+    }
+
+    @Override
+    public int compareTo(Object otherEvent) {
+        int result=0;
+        Event event = (Event) otherEvent;
+
+
+        switch (this.sortingCriteria) {
+
+            case 0:
+                result = compareToByPopularity(event);
+                // popularity
+                break;
+            case 1:
+                result = compareToByTime(event);
+                // incoming
+                break;
+            case 2:
+                result = compareToByDistance(event);
+                // distance
+                break;
+            case 3:
+                result = compareToByCreationTime(event);
+                // recent
+                break;
+        }
+
+        return result;
     }
 }
