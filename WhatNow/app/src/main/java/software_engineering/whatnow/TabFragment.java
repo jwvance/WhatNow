@@ -72,6 +72,7 @@ public class TabFragment extends Fragment{
 			cardsEventData.get(i).setSortingCriteria(sortingCriteria);
 		}
 		Collections.sort(cardsEventData);
+		AddEventActivity.saveEvents(tabActivity, cardsEventData, cardsEventData.size());
 	}
 
 	public void setCategory(String category){
