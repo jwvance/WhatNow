@@ -40,11 +40,11 @@ public class TabFragment extends Fragment{
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));
 		cardsEventData = AddEventActivity.loadEvents(rootView.getContext());
 
-		ArrayList<Event> appropriate = new ArrayList<Event>();
+		//ArrayList<Event> appropriate = new ArrayList<Event>();
 
-		for(int i = 0; i<cardsEventData.size(); i++){
-			if(cardsEventData.get(i).getCategory().getName().equals(category)) appropriate.add(cardsEventData.get(i));
-		}
+		//for(int i = 0; i<cardsEventData.size(); i++){
+		//	if(cardsEventData.get(i).getCategory().getName().equals(category)) appropriate.add(cardsEventData.get(i));
+		//}
 		// PLACE HERE CALL TO THE SERVER TO GET EVENTS FROM THE SPECIFIC CATEGORY
 		/*cardsEventData.add("Event 1");
 		cardsEventData.add("Event 2");
@@ -58,7 +58,21 @@ public class TabFragment extends Fragment{
 
 		//recyclerView.setAdapter(new RecyclerAdapter(cardsEventData));	// GIVES TO THE ADAPTER ONLY THE EVENTS RELEVANT TO THIS FRAGMENT
 		//Attempt this and see if it fixes where the things appear first.
-		recyclerView.setAdapter(new RecyclerAdapter(appropriate));
+
+		//This is to make sure that it works with either the ALL. Moved things here so as to make things more efficient.
+		//That is, be conservative with memory.
+		if(category.equals("ALL")){
+			//Sets all the events to view.
+			recyclerView.setAdapter(new RecyclerAdapter(cardsEventData));
+		}
+		else{
+			//This is for the appropriate category tab.
+			ArrayList<Event> appropriate = new ArrayList<Event>();
+			for(int i = 0; i<cardsEventData.size(); i++){
+				if(cardsEventData.get(i).getCategory().getName().equals(category)) appropriate.add(cardsEventData.get(i));
+			}
+			recyclerView.setAdapter(new RecyclerAdapter(appropriate));
+		}
 		return rootView;
 	}
 
