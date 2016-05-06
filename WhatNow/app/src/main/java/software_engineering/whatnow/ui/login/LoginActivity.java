@@ -1,5 +1,7 @@
 package software_engineering.whatnow.ui.login;
 
+import software_engineering.whatnow.R;
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,17 +9,22 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ServerValue;
+import com.firebase.client.ValueEventListener;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -30,11 +37,10 @@ import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.Scope;
 
-import software_engineering.whatnow.R;
-import software_engineering.whatnow.model.User;
 import software_engineering.whatnow.ui.BaseActivity;
 import software_engineering.whatnow.ui.MainActivity;
 import software_engineering.whatnow.utils.*;
+import software_engineering.whatnow.model.User;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -192,11 +198,11 @@ public class LoginActivity extends BaseActivity {
                 /**
                  * If user has logged in with Google provider
                  */
-                 if (authData.getProvider().equals(Constants.GOOGLE_PROVIDER)) {
-                     setAuthenticatedUserGoogle(authData);
-                     } else {
-                        Log.e(LOG_TAG, getString(R.string.log_error_invalid_provider) + authData.getProvider());
-                     }
+                if (authData.getProvider().equals(Constants.GOOGLE_PROVIDER)) {
+                    setAuthenticatedUserGoogle(authData);
+                } else {
+                    Log.e(LOG_TAG, getString(R.string.log_error_invalid_provider) + authData.getProvider());
+                }
 
                 /* Save provider name and encodedEmail for later use and start MainActivity */
                 mSharedPrefEditor.putString(Constants.KEY_PROVIDER, authData.getProvider()).apply();
@@ -390,11 +396,14 @@ public class LoginActivity extends BaseActivity {
 
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(LOG_TAG, "handleSignInResult:" + result.isSuccess());
+        Log.d(LOG_TAG, "handleSignInResult:" + result.getStatus().getStatusCode());
+        Log.d(LOG_TAG, "handleSignInResult:" + result.getStatus().getStatusMessage());
+
+
         if (result.isSuccess()) {
             /* Signed in successfully, get the OAuth token */
             mGoogleAccount = result.getSignInAccount();
             getGoogleOAuthTokenAndLogin();
-
 
         } else {
             if (result.getStatus().getStatusCode() == GoogleSignInStatusCodes.SIGN_IN_CANCELLED) {
@@ -430,11 +439,9 @@ public class LoginActivity extends BaseActivity {
                     Log.w(LOG_TAG, getString(R.string.google_error_recoverable_oauth_error) + e.toString());
 
                     /* We probably need to ask for permissions, so start the intent if there is none pending */
-                    if (!mGoogleIntentInProgress) {
-                        mGoogleIntentInProgress = true;
-                        Intent recover = e.getIntent();
-                        startActivityForResult(recover, RC_GOOGLE_LOGIN);
-                    }
+                    Intent recover = e.getIntent();
+                    startActivityForResult(recover, RC_GOOGLE_LOGIN);
+
                 } catch (GoogleAuthException authEx) {
                     /* The call is not ever expected to succeed assuming you have already verified that
                      * Google Play services is installed. */

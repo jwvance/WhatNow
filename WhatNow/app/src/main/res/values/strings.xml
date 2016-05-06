@@ -8,6 +8,8 @@
 
 
     <string name="facebook_app_id">532498350256407</string>
+    <string name="server_client_id">823024199502-vdik5gj9vf4dmcqnlfgo2obs0om9ui1a.apps.googleusercontent.com</string>
+
 
     <!-- Base Error Strings-->
     <string name="log_error_updating_data">Error updating data: </string>
