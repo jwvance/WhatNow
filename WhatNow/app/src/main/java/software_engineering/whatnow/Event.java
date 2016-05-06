@@ -5,6 +5,8 @@ import android.location.Address;
 import android.location.Geocoder;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 
 import java.util.Calendar;
@@ -15,21 +17,59 @@ import java.util.List;
  */
 public class Event {
 
+    @SerializedName("category")
+    @Expose
+    private Category category;
+    @SerializedName("dateStart")
+    @Expose
+    private long dateStart;
+    @SerializedName("dateString")
+    @Expose
+    private String dateString;
+    @SerializedName("description")
+    @Expose
+    private String description;
+    @SerializedName("distance")
+    @Expose
+    private String distance;
+    @SerializedName("endTime")
+    @Expose
+    private String endTime;
+    @SerializedName("host")
+    @Expose
+    private Host host;
+    @SerializedName("hourEnd")
+    @Expose
+    private Integer hourEnd;
+    @SerializedName("hourStart")
+    @Expose
+    private Integer hourStart;
+    @SerializedName("id")
+    @Expose
+    private Integer id;
+    @SerializedName("imagePath")
+    @Expose
+    private String imagePath;
+    @SerializedName("location")
+    @Expose
+    private String location;
+    @SerializedName("minuteEnd")
+    @Expose
+    private Integer minuteEnd;
+    @SerializedName("minuteStart")
+    @Expose
+    private Integer minuteStart;
+    @SerializedName("name")
+    @Expose
+    private String name;
+    @SerializedName("startTime")
+    @Expose
+    private String startTime;
+
     //test
     LocationToolBox locationIs;
     //
 
-	private int id;
-    private int hourStart;
-    private int minuteStart;
-    private int hourEnd;
-    private int minuteEnd;
-    private String location;
-    private Host host;
-    private String name;
-    private String description;
-    private Category category;
-    private long dateStart;
     private long dateEnd;
     private int month;
     private int year;
@@ -38,8 +78,10 @@ public class Event {
     //Location stuff
     private LatLng myLoc;
 
-    private String imagePath;
 
+    public Event(){
+        //empty constructor
+    }
 
     public Event(int id, int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
                  Host host, String name, String description, Category category, long dateStart, String imagePath) {
@@ -55,8 +97,12 @@ public class Event {
         this.category = category;
         this.dateStart = dateStart;
 
-        this.myLoc = getLocationFromAddress(AddEventActivity.conEvent, this.location);
-
+		try {
+			this.myLoc = getLocationFromAddress(AddEventActivity.conEvent, this.location);
+		}catch(NullPointerException npe){
+			this.myLoc = new LatLng(36.9741,-122.0308);	//Santa Cruz
+			npe.printStackTrace();
+		}
         this.imagePath = imagePath;
 
 
@@ -201,6 +247,10 @@ public class Event {
 
 	public static String getDateString(int year, int month, int day){
 		return month + "-" + (day < 10 ? 0 : "") + day + "-" + year;
+	}
+
+	public void setMyLoc(Context context){
+		this.myLoc = getLocationFromAddress(context, this.location);
 	}
 
     public LatLng getLocationFromAddress(Context context, String strAddress) {

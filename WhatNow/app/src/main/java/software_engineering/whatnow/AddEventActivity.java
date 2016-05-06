@@ -26,11 +26,15 @@ import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
 import java.util.StringTokenizer;
+
+import software_engineering.whatnow.firebase_stuff.Constants;
 
 public class AddEventActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, DialogInterface.OnClickListener{
 
@@ -64,6 +68,8 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 	private String[] categories = {"BARS","CLUBS","FOOD","SHOPS","OTHERS"};
 	private String imagePath;
 	private Bitmap image;
+
+	//private String databaseURL;
 
 
 	@Override
@@ -102,6 +108,8 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		finalTime.setText(Event.getTimeString(fHour, fMinute));
 
 		category = null;
+
+		//databaseURL = Constants.FIREBASE_URL + "/events";
 	}
 
 	public static ArrayList<Event> loadEvents(Context context) {
@@ -167,6 +175,8 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		events.add(event);
 
 		saveEvents(getApplicationContext(), events, events.size() - 1);
+
+		new Firebase(Constants.DATABASE_URL + "/events/events_list").push().setValue(event);
 
 		//reinitializeUI();
 		finish();
