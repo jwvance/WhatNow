@@ -10,6 +10,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
+import software_engineering.whatnow.MyProfileActivity;
 import software_engineering.whatnow.R;
 import software_engineering.whatnow.TabActivity;
 import software_engineering.whatnow.model.User;
@@ -23,7 +24,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_my_profile);
         /**
          * Create Firebase references
          */
@@ -66,7 +67,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void callNewActivity (View view) {
-        startActivity(new Intent(this, TabActivity.class));
+        startActivity(new Intent(this, MyProfileActivity.class));
     }
 
 
