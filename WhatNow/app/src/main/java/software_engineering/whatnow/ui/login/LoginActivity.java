@@ -325,27 +325,6 @@ public class LoginActivity extends BaseActivity {
         mFirebaseRef.authWithOAuthToken(Constants.GOOGLE_PROVIDER, token, new MyAuthResultHandler(Constants.GOOGLE_PROVIDER));
     }
 
-    /**
-     * GOOGLE SIGN IN CODE
-     * <p/>
-     * This code is mostly boiler plate from
-     * https://developers.google.com/identity/sign-in/android/start-integrating
-     * and
-     * https://github.com/googlesamples/google-services/blob/master/android/signin/app/src/main/java/com/google/samples/quickstart/signin/SignInActivity.java
-     * <p/>
-     * The big picture steps are:
-     * 1. User clicks the sign in with Google button
-     * 2. An intent is started for sign in.
-     * - If the connection fails it is caught in the onConnectionFailed callback
-     * - If it finishes, onActivityResult is called with the correct request code.
-     * 3. If the sign in was successful, set the mGoogleAccount to the current account and
-     * then call get GoogleOAuthTokenAndLogin
-     * 4. getGoogleOAuthTokenAndLogin launches an AsyncTask to get an OAuth2 token from Google.
-     * 5. Once this token is retrieved it is available to you in the onPostExecute method of
-     * the AsyncTask. **This is the token required by Firebase**
-     */
-
-
     /* Sets up the Google Sign In Button : https://developers.google.com/android/reference/com/google/android/gms/common/SignInButton */
     private void setupGoogleSignIn() {
         SignInButton signInButton = (SignInButton) findViewById(R.id.login_with_google);

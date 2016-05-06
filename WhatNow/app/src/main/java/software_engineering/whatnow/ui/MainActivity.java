@@ -2,6 +2,7 @@ package software_engineering.whatnow.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
@@ -25,6 +26,12 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_profile);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        this.setTitle("My Profile");
+
         /**
          * Create Firebase references
          */
@@ -65,10 +72,10 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
         mUserRef.removeEventListener(mUserRefListener);
     }
-
-    public void callNewActivity (View view) {
-        startActivity(new Intent(this, MyProfileActivity.class));
-    }
+//
+//    public void callNewActivity (View view) {
+//        startActivity(new Intent(this, TabActivity.class));
+//    }
 
 
 }

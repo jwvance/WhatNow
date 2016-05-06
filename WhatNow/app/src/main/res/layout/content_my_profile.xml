@@ -6,13 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="software_engineering.whatnow.MyProfileActivity"
+    tools:context="software_engineering.whatnow.ui.MainActivity"
     tools:showIn="@layout/activity_my_profile">
 
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="100dp"-->
+        <!--android:layout_margin="@dimen/text_margin"-->
+        <!--android:text="Welcome from Login!"-->
+        <!--android:textColor="#ee1616"-->
+        <!--android:onClick="callNewActivity"/>-->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
+        android:onClick="callNewActivity"
         android:text="TO BE DEVELOPED"/>
 
 </android.support.v4.widget.NestedScrollView>
