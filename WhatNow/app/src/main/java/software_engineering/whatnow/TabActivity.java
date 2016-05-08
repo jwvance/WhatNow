@@ -28,10 +28,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
 public class TabActivity extends AppCompatActivity implements DialogInterface.OnClickListener{
+=======
+import software_engineering.whatnow.firebase_stuff.Constants;
+
+public class TabActivity extends AppCompatActivity {
+>>>>>>> testingFirebaseEvents
 
 	//Test for location
 	public static Context con;
@@ -61,6 +72,9 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab_layout);
+
+		Firebase.setAndroidContext(this);
+
 		//Get the location toolbox set up and its listener
 		//-------------------------------------------------
 		//locationData.getLocation();
