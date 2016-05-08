@@ -22,38 +22,33 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
-<<<<<<< HEAD
 import java.util.Collections;
-=======
 import java.util.Collection;
 import java.util.HashMap;
 
 import software_engineering.whatnow.firebase_stuff.Constants;
->>>>>>> testingFirebaseEvents
 
 
 public class TabFragment extends Fragment{
 	private View rootView;
 	private RecyclerView recyclerView;
 	private String category;
-<<<<<<< HEAD
-	private ArrayList<Event> cardsEventData;
 	//private String[] cardsEventData = new String[]{"Event 1","Event 2","Event 3","Event 4",
 	// "Event 5","Event 6","Event 7","Event 8","Event 9"};
-=======
 	private ArrayList<Event> cardsEventData = new ArrayList<Event>();;
-	//private String[] cardsEventData = new String[]{"Event 1","Event 2","Event 3","Event 4","Event 5","Event 6","Event 7","Event 8","Event 9"};
->>>>>>> testingFirebaseEvents
 	//private ArrayList<Event> events;
 	private RecyclerAdapter recyclerAdapter;
 	private Context context;
+	private int sortingCriteria = 1; //default is incoming
 
 	public TabFragment() {}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
+		recyclerAdapter = new RecyclerAdapter(cardsEventData);
+
 		context = getContext();
 		//cardsEventData = new ArrayList<Event>();	//AddEventActivity.loadEvents(getContext());
 
@@ -112,6 +107,7 @@ public class TabFragment extends Fragment{
 					cardsEventData.clear();
 				try{
 					recyclerAdapter.notifyDataSetChanged();
+					setSortingCriteria(sortingCriteria, context);
 				}catch(NullPointerException e){
 					e.printStackTrace();
 				}
@@ -124,12 +120,12 @@ public class TabFragment extends Fragment{
 
 			@Override
 			public void onChildRemoved(DataSnapshot dataSnapshot) {
-				cardsEventData.remove((Event) dataSnapshot.child("title").getValue());
+				/*cardsEventData.remove((Event) dataSnapshot.child("title").getValue());
 				try{
 					recyclerAdapter.notifyDataSetChanged();
 				}catch(NullPointerException e){
 					e.printStackTrace();
-				}
+				}*/
 			}
 
 			@Override
@@ -165,7 +161,7 @@ public class TabFragment extends Fragment{
 		cardsEventData.add("Event 8");
 		cardsEventData.add("Event 9");*/
 
-		recyclerAdapter = new RecyclerAdapter(cardsEventData);
+	//	recyclerAdapter = new RecyclerAdapter(cardsEventData);
 
 		recyclerView.setAdapter(recyclerAdapter);	// GIVES TO THE ADAPTER ONLY THE EVENTS RELEVANT TO THIS FRAGMENT
 
@@ -181,12 +177,18 @@ public class TabFragment extends Fragment{
 	}*/
 
 	public void setSortingCriteria(int sortingCriteria, Context tabActivity){
-		cardsEventData = AddEventActivity.loadEvents(tabActivity);
+		this.sortingCriteria = sortingCriteria;
+	//	cardsEventData = AddEventActivity.loadEvents(tabActivity);
 		for (int i=0; i<cardsEventData.size(); i++){
 			cardsEventData.get(i).setSortingCriteria(sortingCriteria);
 		}
 		Collections.sort(cardsEventData);
-		AddEventActivity.saveEvents(tabActivity, cardsEventData, cardsEventData.size());
+		//AddEventActivity.saveEvents(tabActivity, cardsEventData, cardsEventData.size());
+		try{
+			recyclerAdapter.notifyDataSetChanged();
+		}catch(NullPointerException e){
+			//e.printStackTrace();
+		}
 	}
 
 	public void setCategory(String category){

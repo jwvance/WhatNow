@@ -32,17 +32,12 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import software_engineering.whatnow.firebase_stuff.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
 
-<<<<<<< HEAD
 public class TabActivity extends AppCompatActivity implements DialogInterface.OnClickListener{
-=======
-import software_engineering.whatnow.firebase_stuff.Constants;
-
-public class TabActivity extends AppCompatActivity {
->>>>>>> testingFirebaseEvents
 
 	//Test for location
 	public static Context con;
