@@ -6,10 +6,12 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
+import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -29,6 +31,10 @@ import software_engineering.whatnow.utils.*;
  */
 public abstract class BaseActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener {
+
+
+    private static final String LOG_TAG = BaseActivity.class.getSimpleName();
+
     protected String mProvider, mEncodedEmail;
     /* Client used to interact with Google APIs. */
     protected GoogleApiClient mGoogleApiClient;
@@ -62,6 +68,25 @@ public abstract class BaseActivity extends AppCompatActivity implements
         /* Get mEncodedEmail and mProvider from SharedPreferences, use null as default value */
         mEncodedEmail = sp.getString(Constants.KEY_ENCODED_EMAIL, null);
         mProvider = sp.getString(Constants.KEY_PROVIDER, null);
+
+        if (!((this instanceof LoginActivity))) {
+            mFirebaseRef = new Firebase(Constants.FIREBASE_URL);
+            mAuthListener = new Firebase.AuthStateListener() {
+                @Override
+                public void onAuthStateChanged(AuthData authData) {
+                     /* The user has been logged out */
+                    if (authData == null) {
+                        /* Clear out shared preferences */
+                        SharedPreferences.Editor spe = sp.edit();
+                        spe.putString(Constants.KEY_ENCODED_EMAIL, null);
+                        spe.putString(Constants.KEY_PROVIDER, null);
+
+                        takeUserToLoginScreenOnUnAuth();
+                    }
+                }
+            };
+            mFirebaseRef.addAuthStateListener(mAuthListener);
+        }
 
     }
 
@@ -118,6 +143,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
         /* Logout if mProvider is not null */
         if (mProvider != null) {
+            Log.e(LOG_TAG, "PROVIDER:" + mProvider);
+
             mFirebaseRef.unauth();
 
             if (mProvider.equals(Constants.GOOGLE_PROVIDER)) {
