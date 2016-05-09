@@ -65,7 +65,7 @@ public class ListedEventActivity extends AppCompatActivity {
 
 	//	events = AddEventActivity.loadEvents(getApplicationContext());
 
-		final ListedEventActivity listedEventActivity = this;
+	/*	final ListedEventActivity listedEventActivity = this;
 
 		Firebase firebase = new Firebase(Constants.EVENTS_URL);
 		Query query = firebase.equalTo(eventID, "id");
@@ -100,7 +100,7 @@ public class ListedEventActivity extends AppCompatActivity {
 			public void onCancelled(FirebaseError firebaseError) {
 
 			}
-		});
+		});*/
 		/*event = null;
 
 		for (int i = 0; i < events.size(); i++) {
@@ -112,13 +112,10 @@ public class ListedEventActivity extends AppCompatActivity {
 		description.setText(event.getDescription());
 		date.setText(event.getDateString());
 		times.setText(event.getStartTime());
-<<<<<<< HEAD
-		address.setText(event.getLocation());*/
-=======
+		address.setText(event.getLocation());
 		address.setText(event.getLocation());//event.getLocation()
 		distance.setText(event.getDistance()); //added distance ** Didn't work
->>>>>>> carlos
-
+		*/
 		/*Bitmap bitmap = BitmapFactory.decodeFile(event.getImagePath());
 		image.setImageBitmap(bitmap);*/
 		//image.setImageURI(Uri.fromFile(new File(event.getImagePath())));

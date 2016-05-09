@@ -149,19 +149,16 @@ public class TabFragment extends Fragment{
 		recyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view);
 		recyclerView.setHasFixedSize(true);
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));
-<<<<<<< HEAD
 		//	cardsEventData = AddEventActivity.loadEvents(rootView.getContext());
 
 
-=======
-		cardsEventData = AddEventActivity.loadEvents(rootView.getContext());
+	//	cardsEventData = AddEventActivity.loadEvents(rootView.getContext());
 
 		//ArrayList<Event> appropriate = new ArrayList<Event>();
 
 		//for(int i = 0; i<cardsEventData.size(); i++){
 		//	if(cardsEventData.get(i).getCategory().getName().equals(category)) appropriate.add(cardsEventData.get(i));
 		//}
->>>>>>> carlos
 		// PLACE HERE CALL TO THE SERVER TO GET EVENTS FROM THE SPECIFIC CATEGORY
 		/*cardsEventData.add("Event 1");
 		cardsEventData.add("Event 2");
@@ -173,14 +170,11 @@ public class TabFragment extends Fragment{
 		cardsEventData.add("Event 8");
 		cardsEventData.add("Event 9");*/
 
-<<<<<<< HEAD
 	//	recyclerAdapter = new RecyclerAdapter(cardsEventData);
 
 		recyclerView.setAdapter(recyclerAdapter);	// GIVES TO THE ADAPTER ONLY THE EVENTS RELEVANT TO THIS FRAGMENT
-=======
 		//recyclerView.setAdapter(new RecyclerAdapter(cardsEventData));	// GIVES TO THE ADAPTER ONLY THE EVENTS RELEVANT TO THIS FRAGMENT
 		//Attempt this and see if it fixes where the things appear first.
->>>>>>> carlos
 
 		//This is to make sure that it works with either the ALL. Moved things here so as to make things more efficient.
 		//That is, be conservative with memory.
