@@ -7,11 +7,20 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+
 import java.util.ArrayList;
+
+import software_engineering.whatnow.firebase_stuff.Constants;
 
 public class ListedEventActivity extends AppCompatActivity {
 	private TextView description;
@@ -54,19 +63,56 @@ public class ListedEventActivity extends AppCompatActivity {
 		distance = (TextView) findViewById(R.id.listed_event_distance);
 		image = (ImageView) findViewById(R.id.listed_event_image);
 
-		events = AddEventActivity.loadEvents(getApplicationContext());
-		event = null;
+	//	events = AddEventActivity.loadEvents(getApplicationContext());
+
+		final ListedEventActivity listedEventActivity = this;
+
+		Firebase firebase = new Firebase(Constants.EVENTS_URL);
+		Query query = firebase.equalTo(eventID, "id");
+		query.addChildEventListener(new ChildEventListener() {
+			@Override
+			public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+				event = dataSnapshot.getValue(Event.class);
+				listedEventActivity.setTitle(event.getName());
+				description.setText(event.getDescription());
+				date.setText(event.getDateString());
+				times.setText(event.getStartTime());
+				address.setText(event.getLocation());
+				Log.wtf("Event retreived ID", "" + event.getId());
+			}
+
+			@Override
+			public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+			}
+
+			@Override
+			public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+			}
+
+			@Override
+			public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+			}
+
+			@Override
+			public void onCancelled(FirebaseError firebaseError) {
+
+			}
+		});
+		/*event = null;
 
 		for (int i = 0; i < events.size(); i++) {
 			if(events.get(i).getId() == eventID)
 				event = events.get(i);
-		}
+		}*/
 
-		this.setTitle(event.getName());
+	/*	this.setTitle(event.getName());
 		description.setText(event.getDescription());
 		date.setText(event.getDateString());
 		times.setText(event.getStartTime());
-		address.setText(event.getLocation());
+		address.setText(event.getLocation());*/
 
 		/*Bitmap bitmap = BitmapFactory.decodeFile(event.getImagePath());
 		image.setImageBitmap(bitmap);*/

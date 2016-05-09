@@ -82,7 +82,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		AddEventActivity.conEvent = this;
 		initialize();
 
-		events = loadEvents(this);
+	//	events = loadEvents(this);
 
 		Calendar mcurrentDate = Calendar.getInstance();
 
@@ -112,7 +112,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		//databaseURL = Constants.FIREBASE_URL + "/events";
 	}
 
-	public static ArrayList<Event> loadEvents(Context context) {
+	/*public static ArrayList<Event> loadEvents(Context context) {
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 		SharedPreferences.Editor editor = preferences.edit();
 
@@ -131,7 +131,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 			}
 		}
 		return output;
-	}
+	}*/
 
 	private void initialize(){
 		tv[0]= (EditText) findViewById(R.id.new_event_name);
@@ -174,9 +174,9 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 
 		events.add(event);
 
-		saveEvents(getApplicationContext(), events, events.size() - 1);
+	//	saveEvents(getApplicationContext(), events, events.size() - 1);
 
-		new Firebase(Constants.DATABASE_URL + "/events/events_list").push().setValue(event);
+		new Firebase(Constants.EVENTS_URL).push().setValue(event);
 
 		//reinitializeUI();
 		finish();

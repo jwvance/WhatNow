@@ -73,6 +73,7 @@ public class TabFragment extends Fragment{
 				try{
 					//for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
 					//ArrayList<Event> events = (ArrayList<Event>) dataSnapshot.getValue();
+				//	Event eventTest = dataSnapshot.getValue(Event.class);
 					HashMap<String, Event> eventHashMap = (HashMap<String, Event>) dataSnapshot.getValue();
 					ArrayList<HashMap> weirdEvents = new ArrayList(eventHashMap.values());
 					HashMap e;
@@ -101,6 +102,7 @@ public class TabFragment extends Fragment{
 					}
 				}catch(Exception e){
 					Log.wtf("FIREBASE event name CEL", e.getMessage());
+					e.printStackTrace();
 				}
 			/*	cardsEventData.add((Event) dataSnapshot.child("title").getValue());*/
 				if(cardsEventData.size() > 0 && cardsEventData.get(0) == null)
