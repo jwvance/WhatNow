@@ -6,12 +6,14 @@ package software_engineering.whatnow;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.LocationListener;
 
 import android.content.DialogInterface;
 
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,10 +28,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import software_engineering.whatnow.firebase_stuff.Constants;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class TabActivity extends AppCompatActivity {
+public class TabActivity extends AppCompatActivity implements DialogInterface.OnClickListener{
 
 	//Test for location
 	public static Context con;
@@ -51,6 +59,7 @@ public class TabActivity extends AppCompatActivity {
 
 	//-------------------------
 	ArrayList<String> categories;
+	private ArrayList<TabFragment> fragments;
 	//String[] categories = new String[{"ALL","BARS","CLUBS","FOOD","SHOPS","OTHERS"}];
 
 
@@ -58,6 +67,9 @@ public class TabActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab_layout);
+
+		Firebase.setAndroidContext(this);
+
 		//Get the location toolbox set up and its listener
 		//-------------------------------------------------
 		//locationData.getLocation();
@@ -84,6 +96,7 @@ public class TabActivity extends AppCompatActivity {
 		categories.add("SHOPS");
 		categories.add("OTHERS");
 
+		fragments = new ArrayList<TabFragment>();
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
@@ -144,14 +157,24 @@ public class TabActivity extends AppCompatActivity {
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Sort by...");
-		builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+		builder.setSingleChoiceItems(items, -1, this);
+		/*new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
+				SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+				SharedPreferences.Editor editor = preferences.edit();
+				editor.putInt("itemSelected", item);
+				editor.commit();
 				switch (item) {
+					final ArrayList<TabFragment>
+
 					// PROBABLY THE BEST OPTION TO SOLVE THIS IS THAT EVENT IS COMPARABLE OR COMPARATOR
 					// AND THEN INSIDE COMPARETO THERE IS AN INT CHECK (BASED ON THIS, DEFAULT RECENT)
 					// SO THAT IT CAN APPLY DIFFERENT CRITERIA
 					case 0:
 						// popularity
+						for (int i = 0; i < fragments; i++) {
+
+						}
 						break;
 					case 1:
 						// incoming
@@ -165,7 +188,7 @@ public class TabActivity extends AppCompatActivity {
 				}
 				dialog.dismiss();
 			}
-		});
+		});*/
 		levelDialog = builder.create();
 		levelDialog.show();
 	}
@@ -184,8 +207,47 @@ public class TabActivity extends AppCompatActivity {
 			fragment.setContext(this);
 			fragment.setCategory(categories.get(i));    //EITHER THIS OR DOWNLOAD EVENTS HERE AND USE setEvents(events)
 			adapter.addFragment(fragment, categories.get(i));
+			fragments.add(fragment);
 		}
 		viewPager.setAdapter(adapter);
+	}
+
+	@Override
+	public void onClick(DialogInterface dialog, int which) {
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putInt("itemSelected", which);
+		editor.commit();
+		setSorting(which);
+	/*	switch (which) {
+
+			// PROBABLY THE BEST OPTION TO SOLVE THIS IS THAT EVENT IS COMPARABLE OR COMPARATOR
+			// AND THEN INSIDE COMPARETO THERE IS AN INT CHECK (BASED ON THIS, DEFAULT RECENT)
+			// SO THAT IT CAN APPLY DIFFERENT CRITERIA
+			case 0:
+				// popularity
+				setSorting(0);
+				break;
+			case 1:
+				// incoming
+				setSorting(1);
+				break;
+			case 2:
+				// distance
+				setSorting(2);
+				break;
+			case 3:
+				// recent
+				setSorting(3);
+				break;
+		}*/
+		dialog.dismiss();
+	}
+
+	private void setSorting(int which) {
+		for (int i = 0; i < fragments.size(); i++) {
+			fragments.get(i).setSortingCriteria(which, this);
+		}
 	}
 
 	class ViewPagerAdapter extends FragmentPagerAdapter {
