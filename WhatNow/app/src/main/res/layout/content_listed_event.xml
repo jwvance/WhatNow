@@ -43,6 +43,7 @@
             android:layout_alignTop="@+id/listed_event_pin_image"
             android:layout_toRightOf="@+id/listed_event_pin_image"
             android:layout_toEndOf="@+id/listed_event_pin_image"
+
             android:layout_marginRight="20dp"
             android:onClick="searchMap"/>
 
@@ -53,10 +54,9 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Distance"
             android:textColor="#757575"
-            android:layout_alignTop="@+id/listed_event_address"
-            android:layout_toRightOf="@+id/listed_event_address"
-            android:layout_toEndOf="@+id/listed_event_address"
-            android:layout_marginRight="20dp"/>
+            android:layout_alignBottom="@+id/listed_event_description"
+            android:layout_alignLeft="@+id/listed_event_participants"
+            android:layout_alignStart="@+id/listed_event_participants" />
 
         <ImageView
             android:id="@+id/listed_event_clock_image"
