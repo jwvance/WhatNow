@@ -1,3 +1,7 @@
+/*  CLASS DESCRIPTION:
+    -   Carlos (*Shobbit) made this one, used to handle the location stuff
+*/
+
 package software_engineering.whatnow;
 
 /**

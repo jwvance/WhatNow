@@ -1,3 +1,19 @@
+/*  CLASS DESCRIPTION:
+    -   This is the class that has all the info about a single event
+    -   there are many fields and others will be added soon, they all have getters
+        and setters, there are also additional methods
+    -   getDistance and the one with meters (made by Carlos) calculates the distance,
+        they need to be fixed though (many exceptions and crashes)
+    -   toString is used by the saveEvents function
+    -   utility methods to get the date as a String MM-DD-YYYY (instead of a long),
+        the time as a String like HH:MM, also static versions of both
+    -   getLocationFromAddress is another utility function to get a lat&lng pair from
+        an address like "Santa Cruz", "College Nine Road, Santa Cruz" or whatever
+    -   the following methods are related to the sorting functionality: it was
+        implemented so that the compareTo calls different comparing methods depending
+        on the sorting criteria set
+*/
+
 package software_engineering.whatnow;
 
 import android.app.Activity;

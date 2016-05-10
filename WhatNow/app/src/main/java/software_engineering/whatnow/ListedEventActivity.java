@@ -1,3 +1,14 @@
+/* 	CLASS DESCRIPTION:
+	-	This is the activity that allows the user to show an event that is in our app
+	-	The related layout file is activity_listed_event that contains content_listed_event.
+	-	It needs to be updated to get the events from Firebase instead of from the
+		Preferences, I think I'll implement it either with a query to the database, or
+		saving to the preferences the events that were downloaded (so that there is
+		just one call)
+	-	searchMap is called when you click the address, it launches Google Maps
+		set to search that specific address
+*/
+
 package software_engineering.whatnow;
 
 import android.content.Intent;

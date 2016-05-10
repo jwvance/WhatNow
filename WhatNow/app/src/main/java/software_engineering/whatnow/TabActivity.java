@@ -1,3 +1,29 @@
+/* 	CLASS DESCRIPTION:
+	-	This is the main activity, the one with the tabs
+	-	The related layout file is tab_layout but it contains also the Fragments
+	-	it implements the DialogListener interface to handle the answer from the
+		sorting dialog.
+	-	in onCreate, after the usual layout stuff, setting the Firebase context
+		and some location code and deciding the categories, the toolbar is set
+		and also the tabs with the ViewPager
+	-	the ViewPager is the one that handles the Fragments visualization
+	-	there is a Fragment (an obj with a layout related) for each tab
+	-	the onCreateOptionsMenu and the onOptionSelectedItem methods respectively
+		set the layout menu of the top right corner and associate different 
+		actions depending on what was clicked in that menu
+	-	showSortDialog is just to show the sorting Dialog, the answer is handled
+		by the onClick method
+	-	the setupViewPager adapter creates the fragments, one related to each
+		category, it gives them to the ViewPagerAdapter
+	-	onClick is called when a sorting criteria is selected, it calls setSorting:
+	-	setSorting sets the new sorting criteria to each Fragment that is gonna set
+		it to each Event
+	-	then there is a ViewPagerAdapter class which takes care of how to show the
+		tabs, fragments and all that tab related stuff
+	-	newEvent is called when the FloatingActionButton is pressed
+	-	then there are a 1000 lines of code that Carlos put there and commented o.O
+*/
+
 package software_engineering.whatnow;
 
 /**

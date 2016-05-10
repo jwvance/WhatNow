@@ -1,3 +1,18 @@
+/* 	CLASS DESCRIPTION:
+	-	This class is responsible of showing the cards properly
+	-	there are 2 classes in here
+	-	ViewHolder let's say contains the card, it does generic stuff
+		to make the life easier to the RecyclerAdapter:
+	-	RecyclerAdapter is the one that shows the card, it has access
+		to all of its fields and stuff thanks to the ViewHolder.
+		it's the place where you have to put things in order to edit
+		whatever is related to the card.
+		it is related to an ArrayList of Event objs.
+		the onBindViewHolder method sets the various fields for the,
+		card: it's specifically here that you edit to have the card
+		showing specific stuff or responding to specific clicks.
+*/
+
 package software_engineering.whatnow;
 
 import android.content.Intent;

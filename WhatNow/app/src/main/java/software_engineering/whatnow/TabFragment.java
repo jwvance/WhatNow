@@ -1,3 +1,17 @@
+/* 	CLASS DESCRIPTION:
+	-	This is similar to an Activity, but it's a Fragment
+	-	The related layout file is the fragment_one
+	-	here is everything related to splitting in categories
+	-	here are retrieved the events from Firebase, thanks to a Listener
+		attached to the database
+	-	I don't honestly know why but the events I get from Firebase are
+		not Event objs but HashMaps, that's why you read HashMap so many times
+	-	onCreate contains the Firebase stuff
+	-	onCreateView contains the category split part
+	-	setSortingCriteria loops on the various events downloaded and sets the
+		sorting criteria to the one that TabActivity tells it (got from the Dialog)
+*/
+
 package software_engineering.whatnow;
 
 /**

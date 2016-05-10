@@ -1,3 +1,11 @@
+/*  CLASS DESCRIPTION:
+    -   Carlos made this one, it is used to get location updates and the distance
+        from the device to the event address
+    -   there is a Listener to location updates
+    -   there is a method to request location updates
+    -   the method distance calculates the distance between two lat&lng points
+*/
+
 package software_engineering.whatnow;
 
 import android.Manifest;
