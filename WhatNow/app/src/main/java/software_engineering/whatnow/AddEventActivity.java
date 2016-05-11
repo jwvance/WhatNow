@@ -125,7 +125,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 				output.add(new Event(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
 					Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), st.nextToken(),
 					new Host(st.nextToken()), st.nextToken(), st.nextToken(), new Category(st.nextToken()),
-					Long.parseLong(st.nextToken()), st.nextToken()));
+					Long.parseLong(st.nextToken()), st.nextToken(), conEvent));
 			}catch(Exception e){
 				Log.wtf("LOAD", "Problem loading events: " + e.getMessage());
 			}
@@ -170,7 +170,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		calendar.set(iYear, iMonth, iDay);
 		event = new Event(new Random().nextInt(1000), iHour, iMinute, fHour, fMinute,
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), name,
-				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category), calendar.getTimeInMillis(), imagePath);
+				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category), calendar.getTimeInMillis(), imagePath, this);
 
 		events.add(event);
 

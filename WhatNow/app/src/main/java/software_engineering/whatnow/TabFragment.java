@@ -94,7 +94,7 @@ public class TabFragment extends Fragment{
 								(int) ((long) e.get("minuteStart")), (int) ((long) e.get("hourEnd")),
 								(int) ((long) e.get("minuteEnd")), (String) e.get("location"), host,
 								(String) e.get("name"), (String) e.get("description"), category,
-								(long) e.get("dateStart"), (String) e.get("imagePath"));
+								(long) e.get("dateStart"), (String) e.get("imagePath"), TabActivity.con);
 						event.setMyLoc(context);
 						cardsEventData.add(event);
 					//	Log.wtf("FIREBASE event name CEL", i + ": " + weirdEvents.get(i).get("name").toString());

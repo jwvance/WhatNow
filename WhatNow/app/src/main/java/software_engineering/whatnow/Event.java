@@ -11,6 +11,7 @@ import com.google.gson.annotations.SerializedName;
 
 import android.content.*;
 import android.preference.PreferenceManager;
+import android.view.View;
 
 import java.util.Calendar;
 import java.util.List;
@@ -83,6 +84,7 @@ public class Event implements Comparable {
 
     //Location stuff
     private LatLng myLoc;
+    private Context cont;
 
 
     public Event(){
@@ -90,7 +92,7 @@ public class Event implements Comparable {
     }
 
     public Event(int id, int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
-                 Host host, String name, String description, Category category, long dateStart, String imagePath) {
+                 Host host, String name, String description, Category category, long dateStart, String imagePath, Context cont) {
         this.id = id;
         this.hourStart = hourStart;
         this.minuteStart = minuteStart;
@@ -103,9 +105,10 @@ public class Event implements Comparable {
         this.category = category;
         this.dateStart = dateStart;
         this.timestamp = System.currentTimeMillis();
+        this.cont = cont;
 
 		try {
-			this.myLoc = getLocationFromAddress(AddEventActivity.conEvent, this.location);
+			this.myLoc = getLocationFromAddress(this.cont, this.location);
 		}catch(NullPointerException npe){
 			this.myLoc = new LatLng(36.9741,-122.0308);	//Santa Cruz
 			npe.printStackTrace();
