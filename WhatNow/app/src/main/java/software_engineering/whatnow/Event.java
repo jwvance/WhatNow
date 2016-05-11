@@ -86,7 +86,7 @@ public class Event implements Comparable {
     }
 
     public Event(int id, int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
-                 Host host, String name, String description, Category category, long dateStart, String imageAsString) {
+                 Host host, String name, String description, Category category, long dateStart, String imageAsString, boolean fromFirebase, long timeStamp) {
         this.id = id;
         this.hourStart = hourStart;
         this.minuteStart = minuteStart;
@@ -98,7 +98,9 @@ public class Event implements Comparable {
         this.description = description;
         this.category = category;
         this.dateStart = dateStart;
-        this.timestamp = System.currentTimeMillis();
+        if (fromFirebase){
+            this.timestamp=timeStamp;
+        } else this.timestamp = System.currentTimeMillis();
 
 		try {
 			this.myLoc = getLocationFromAddress(AddEventActivity.conEvent, this.location);
@@ -335,43 +337,39 @@ public class Event implements Comparable {
         return p1;
     }
 
-    //returns 1 if this is before the other event, 0 if they are at the same time
-    //and -1 if the second event is before this one
+    //returns -1 if this is before the other event, 0 if they are at the same time
+    //and 1 if the second event is before this one
     public int compareToByTime(Event event){
         if (this.getYear()<event.getYear())
-            return 1;
+            return -1;
         else if (this.getYear()>event.getYear())
-            return -1;
+            return 1;
         if (this.getMonth()<event.getMonth())
-            return 1;
+            return -1;
         else if (this.getMonth()>event.getMonth())
-            return -1;
+            return 1;
         if (this.getDay()<event.getDay())
-            return 1;
+            return -1;
         else if (this.getDay()>event.getDay())
-            return -1;
+            return 1;
         if (this.getHourStart()<event.getHourStart())
-            return 1;
+            return -1;
         else if (this.getHourStart()>event.getHourStart())
-            return -1;
-        if (this.getMinuteStart()<event.getMinuteStart())
             return 1;
-        else if (this.getMinuteStart()>event.getMinuteStart())
+        if (this.getMinuteStart()<event.getMinuteStart())
             return -1;
+        else if (this.getMinuteStart()>event.getMinuteStart())
+            return 1;
 
 
         return 0;
     }
 
 
-    //returns 1 if this is closer than the other event, 0 if they are at the same distance
-    //and -1 if the second event is closer to this one
+    //returns -1 if this is closer than the other event, 0 if they are at the same distance
+    //and 1 if the second event is closer to this one
     public int compareToByDistance(Event event){
-        if (this.getDistanceInMeters()>event.getDistanceInMeters())
-            return 1;
-        else if (this.getDistanceInMeters()<event.getDistanceInMeters())
-            return -1;
-        return 0;
+        return (this.getDistanceInMeters()-event.getDistanceInMeters());
     }
 
     //returns 1 if this has more attendences than the other event, 0 if they have the same

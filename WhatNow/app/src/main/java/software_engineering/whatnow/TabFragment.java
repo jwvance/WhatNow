@@ -89,13 +89,14 @@ public class TabFragment extends Fragment{
 					//	String name = (String) e.get("name");
 					//	String description = (String) e.get("description");
 						Category category = new Category((String) ((HashMap) e.get("category")).get("name"));
+						long timeStamp = ((long) e.get("timestamp"));
 					//	long dateStart = (long) e.get("dateStart");
 					//	String imagePath = (String) e.get("imagePath");
 						Event event = new Event((int) ((long) e.get("id")), (int) ((long) e.get("hourStart")),
 								(int) ((long) e.get("minuteStart")), (int) ((long) e.get("hourEnd")),
 								(int) ((long) e.get("minuteEnd")), (String) e.get("location"), host,
 								(String) e.get("name"), (String) e.get("description"), category,
-								(long) e.get("dateStart"), (String) e.get("imageAsString"));
+								(long) e.get("dateStart"), (String) e.get("imageAsString"), true, timeStamp);
 						event.setMyLoc(context);
 						cardsEventData.add(event);
 					//	Log.wtf("FIREBASE event name CEL", i + ": " + weirdEvents.get(i).get("name").toString());

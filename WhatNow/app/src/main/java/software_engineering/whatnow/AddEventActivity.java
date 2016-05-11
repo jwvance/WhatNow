@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -31,6 +32,7 @@ import com.firebase.client.utilities.Base64;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
@@ -51,6 +53,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 	//Stuff
 	public static Context conEvent;
 
+	private final static int MAX_IMAGE_DIMENSION=400;
 	private Button initialDate;
 	private Button finalDate;
 	private Button initialTime;
@@ -128,7 +131,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 				output.add(new Event(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
 					Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), st.nextToken(),
 					new Host(st.nextToken()), st.nextToken(), st.nextToken(), new Category(st.nextToken()),
-					Long.parseLong(st.nextToken()), st.nextToken()));
+					Long.parseLong(st.nextToken()), st.nextToken(), false, 0));
 			}catch(Exception e){
 				Log.wtf("LOAD", "Problem loading events: " + e.getMessage());
 			}
@@ -173,7 +176,8 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		calendar.set(iYear, iMonth, iDay);
 		event = new Event(new Random().nextInt(1000), iHour, iMinute, fHour, fMinute,
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), name,
-				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category), calendar.getTimeInMillis(), imageAsString);
+				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category),
+				calendar.getTimeInMillis(), imageAsString, false, 0);
 
 		events.add(event);
 
@@ -302,12 +306,12 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 				String boh= "";
 				grantUriPermission(boh, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-				Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+				//Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
 				// Log.d(TAG, String.valueOf(bitmap));
 
 
 				imagePath = getRealPathFromURI(this, uri);
-				image = bitmap;
+				image = scaleImage(this, uri);
 				Log.wtf("IMAGE", imagePath);
 
 
@@ -317,8 +321,6 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 				bmp.recycle();
 				byte[] byteArray = stream.toByteArray();
 				String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);*/
-
-
 
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
 				image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
@@ -342,6 +344,55 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 				Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
 			}
 		}
+	}
+
+	public static Bitmap scaleImage(Context context, Uri photoUri) throws IOException {
+		InputStream is = context.getContentResolver().openInputStream(photoUri);
+		BitmapFactory.Options dbo = new BitmapFactory.Options();
+		dbo.inJustDecodeBounds = true;
+		BitmapFactory.decodeStream(is, null, dbo);
+		is.close();
+
+		int rotatedWidth, rotatedHeight;
+		int orientation = 0;
+
+
+		rotatedWidth = dbo.outWidth;
+		rotatedHeight = dbo.outHeight;
+
+
+		Bitmap srcBitmap;
+		is = context.getContentResolver().openInputStream(photoUri);
+		if (rotatedWidth > MAX_IMAGE_DIMENSION || rotatedHeight > MAX_IMAGE_DIMENSION) {
+			float widthRatio = ((float) rotatedWidth) / ((float) MAX_IMAGE_DIMENSION);
+			float heightRatio = ((float) rotatedHeight) / ((float) MAX_IMAGE_DIMENSION);
+			float maxRatio = Math.max(widthRatio, heightRatio);
+
+			// Create the bitmap from file
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inSampleSize = (int) maxRatio;
+			srcBitmap = BitmapFactory.decodeStream(is, null, options);
+		} else {
+			srcBitmap = BitmapFactory.decodeStream(is);
+		}
+		is.close();
+
+    /*
+     * if the orientation is not 0 (or -1, which means we don't know), we
+     * have to do a rotation.
+     */
+
+
+		String type = context.getContentResolver().getType(photoUri);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		if (type.equals("image/png")) {
+			srcBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+		} else if (type.equals("image/jpg") || type.equals("image/jpeg")) {
+			srcBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+		}
+		byte[] bMapArray = baos.toByteArray();
+		baos.close();
+		return BitmapFactory.decodeByteArray(bMapArray, 0, bMapArray.length);
 	}
 
 	public String getRealPathFromURI(Context context, Uri contentUri) {
