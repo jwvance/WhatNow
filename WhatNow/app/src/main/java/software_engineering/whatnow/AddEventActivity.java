@@ -27,7 +27,9 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+import com.firebase.client.utilities.Base64;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -68,6 +70,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 	private String[] categories = {"BARS","CLUBS","FOOD","SHOPS","OTHERS"};
 	private String imagePath;
 	private Bitmap image;
+	private String imageAsString;
 
 	//private String databaseURL;
 
@@ -170,13 +173,14 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		calendar.set(iYear, iMonth, iDay);
 		event = new Event(new Random().nextInt(1000), iHour, iMinute, fHour, fMinute,
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), name,
-				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category), calendar.getTimeInMillis(), imagePath);
+				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category), calendar.getTimeInMillis(), imageAsString);
 
 		events.add(event);
 
 		saveEvents(getApplicationContext(), events, events.size() - 1);
 
-		new Firebase(Constants.DATABASE_URL + "/events/events_list").push().setValue(event);
+		Firebase.setAndroidContext(this);
+		new Firebase(Constants.DATABASE_URL + "/events_list").push().setValue(event);
 
 		//reinitializeUI();
 		finish();
@@ -295,15 +299,39 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 			Uri uri = data.getData();
 
 			try {
+				String boh= "";
+				grantUriPermission(boh, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
 				Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
 				// Log.d(TAG, String.valueOf(bitmap));
+
 
 				imagePath = getRealPathFromURI(this, uri);
 				image = bitmap;
 				Log.wtf("IMAGE", imagePath);
 
+
+				/*Bitmap bmp = (Bitmap) data.getExtras().get("data");
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+				bmp.recycle();
+				byte[] byteArray = stream.toByteArray();
+				String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);*/
+
+
+
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
+
+
+				byte[] byteArray = stream.toByteArray();
+				imageAsString = android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT);
+
 				ImageView imageView = (ImageView) findViewById(R.id.new_event_image);
-				imageView.setImageBitmap(bitmap);
+				imageView.setImageBitmap(image);
+
+
 			//	imageView.setVisibility(View.VISIBLE);
 			//	imageView.bringToFront();
 			//	findViewById(R.id.choose_image).setVisibility(View.INVISIBLE);

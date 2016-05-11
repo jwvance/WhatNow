@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,23 +42,30 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 		holder.cardDate.setText(event.getDateString());
 		holder.cardTimes.setText(event.getStartTime());
 
+
+
+		byte[] imageAsBytes = Base64.decode(event.getImageAsString(), Base64.DEFAULT);
+		Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+		holder.cardImage.setImageBitmap(bitmap);
+
+
 	/*	File sd = Environment.getExternalStorageDirectory();
-		File image = new File(sd+event.getImagePath(), imageName);
+		File image = new File(sd+event.getImageAsString(), imageName);
 		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 		Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
 		bitmap = Bitmap.createScaledBitmap(bitmap,parent.getWidth(),parent.getHeight(),true);
 		imageView.setImageBitmap(bitmap);*/
 
-		/*File imgFile = new File(event.getImagePath());
+		/*File imgFile = new File(event.getImageAsString());
 
 		if(imgFile.exists()) {
 			Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 			holder.cardImage.setImageBitmap(bitmap);
 		}*/
 
-		/*Bitmap bitmap = BitmapFactory.decodeFile(event.getImagePath());
+		/*Bitmap bitmap = BitmapFactory.decodeFile(event.getImageAsString());
 		holder.cardImage.setImageBitmap(bitmap);*/
-	//	holder.cardImage.setImageURI(Uri.fromFile(new File(event.getImagePath())));
+	//	holder.cardImage.setImageURI(Uri.fromFile(new File(event.getImageAsString())));
 	//	holder.cardParticipants.setText("");
 		holder.cardDistance.setText(event.getDistance()); //test
 	}

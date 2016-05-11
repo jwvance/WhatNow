@@ -53,7 +53,8 @@ public class TabFragment extends Fragment{
 		//cardsEventData = new ArrayList<Event>();	//AddEventActivity.loadEvents(getContext());
 
 		// Use Firebase to populate the list.
-		Firebase firebase = new Firebase(Constants.DATABASE_URL/* + "/events/events_list"*/);
+		Firebase.setAndroidContext(context);
+		Firebase firebase = new Firebase(Constants.DATABASE_URL/* + "/events_list"*/);
 		/*firebase.addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(DataSnapshot dataSnapshot) {
@@ -94,7 +95,7 @@ public class TabFragment extends Fragment{
 								(int) ((long) e.get("minuteStart")), (int) ((long) e.get("hourEnd")),
 								(int) ((long) e.get("minuteEnd")), (String) e.get("location"), host,
 								(String) e.get("name"), (String) e.get("description"), category,
-								(long) e.get("dateStart"), (String) e.get("imagePath"));
+								(long) e.get("dateStart"), (String) e.get("imageAsString"));
 						event.setMyLoc(context);
 						cardsEventData.add(event);
 					//	Log.wtf("FIREBASE event name CEL", i + ": " + weirdEvents.get(i).get("name").toString());

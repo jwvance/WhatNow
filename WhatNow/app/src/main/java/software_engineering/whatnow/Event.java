@@ -1,6 +1,5 @@
 package software_engineering.whatnow;
 
-import android.app.Activity;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
@@ -8,9 +7,6 @@ import android.location.Geocoder;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
-import android.content.*;
-import android.preference.PreferenceManager;
 
 import java.util.Calendar;
 import java.util.List;
@@ -50,9 +46,9 @@ public class Event implements Comparable {
     @SerializedName("id")
     @Expose
     private Integer id;
-    @SerializedName("imagePath")
+    @SerializedName("imageAsString")
     @Expose
-    private String imagePath;
+    private String imageAsString;
     @SerializedName("location")
     @Expose
     private String location;
@@ -90,7 +86,7 @@ public class Event implements Comparable {
     }
 
     public Event(int id, int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
-                 Host host, String name, String description, Category category, long dateStart, String imagePath) {
+                 Host host, String name, String description, Category category, long dateStart, String imageAsString) {
         this.id = id;
         this.hourStart = hourStart;
         this.minuteStart = minuteStart;
@@ -110,7 +106,7 @@ public class Event implements Comparable {
 			this.myLoc = new LatLng(36.9741,-122.0308);	//Santa Cruz
 			npe.printStackTrace();
 		}
-        this.imagePath = imagePath;
+        this.imageAsString = imageAsString;
 
 
         Calendar calendar = Calendar.getInstance();
@@ -253,12 +249,12 @@ public class Event implements Comparable {
         this.id = id;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getImageAsString() {
+        return imageAsString;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setImageAsString(String imageAsString) {
+        this.imageAsString = imageAsString;
     }
 
     public int getNumberOfGuests() {
@@ -284,7 +280,7 @@ public class Event implements Comparable {
         return id + ":::" + hourStart + ":::" + minuteStart + ":::" +
                 hourEnd + ":::" + minuteEnd + ":::" + location + ":::" +
                 host.getName() + ":::" + name + ":::" +description + ":::"
-                + category.getName() + ":::" + dateStart + ":::" + imagePath;
+                + category.getName() + ":::" + dateStart + ":::" + imageAsString;
     }
 
     public String getDateString(){
@@ -356,12 +352,13 @@ public class Event implements Comparable {
             return -1;
         if (this.getHourStart()<event.getHourStart())
             return 1;
-        else if (this.getHourStart()<event.getHourStart())
+        else if (this.getHourStart()>event.getHourStart())
             return -1;
         if (this.getMinuteStart()<event.getMinuteStart())
             return 1;
-        else if (this.getMinuteStart()<event.getMinuteStart())
+        else if (this.getMinuteStart()>event.getMinuteStart())
             return -1;
+
 
         return 0;
     }

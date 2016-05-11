@@ -1,12 +1,15 @@
 package software_engineering.whatnow;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,6 +42,8 @@ public class ListedEventActivity extends AppCompatActivity {
 			public void onClick(View view) {
 				Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 						.setAction("Action", null).show();
+
+
 			}
 		});
 
@@ -68,9 +73,16 @@ public class ListedEventActivity extends AppCompatActivity {
 		times.setText(event.getStartTime());
 		address.setText(event.getLocation());
 
-		/*Bitmap bitmap = BitmapFactory.decodeFile(event.getImagePath());
+
+		byte[] imageAsBytes = Base64.decode(event.getImageAsString(), Base64.DEFAULT);
+		Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+		image.setImageBitmap(bitmap);
+
+
+		/*
+		Bitmap bitmap = BitmapFactory.decodeFile(event.getImageAsString());
 		image.setImageBitmap(bitmap);*/
-		//image.setImageURI(Uri.fromFile(new File(event.getImagePath())));
+		//image.setImageURI(Uri.fromFile(new File(event.getImageAsString())));
 
 	//	address.setText("Santa Cruz");
 	}
