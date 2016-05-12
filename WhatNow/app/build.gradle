@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+
+//http://stackoverflow.com/questions/26925264/android-support-multidex-library-implementation
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -10,7 +12,17 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
+
+    //Specify the maximum size, in bytes, of the memory allocation pool.
+    //This value must a multiple of 1024 greater than 2MB.
+    // Append the letter k or K to indicate kilobytes, or m or M to indicate megabytes.
+    // The default value is chosen at runtime based on system configuration.
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -37,4 +49,11 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:8.4.0'
     compile 'com.firebase:firebase-client-android:2.3.1'
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
+
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.facebook.android:facebook-android-sdk:4.11.0'
 }
+
+//http://stackoverflow.com/questions/30527369/error-could-not-find-com-google-gmsgoogle-services1-0-when-adding-google-ser
+//problem : could not find 'com.google.gms:google-services'
+apply plugin: 'com.google.gms.google-services'
