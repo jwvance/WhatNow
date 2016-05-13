@@ -314,7 +314,7 @@ public class Event implements Comparable {
     }
 
     public static String getTimeString(int hour, int minute){
-        return "" + (hour < 10 ? 0 : "") + hour + " : " + (minute < 10 ? 0 : "") + minute;
+        return "" + (hour < 10 ? 0 : "") + hour + ":" + (minute < 10 ? 0 : "") + minute;
     }
 
     public static String getDateString(int year, int month, int day){
