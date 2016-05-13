@@ -104,11 +104,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab_layout);
 
-<<<<<<< HEAD
 		context = this;
-=======
-
->>>>>>> catPics
 
 		//Get the location toolbox set up and its listener
 		//-------------------------------------------------
@@ -203,7 +199,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 								(int) ((long) e.get("minuteStart")), (int) ((long) e.get("hourEnd")),
 								(int) ((long) e.get("minuteEnd")), (String) e.get("location"), host,
 								(String) e.get("name"), (String) e.get("description"), category,
-								(long) e.get("dateStart"), (String) e.get("imageAsString"), true, timeStamp);
+								(long) e.get("dateStart"), (String) e.get("imageAsString"), true, timeStamp, context);
 						event.setMyLoc(context);
 						events.add(event);
 						Log.wtf("TabActivity", "Downloaded an event!");
@@ -337,11 +333,20 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	private void setupViewPager(ViewPager viewPager) {
 		ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 		TabFragment fragment;
+		ArrayList<Event> catEvents;
 		for (int i = 0; i < categories.size(); i++) {
 			fragment = new TabFragment();
+			catEvents = new ArrayList<Event>(events);
 			fragment.setContext(this);
 			fragment.setCategory(categories.get(i));    //EITHER THIS OR DOWNLOAD EVENTS HERE AND USE setEvents(events)
-			fragment.setEvents(events);
+
+			if(i > 0)
+				for (int j = 0; j < catEvents.size(); j++) {
+					if(!catEvents.get(j).getCategory().getName().equals(categories.get(i)))
+						catEvents.remove(j);
+				}
+
+			fragment.setEvents(catEvents);
 			adapter.addFragment(fragment, categories.get(i));
 			fragments.add(fragment);
 		}

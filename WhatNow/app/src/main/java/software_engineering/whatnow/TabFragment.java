@@ -151,7 +151,7 @@ public class TabFragment extends Fragment{
 		recyclerView.setHasFixedSize(true);
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-		cardsEventData = AddEventActivity.loadEvents(rootView.getContext());
+	//	cardsEventData = AddEventActivity.loadEvents(rootView.getContext());
 
 		// PLACE HERE CALL TO THE SERVER TO GET EVENTS FROM THE SPECIFIC CATEGORY
 		/*cardsEventData.add("Event 1");
@@ -164,17 +164,14 @@ public class TabFragment extends Fragment{
 		cardsEventData.add("Event 8");
 		cardsEventData.add("Event 9");*/
 
-<<<<<<< HEAD
-		//	recyclerAdapter = new RecyclerAdapter(cardsEventData);
-=======
->>>>>>> catPics
+		recyclerAdapter = new RecyclerAdapter(cardsEventData);
 
 		recyclerView.setAdapter(recyclerAdapter);	// GIVES TO THE ADAPTER ONLY THE EVENTS RELEVANT TO THIS FRAGMENT
 
 
 		//This is to make sure that it works with either the ALL. Moved things here so as to make things more efficient.
 		//That is, be conservative with memory.
-		if(category.equals("ALL")){
+	/*	if(category.equals("ALL")){
 			//Sets all the events to view.
 			recyclerView.setAdapter(new RecyclerAdapter(cardsEventData));
 		}
@@ -185,7 +182,7 @@ public class TabFragment extends Fragment{
 				if(cardsEventData.get(i).getCategory().getName().equals(category)) appropriate.add(cardsEventData.get(i));
 			}
 			recyclerView.setAdapter(new RecyclerAdapter(appropriate));
-		}
+		}*/
 		return rootView;
 	}
 
