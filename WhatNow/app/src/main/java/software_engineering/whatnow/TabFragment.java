@@ -1,3 +1,12 @@
+/* 	CLASS DESCRIPTION:
+	-	This is similar to an Activity, but it's a Fragment
+	-	The related layout file is the fragment_one
+	-	here is everything related to splitting in categories
+	-	onCreateView contains the category split part
+	-	setSortingCriteria loops on the various events downloaded and sets the
+		sorting criteria to the one that TabActivity tells it (got from the Dialog)
+*/
+
 package software_engineering.whatnow;
 
 /**
@@ -35,7 +44,7 @@ public class TabFragment extends Fragment{
 	private String category;
 	//private String[] cardsEventData = new String[]{"Event 1","Event 2","Event 3","Event 4",
 	// "Event 5","Event 6","Event 7","Event 8","Event 9"};
-	private ArrayList<Event> cardsEventData = new ArrayList<Event>();;
+	private ArrayList<Event> cardsEventData = new ArrayList<Event>();
 	//private ArrayList<Event> events;
 	private RecyclerAdapter recyclerAdapter;
 	private Context context;
@@ -53,19 +62,8 @@ public class TabFragment extends Fragment{
 		//cardsEventData = new ArrayList<Event>();	//AddEventActivity.loadEvents(getContext());
 
 		// Use Firebase to populate the list.
-		Firebase.setAndroidContext(context);
-		Firebase firebase = new Firebase(Constants.DATABASE_URL/* + "/events_list"*/);
-		/*firebase.addValueEventListener(new ValueEventListener() {
-			@Override
-			public void onDataChange(DataSnapshot dataSnapshot) {
-
-			}
-
-			@Override
-			public void onCancelled(FirebaseError firebaseError) {
-
-			}
-		});*/
+		/*Firebase.setAndroidContext(context);
+		Firebase firebase = new Firebase(Constants.DATABASE_URL);
 
 		firebase.addChildEventListener(new ChildEventListener() {
 			@Override
@@ -104,7 +102,6 @@ public class TabFragment extends Fragment{
 				}catch(Exception e){
 					Log.wtf("FIREBASE event name CEL", e.getMessage());
 				}
-			/*	cardsEventData.add((Event) dataSnapshot.child("title").getValue());*/
 				if(cardsEventData.size() > 0 && cardsEventData.get(0) == null)
 					cardsEventData.clear();
 				try{
@@ -122,12 +119,12 @@ public class TabFragment extends Fragment{
 
 			@Override
 			public void onChildRemoved(DataSnapshot dataSnapshot) {
-				/*cardsEventData.remove((Event) dataSnapshot.child("title").getValue());
-				try{
-					recyclerAdapter.notifyDataSetChanged();
-				}catch(NullPointerException e){
-					e.printStackTrace();
-				}*/
+			//	cardsEventData.remove((Event) dataSnapshot.child("title").getValue());
+			//	try{
+			//		recyclerAdapter.notifyDataSetChanged();
+			//	}catch(NullPointerException e){
+			//		e.printStackTrace();
+			//	}
 			}
 
 			@Override
@@ -139,7 +136,7 @@ public class TabFragment extends Fragment{
 			public void onCancelled(FirebaseError firebaseError) {
 
 			}
-		});
+		});*/
 	}
 
 	@Override
@@ -163,7 +160,7 @@ public class TabFragment extends Fragment{
 		cardsEventData.add("Event 8");
 		cardsEventData.add("Event 9");*/
 
-	//	recyclerAdapter = new RecyclerAdapter(cardsEventData);
+		//	recyclerAdapter = new RecyclerAdapter(cardsEventData);
 
 		recyclerView.setAdapter(recyclerAdapter);	// GIVES TO THE ADAPTER ONLY THE EVENTS RELEVANT TO THIS FRAGMENT
 
@@ -174,13 +171,13 @@ public class TabFragment extends Fragment{
 		this.context = context;
 	}
 
-	/*public void setEvents(ArrayList<Event> events) {
-		this.events = events;
-	}*/
+	public void setEvents(ArrayList<Event> events) {
+		this.cardsEventData = events;
+	}
 
 	public void setSortingCriteria(int sortingCriteria, Context tabActivity){
 		this.sortingCriteria = sortingCriteria;
-	//	cardsEventData = AddEventActivity.loadEvents(tabActivity);
+		//	cardsEventData = AddEventActivity.loadEvents(tabActivity);
 		for (int i=0; i<cardsEventData.size(); i++){
 			cardsEventData.get(i).setSortingCriteria(sortingCriteria);
 		}

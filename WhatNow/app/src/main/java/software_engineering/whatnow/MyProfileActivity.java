@@ -1,3 +1,9 @@
+/* 	CLASS DESCRIPTION:
+	-	This is the activity that allows the user to see his/her profile.
+	-	The related layout file is activity_my_profile that contains content_my_profile.
+	-	still extremely empty, will contain info from facebook and stuff
+*/
+
 package software_engineering.whatnow;
 
 import android.os.Bundle;

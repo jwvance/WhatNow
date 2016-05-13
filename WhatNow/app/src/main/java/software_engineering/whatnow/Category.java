@@ -1,3 +1,8 @@
+/*  CLASS DESCRIPTION:
+    -   This is class simply expresses the Category
+    -   every Event obj has a reference to a Category obj
+*/
+
 package software_engineering.whatnow;
 
 import com.google.gson.annotations.Expose;

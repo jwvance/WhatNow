@@ -1,3 +1,34 @@
+/* 	CLASS DESCRIPTION:
+	-	This is the activity that allows the user to add an event.
+	-	The related layout file is activity_add_event that contains content_add_event.
+	-	It implements three interfaces rispectively for: DatePicker, TimePicker and
+		the Dialog to get an image from the gallery.
+	-	Inside OnCreate, except for the usual layout setting, there is the setting of
+		default dates and times.
+	-	initialize is simply to get a reference to the various EditText (Francesco made
+		that) and the listener part doesn't work properly.
+	-	addEvent is to add an Event to Firebase, after getting all the info from the
+		fields and creating the Event obj.
+	-	saveEvents is the method used to save the events to the Preferences, I might
+		reuse that to temporarly save them (instead of getting everything from Firebase)
+	-	onDateSet is called at the click of OK in the DatePicker, it saves the date
+	-	chooseDate is called at the click of the date buttons in the activity,
+		it launches the DatePicker
+	-	chooseTime is called at the click of the time buttons in the activity,
+		it launches the TimePicker
+	-	onTimeSet is called at the click of OK in the TimePicker, it saves the time
+	-	chooseCategory is called at the click of the choose category button,
+		it launches a Dialog to choose the Category
+	-	onClick is called when a category is chosen, it saves it
+	-	chooseImage is called at the click of the choose image button,
+		it launches the gallery
+	-	onActivityResult is called automatically when an image is chosen from the
+		gallery, it puts it in the top part of the activity layout and saves the path;
+		it's going to be uploaded on Firebase
+	-	getRealPathFromURI is simply to save the real path instead of a weird thumbnail
+		path that doesn't bring you anywhere
+*/
+
 package software_engineering.whatnow;
 
 import android.app.DatePickerDialog;
@@ -120,23 +151,43 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 
 	public static ArrayList<Event> loadEvents(Context context) {
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-		SharedPreferences.Editor editor = preferences.edit();
 
 		ArrayList<Event> output = new ArrayList<Event>();
 		int size = preferences.getInt("EventsArray_size", 0);
 		StringTokenizer st;
 		for (int i = 0; i < size; i++) {
-			st = new StringTokenizer(preferences.getString("EventArray_" + i, null), ":::");
+			st = new StringTokenizer(preferences.getString("EventArray_" + i, null), ":::***:::***:::");
 			try{
 				output.add(new Event(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
-					Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), st.nextToken(),
-					new Host(st.nextToken()), st.nextToken(), st.nextToken(), new Category(st.nextToken()),
-					Long.parseLong(st.nextToken()), st.nextToken(), false, 0));
+						Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), st.nextToken(),
+						new Host(st.nextToken()), st.nextToken(), st.nextToken(), new Category(st.nextToken()),
+						Long.parseLong(st.nextToken()), st.nextToken(""), false, 0));
+				Log.wtf("LOAD", "Just loaded one!");
 			}catch(Exception e){
 				Log.wtf("LOAD", "Problem loading events: " + e.getMessage());
 			}
 		}
 		return output;
+	}
+
+	public static void saveEvents(Context context, ArrayList<Event> events, int oldSize) {
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = preferences.edit();
+
+		if(oldSize < 0) 		// it means "I don't know it!"
+			oldSize = preferences.getInt("EventsArray_size", 0);
+
+		editor.remove("EventsArray_size");
+		editor.putInt("EventsArray_size", events.size());
+
+		for(int i=0;i < oldSize; i++)
+			editor.remove("EventArray_" + i);
+		for (int i = 0; i < events.size(); i++) {
+			editor.putString("EventArray_" + i, events.get(i).toString());
+			Log.wtf("SAVE", "Just saved one!");
+		}
+
+		editor.commit();
 	}
 
 	private void initialize(){
@@ -159,14 +210,14 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				name = s.toString();
 				addEventActivity.setTitle(name);
-			//	((TextView) findViewById(R.id.textView)).setText(s);
+				//	((TextView) findViewById(R.id.textView)).setText(s);
 			}
 
 			@Override
 			public void afterTextChanged(Editable s) {
 				name = s.toString();
 				addEventActivity.setTitle(name);
-			//	((TextView) findViewById(R.id.textView)).setText(s);
+				//	((TextView) findViewById(R.id.textView)).setText(s);
 			}
 		});
 	}
@@ -194,23 +245,6 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		for (int i=0; i<5; i++){
 			tv[i].setText("");
 		}
-	}
-
-	public static void saveEvents(Context context, ArrayList<Event> events, int oldSize) {
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-		SharedPreferences.Editor editor = preferences.edit();
-
-		editor.remove("EventsArray_size");
-		editor.putInt("EventsArray_size", events.size());
-
-        for(int i=0;i<oldSize;i++)
-            editor.remove("EventArray_" + i);
-        for (int i = 0; i < events.size(); i++) {
-            //assicurati che la toString() sia come serve a te
-            editor.putString("EventArray_" + i, events.get(i).toString());
-        }
-
-        editor.commit();
 	}
 
 	@Override
@@ -334,10 +368,10 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 				imageView.setImageBitmap(image);
 
 
-			//	imageView.setVisibility(View.VISIBLE);
-			//	imageView.bringToFront();
-			//	findViewById(R.id.choose_image).setVisibility(View.INVISIBLE);
-			//	((TextView) findViewById(R.id.textViewPic)).setText("Click image to change it");
+				//	imageView.setVisibility(View.VISIBLE);
+				//	imageView.bringToFront();
+				//	findViewById(R.id.choose_image).setVisibility(View.INVISIBLE);
+				//	((TextView) findViewById(R.id.textViewPic)).setText("Click image to change it");
 				((Button) findViewById(R.id.choose_image)).setText("Change image");
 			} catch (IOException e) {
 				e.printStackTrace();

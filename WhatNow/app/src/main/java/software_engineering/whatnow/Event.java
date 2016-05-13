@@ -1,3 +1,19 @@
+/*  CLASS DESCRIPTION:
+    -   This is the class that has all the info about a single event
+    -   there are many fields and others will be added soon, they all have getters
+        and setters, there are also additional methods
+    -   getDistance and the one with meters (made by Carlos) calculates the distance,
+        they need to be fixed though (many exceptions and crashes)
+    -   toString is used by the saveEvents function
+    -   utility methods to get the date as a String MM-DD-YYYY (instead of a long),
+        the time as a String like HH:MM, also static versions of both
+    -   getLocationFromAddress is another utility function to get a lat&lng pair from
+        an address like "Santa Cruz", "College Nine Road, Santa Cruz" or whatever
+    -   the following methods are related to the sorting functionality: it was
+        implemented so that the compareTo calls different comparing methods depending
+        on the sorting criteria set
+*/
+
 package software_engineering.whatnow;
 
 import android.content.Context;
@@ -102,12 +118,12 @@ public class Event implements Comparable {
             this.timestamp=timeStamp;
         } else this.timestamp = System.currentTimeMillis();
 
-		try {
-			this.myLoc = getLocationFromAddress(AddEventActivity.conEvent, this.location);
-		}catch(NullPointerException npe){
-			this.myLoc = new LatLng(36.9741,-122.0308);	//Santa Cruz
-			npe.printStackTrace();
-		}
+        try {
+            this.myLoc = getLocationFromAddress(AddEventActivity.conEvent, this.location);
+        }catch(NullPointerException npe){
+            this.myLoc = new LatLng(36.9741,-122.0308);	//Santa Cruz
+            npe.printStackTrace();
+        }
         this.imageAsString = imageAsString;
 
 
@@ -279,10 +295,10 @@ public class Event implements Comparable {
 
     @Override
     public String toString() {
-        return id + ":::" + hourStart + ":::" + minuteStart + ":::" +
-                hourEnd + ":::" + minuteEnd + ":::" + location + ":::" +
-                host.getName() + ":::" + name + ":::" +description + ":::"
-                + category.getName() + ":::" + dateStart + ":::" + imageAsString;
+        return id + ":::***:::***:::" + hourStart + ":::***:::***:::" + minuteStart + ":::***:::***:::" +
+                hourEnd + ":::***:::***:::" + minuteEnd + ":::***:::***:::" + location + ":::***:::***:::" +
+                host.getName() + ":::***:::***:::" + name + ":::***:::***:::" +description + ":::***:::***:::"
+                + category.getName() + ":::***:::***:::" + dateStart + ":::***:::***:::" + imageAsString;
     }
 
     public String getDateString(){
@@ -293,24 +309,24 @@ public class Event implements Comparable {
         return "" + (hourStart < 10 ? 0 : "") + hourStart + " : " + (minuteStart < 10 ? 0 : "") + minuteStart;
     }
 
-	public String getEndTime(){
-		return "" + (hourEnd < 10 ? 0 : "") + hourEnd + " : " + (minuteEnd < 10 ? 0 : "") + minuteEnd;
-	}
+    public String getEndTime(){
+        return "" + (hourEnd < 10 ? 0 : "") + hourEnd + " : " + (minuteEnd < 10 ? 0 : "") + minuteEnd;
+    }
 
-	public static String getTimeString(int hour, int minute){
-		return "" + (hour < 10 ? 0 : "") + hour + " : " + (minute < 10 ? 0 : "") + minute;
-	}
+    public static String getTimeString(int hour, int minute){
+        return "" + (hour < 10 ? 0 : "") + hour + " : " + (minute < 10 ? 0 : "") + minute;
+    }
 
-	public static String getDateString(int year, int month, int day){
-		return month + "-" + (day < 10 ? 0 : "") + day + "-" + year;
-	}
+    public static String getDateString(int year, int month, int day){
+        return month + "-" + (day < 10 ? 0 : "") + day + "-" + year;
+    }
     public void setSortingCriteria(int sortingCriteria) {
         this.sortingCriteria = sortingCriteria;
     }
 
-	public void setMyLoc(Context context){
-		this.myLoc = getLocationFromAddress(context, this.location);
-	}
+    public void setMyLoc(Context context){
+        this.myLoc = getLocationFromAddress(context, this.location);
+    }
 
     public LatLng getLocationFromAddress(Context context, String strAddress) {
 

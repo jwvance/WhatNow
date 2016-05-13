@@ -1,3 +1,33 @@
+/* 	CLASS DESCRIPTION:
+	-	This is the main activity, the one with the tabs
+	-	The related layout file is tab_layout but it contains also the Fragments
+	-	it implements the DialogListener interface to handle the answer from the
+		sorting dialog.
+	-	in onCreate, after the usual layout stuff, some location code and deciding
+		the categories, the toolbar is set and also the tabs with the ViewPager
+	-	in here are retrieved the events from Firebase, thanks to a Listener
+		attached to the database
+	-	I don't honestly know why but the events I get from Firebase are
+		not Event objs but HashMaps, that's why you read HashMap so many times
+	-	onCreate contains also the Firebase stuff
+	-	the ViewPager is the one that handles the Fragments visualization
+	-	there is a Fragment (an obj with a layout related) for each tab
+	-	the onCreateOptionsMenu and the onOptionSelectedItem methods respectively
+		set the layout menu of the top right corner and associate different
+		actions depending on what was clicked in that menu
+	-	showSortDialog is just to show the sorting Dialog, the answer is handled
+		by the onClick method
+	-	the setupViewPager adapter creates the fragments, one related to each
+		category, it gives them to the ViewPagerAdapter
+	-	onClick is called when a sorting criteria is selected, it calls setSorting:
+	-	setSorting sets the new sorting criteria to each Fragment that is gonna set
+		it to each Event
+	-	then there is a ViewPagerAdapter class which takes care of how to show the
+		tabs, fragments and all that tab related stuff
+	-	newEvent is called when the FloatingActionButton is pressed
+	-	then there are a 1000 lines of code that Carlos put there and commented o.O
+*/
+
 package software_engineering.whatnow;
 
 /**
@@ -24,6 +54,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +66,7 @@ import com.firebase.client.FirebaseError;
 import software_engineering.whatnow.firebase_stuff.Constants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class TabActivity extends AppCompatActivity implements DialogInterface.OnClickListener{
@@ -46,6 +78,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	private TabLayout tabLayout;
 	private ViewPager viewPager;
 	private RecyclerView recyclerView;
+	private Context context;
 
 	//testing distance
 	private LocationToolBox locTool;
@@ -60,6 +93,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	//-------------------------
 	ArrayList<String> categories;
 	private ArrayList<TabFragment> fragments;
+	private ArrayList<Event> events = new ArrayList<Event>();
 	//String[] categories = new String[{"ALL","BARS","CLUBS","FOOD","SHOPS","OTHERS"}];
 
 
@@ -68,7 +102,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab_layout);
 
-		Firebase.setAndroidContext(this);
+		context = this;
 
 		//Get the location toolbox set up and its listener
 		//-------------------------------------------------
@@ -110,6 +144,77 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		tabLayout.setupWithViewPager(viewPager);
 
 		//	setupTabIcons();	// TO ADD AN ICON INSIDE THE TAB NAME
+
+		Firebase.setAndroidContext(context);
+		Firebase firebase = new Firebase(Constants.DATABASE_URL/* + "/events_list"*/);
+		firebase.addChildEventListener(new ChildEventListener() {
+			@Override
+			public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+				try{
+					HashMap<String, Event> eventHashMap = (HashMap<String, Event>) dataSnapshot.getValue();
+					ArrayList<HashMap> weirdEvents = new ArrayList(eventHashMap.values());
+					HashMap e;
+					for (int i = 0; i < weirdEvents.size(); i++) {
+						e = weirdEvents.get(i);
+						//	int id = (int) ((long) e.get("id"));
+						//	int hourStart = (int) ((long) e.get("hourStart"));
+						//	int minuteStart = (int) ((long) e.get("minuteStart"));
+						//	int hourEnd = (int) ((long) e.get("hourEnd"));
+						//	int minuteEnd = (int) ((long) e.get("minuteEnd"));
+						//	String location = (String) e.get("location");
+						Host host = new Host((String) ((HashMap) e.get("host")).get("name"));
+						//	String name = (String) e.get("name");
+						//	String description = (String) e.get("description");
+						Category category = new Category((String) ((HashMap) e.get("category")).get("name"));
+						long timeStamp = ((long) e.get("timestamp"));
+						//	long dateStart = (long) e.get("dateStart");
+						//	String imagePath = (String) e.get("imagePath");
+						Event event = new Event((int) ((long) e.get("id")), (int) ((long) e.get("hourStart")),
+								(int) ((long) e.get("minuteStart")), (int) ((long) e.get("hourEnd")),
+								(int) ((long) e.get("minuteEnd")), (String) e.get("location"), host,
+								(String) e.get("name"), (String) e.get("description"), category,
+								(long) e.get("dateStart"), (String) e.get("imageAsString"), true, timeStamp);
+						event.setMyLoc(context);
+						events.add(event);
+						Log.wtf("TabActivity", "Downloaded an event!");
+					}
+				}catch(Exception e){
+					Log.wtf("FIREBASE event name CEL", e.getMessage());
+				}
+				if(events.size() > 0 && events.get(0) == null) {
+					events.clear();
+					Log.wtf("TabActivity", "Clearing events!");
+				}
+				try{
+					Log.wtf("TabActivity", "About to save!");
+					AddEventActivity.saveEvents(context, events, -1);
+					//recyclerAdapter.notifyDataSetChanged();
+					setSorting(1);
+				}catch(NullPointerException e){
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+			}
+
+			@Override
+			public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+			}
+
+			@Override
+			public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+			}
+
+			@Override
+			public void onCancelled(FirebaseError firebaseError) {
+
+			}
+		});
 	}
 
 	@Override
@@ -206,6 +311,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			fragment = new TabFragment();
 			fragment.setContext(this);
 			fragment.setCategory(categories.get(i));    //EITHER THIS OR DOWNLOAD EVENTS HERE AND USE setEvents(events)
+			fragment.setEvents(events);
 			adapter.addFragment(fragment, categories.get(i));
 			fragments.add(fragment);
 		}
@@ -288,83 +394,83 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	//Location stuff
 
 	/**
-	private void requestLocationUpdate() {
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-		if (locationManager != null &&
-				(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-						locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))) {
-			if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
-					PackageManager.PERMISSION_GRANTED) {
+	 private void requestLocationUpdate() {
+	 LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+	 if (locationManager != null &&
+	 (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+	 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))) {
+	 if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+	 PackageManager.PERMISSION_GRANTED) {
 
-				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 35000, 10, locationListener);
-				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 35000, 10, locationListener);
+	 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 35000, 10, locationListener);
+	 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 35000, 10, locationListener);
 
-				hasLocation = true;
+	 hasLocation = true;
 
-				Log.i(LOG_TAG, "requesting location update");
-			} else {
-				// Should we show an explanation?
-				if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-						Manifest.permission.ACCESS_FINE_LOCATION)) {
+	 Log.i(LOG_TAG, "requesting location update");
+	 } else {
+	 // Should we show an explanation?
+	 if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+	 Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-					// Show an expanation to the user *asynchronously* -- don't block
-					// this thread waiting for the user's response! After the user
-					// sees the explanation, try again to request the permission.
-					Log.i(LOG_TAG, "please allow to use your location");
+	 // Show an expanation to the user *asynchronously* -- don't block
+	 // this thread waiting for the user's response! After the user
+	 // sees the explanation, try again to request the permission.
+	 Log.i(LOG_TAG, "please allow to use your location");
 
-				} else {
+	 } else {
 
-					// No explanation needed, we can request the permission.
+	 // No explanation needed, we can request the permission.
 
-					ActivityCompat.requestPermissions(this,
-							new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-							MY_PERMISSIONS_REQUEST_FINE_LOCATION);
+	 ActivityCompat.requestPermissions(this,
+	 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+	 MY_PERMISSIONS_REQUEST_FINE_LOCATION);
 
-					// MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-					// app-defined int constant. The callback method gets the
-					// result of the request.
-				}
-			}
-		} else {
-			Log.i(LOG_TAG, "requesting location update from user");
-			//prompt user to enable location
-			Intent gpsOptionsIntent = new Intent(
-					android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-			startActivity(gpsOptionsIntent);
-		}
+	 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+	 // app-defined int constant. The callback method gets the
+	 // result of the request.
+	 }
+	 }
+	 } else {
+	 Log.i(LOG_TAG, "requesting location update from user");
+	 //prompt user to enable location
+	 Intent gpsOptionsIntent = new Intent(
+	 android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+	 startActivity(gpsOptionsIntent);
+	 }
+	 }
+
+	 LocationListener locationListener = new LocationListener() {
+	@Override
+	public void onLocationChanged(Location location) {
+
+	Location lastLocation = locationData.getLocation();
+
+	// Do something with the location you receive.
+	double newAccuracy = location.getAccuracy();
+
+	long newTime = location.getTime();
+	// Is this better than what we had?  We allow a bit of degradation in time.
+	boolean isBetter = ((lastLocation == null) ||
+	newAccuracy < lastLocation.getAccuracy() + (newTime - lastLocation.getTime()));
+	if (isBetter) {
+	// We replace the old estimate by this one.
+	locationData.setLocation(location);
+	}
+	hasLocation = true;
 	}
 
-	LocationListener locationListener = new LocationListener() {
-		@Override
-		public void onLocationChanged(Location location) {
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {}
 
-			Location lastLocation = locationData.getLocation();
+	@Override
+	public void onProviderEnabled(String provider) {}
 
-			// Do something with the location you receive.
-			double newAccuracy = location.getAccuracy();
-
-			long newTime = location.getTime();
-			// Is this better than what we had?  We allow a bit of degradation in time.
-			boolean isBetter = ((lastLocation == null) ||
-					newAccuracy < lastLocation.getAccuracy() + (newTime - lastLocation.getTime()));
-			if (isBetter) {
-				// We replace the old estimate by this one.
-				locationData.setLocation(location);
-			}
-			hasLocation = true;
-		}
-
-		@Override
-		public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-		@Override
-		public void onProviderEnabled(String provider) {}
-
-		@Override
-		public void onProviderDisabled(String provider) {}
+	@Override
+	public void onProviderDisabled(String provider) {}
 	};
 
-	**/
+	 **/
 
 
 }
