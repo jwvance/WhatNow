@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -99,8 +100,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 		protected TextView cardDistance;
 		protected ImageView cardImage;
 		protected int id;
+		protected boolean isBookmarked = false;
 
-		public ViewHolder(View cardLayuot) {
+		public ViewHolder(final View cardLayuot) {
 			super(cardLayuot);
 			cardEventName = (TextView) cardLayuot.findViewById(R.id.card_event_name);
 			cardDescription = (TextView) cardLayuot.findViewById(R.id.card_description);
@@ -118,6 +120,40 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 					v.getContext().startActivity(intent);
 				}
 			});
+
+			cardLayuot.findViewById(R.id.card_share_button).setOnClickListener(new View.OnClickListener() {
+				@Override public void onClick(View v) {
+					String message;
+					Intent sendIntent = new Intent();
+					sendIntent.setAction(Intent.ACTION_SEND);
+					message = "Hey! " + cardEventName.getText() + " is happening on " + cardDate.getText() +	" at " + cardTimes.getText() + ". Find more info by downloading WhatNow from the Play Store!";
+					sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+					sendIntent.setType("text/plain");
+					v.getContext().startActivity(sendIntent);
+				}
+			});
+
+			cardLayuot.findViewById(R.id.card_bookmark_button).setOnClickListener(new View.OnClickListener() {
+				@Override public void onClick(View v) {
+					Snackbar snackbar;
+
+					//change bookmark icon and display snackbar
+					ImageView img = (ImageView)cardLayuot.findViewById(R.id.card_bookmark_button);
+					if(isBookmarked){
+						img.setImageResource(R.drawable.ic_bookmark_border_black_24dp);
+						isBookmarked = false;
+						snackbar = Snackbar.make(v, "Event removed from your profile", Snackbar.LENGTH_SHORT);
+					}
+					else{
+						img.setImageResource(R.drawable.ic_bookmark_black_24dp);
+						isBookmarked = true;
+						snackbar = Snackbar.make(v, "Event saved for later, find it in your profile", Snackbar.LENGTH_LONG);
+					}
+					snackbar.show();
+				}
+			});
+
+
 		}
 
 		public void setID(int id){
