@@ -258,7 +258,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 	private void showSortDialog() {
 		AlertDialog levelDialog;
-		final CharSequence[] items = {" Popularity ", " Incoming ", " Distance ", " Recent "};
+		final CharSequence[] items = {" Most Popular ", " Upcoming ", " Distance from me ", " Recently added "};
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Sort by...");
