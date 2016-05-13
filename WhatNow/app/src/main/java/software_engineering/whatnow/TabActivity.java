@@ -243,13 +243,18 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 		if (id == R.id.action_settings) {
 			return true;
+
+		}else if(id == R.id.action_addEvent){
+			Intent intent = new Intent(this, AddEventActivity.class);
+			startActivity(intent);
+			return true;
+
 		} else if (id == R.id.action_sort) {
 			showSortDialog();
-
 			return true;
+
 		} else if (id == R.id.action_profile) {
 			startActivity(new Intent(this, MyProfileActivity.class));
-
 			return true;
 		}
 
@@ -384,12 +389,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			return mFragmentTitleList.get(position);
 		}
 	}
-
-	public void newEvent(View view) {
-		Intent intent = new Intent(this, AddEventActivity.class);
-		startActivity(intent);
-	}
-
+	
 	//-------------------------------------------------
 	//Location stuff
 

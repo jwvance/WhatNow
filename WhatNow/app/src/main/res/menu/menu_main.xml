@@ -10,6 +10,12 @@
         app:showAsAction="never"/>
 
     <item
+        android:id="@+id/action_addEvent"
+        android:orderInCategory="99"
+        android:title="New Event"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/action_profile"
         android:icon="@drawable/ic_person_outline_black_24dp"
         android:orderInCategory="0"
@@ -29,5 +35,7 @@
         android:orderInCategory="2"
         android:title="Search"
         app:showAsAction="ifRoom"/>
+
+
 
 </menu>
