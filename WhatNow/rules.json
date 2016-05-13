@@ -1,0 +1,40 @@
+{
+  "rules": {
+    "users": {
+      ".read": "auth != null",
+      "$userEncodedEmail": {
+        ".write": "auth != null && newData.parent().parent().child('uidMappings').child(auth.uid).val() == $userEncodedEmail && data.val() == null",        
+        ".validate": "newData.hasChildren(['name', 'email', 'timestampJoined', 'hasLoggedInWithPassword'])",
+        "name": {
+          ".validate": "newData.isString()"
+        },
+        "email": {
+          ".validate": "newData.isString() && newData.val().matches(/^[A-Z0-9,_%+-]+@[A-Z0-9,-]+,[A-Z]{2,4}$/i)"
+        },
+        "timestampJoined": {
+          ".validate": "newData.hasChildren(['timestamp'])",
+          "timestamp": {
+            ".validate": "newData.isNumber()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "hasLoggedInWithPassword": {
+          ".validate": "newData.isBoolean()",
+          ".write": "auth != null && root.child('uidMappings').child(auth.uid).val() == $userEncodedEmail && !(data.val() == true)"
+        },
+        "$other": {
+          ".validate": "false"
+        }
+      }
+    },
+    "uidMappings": {
+      "$uid": {
+        ".validate": "newData.isString() && newData.val().matches(/^[A-Z0-9,_%+-]+@[A-Z0-9,-]+,[A-Z]{2,4}$/i)",
+        ".read": "auth != null",
+        ".write": "auth.uid == $uid && data.val() == null"
+      }
+    }
+  }
+}

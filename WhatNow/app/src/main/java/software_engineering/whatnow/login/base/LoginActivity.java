@@ -18,6 +18,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
@@ -64,15 +71,17 @@ public class LoginActivity extends BaseActivity {
     private SharedPreferences mSharedPref;
     private SharedPreferences.Editor mSharedPrefEditor;
 
-    /**
-     * Variables related to Google Login
-     */
-    /* A flag indicating that a PendingIntent is in progress and prevents us from starting further intents. */
-    private boolean mGoogleIntentInProgress;
-    /* Request code used to invoke sign in user interactions for Google+ */
+    /* Request code used to invoke sign in user interactions */
     public static final int RC_GOOGLE_LOGIN = 1;
+    public static int RC_FACEBOOK_LOGIN;
+
     /* A Google account object that is populated if the user signs in with Google */
     GoogleSignInAccount mGoogleAccount;
+
+    /*Facebook Login Button*/
+    private LoginButton loginButton;
+
+    private CallbackManager callBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,8 +180,9 @@ public class LoginActivity extends BaseActivity {
         mAuthProgressDialog.setTitle(getString(R.string.progress_dialog_loading));
         mAuthProgressDialog.setMessage(getString(R.string.progress_dialog_authenticating_with_firebase));
         mAuthProgressDialog.setCancelable(false);
-        /* Setup Google Sign In */
+
         setupGoogleSignIn();
+        setupFacebookSignIn();
     }
     /**
      * Handle user authentication that was initiated with mFirebaseRef.authWithPassword
@@ -260,11 +270,6 @@ public class LoginActivity extends BaseActivity {
             unprocessedEmail = mGoogleAccount.getEmail().toLowerCase();
             mSharedPrefEditor.putString(Constants.KEY_GOOGLE_EMAIL, unprocessedEmail).apply();
         } else {
-
-            /**
-             * Otherwise get email from sharedPreferences, use null as default value
-             * (this mean that user resumes his session)
-             */
             unprocessedEmail = mSharedPref.getString(Constants.KEY_GOOGLE_EMAIL, null);
         }
 
@@ -338,6 +343,36 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
+    private void setupFacebookSignIn(){
+        loginButton = (LoginButton) findViewById(R.id.login_with_facebook);
+        AccessToken facebookToken = AccessToken.getCurrentAccessToken();
+        RC_FACEBOOK_LOGIN = loginButton.getRequestCode();
+        Log.e(LOG_TAG, "facebook request code:" + RC_FACEBOOK_LOGIN);
+
+        callBack = CallbackManager.Factory.create();
+        loginButton.registerCallback(callBack, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(loginIntent);
+            }
+
+            @Override
+            public void onCancel() {
+                showErrorToast("Log In was cancelled.");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                showErrorToast("Log In failed.");
+                Log.e(LOG_TAG, "Facebook Error: " + error);
+            }
+        });
+
+
+
+    }
+
     /**
      * Sign in with Google plus when user clicks "Sign in with Google" textView (button)
      */
@@ -358,7 +393,6 @@ public class LoginActivity extends BaseActivity {
         showErrorToast(result.toString());
     }
 
-
     /**
      * This callback is triggered when any startActivityForResult finishes. The requestCode maps to
      * the value passed into startActivityForResult.
@@ -366,10 +400,15 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        /* Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...); */
+
+        /* Result returned from launching the Intent*/
         if (requestCode == RC_GOOGLE_LOGIN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
+        }
+
+        if(requestCode == RC_FACEBOOK_LOGIN) {
+            callBack.onActivityResult(requestCode, resultCode, data);
         }
 
     }
@@ -445,4 +484,5 @@ public class LoginActivity extends BaseActivity {
 
         task.execute();
     }
+
 }
