@@ -307,10 +307,19 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	private void setupViewPager(ViewPager viewPager) {
 		ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 		TabFragment fragment;
+		ArrayList<Event> catEvents;
 		for (int i = 0; i < categories.size(); i++) {
 			fragment = new TabFragment();
+			catEvents = new ArrayList<Event>(events);
 			fragment.setContext(this);
-			fragment.setCategory(categories.get(i));    //EITHER THIS OR DOWNLOAD EVENTS HERE AND USE setEvents(events)
+			fragment.setCategory(categories.get(i));
+
+			if(i > 0)
+				for (int j = 0; j < catEvents.size(); j++) {
+					if(!catEvents.get(j).getCategory().getName().equals(categories.get(i)))
+						catEvents.remove(j);
+				}
+
 			fragment.setEvents(events);
 			adapter.addFragment(fragment, categories.get(i));
 			fragments.add(fragment);
