@@ -22,6 +22,7 @@ import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +30,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 	private ArrayList<Event> eventDataSource;
@@ -55,8 +58,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 		holder.setID(event.getId());
 		holder.cardEventName.setText(event.getName());
 		holder.cardDescription.setText(event.getDescription());
-		holder.cardDate.setText(event.getDateString());
-		holder.cardTimes.setText(event.getStartTime());
+		holder.cardDate.setText(event.getFriendlyDate());
+		//holder.cardTimes.setText(event.getStartTime());
 
 
 
@@ -107,7 +110,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 			cardEventName = (TextView) cardLayuot.findViewById(R.id.card_event_name);
 			cardDescription = (TextView) cardLayuot.findViewById(R.id.card_description);
 			cardDate = (TextView) cardLayuot.findViewById(R.id.card_date);
-			cardTimes = (TextView) cardLayuot.findViewById(R.id.card_time);
+			//cardTimes = (TextView) cardLayuot.findViewById(R.id.card_time);
 			cardParticipants = (TextView) cardLayuot.findViewById(R.id.card_participants);
 			cardDistance = (TextView) cardLayuot.findViewById(R.id.card_distance);
 			cardImage = (ImageView) cardLayuot.findViewById(R.id.card_image);
@@ -154,7 +157,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 			});
 
 
+
+
 		}
+
+
 
 		public void setID(int id){
 			this.id = id;

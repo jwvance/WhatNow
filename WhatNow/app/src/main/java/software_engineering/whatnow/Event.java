@@ -24,7 +24,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -301,16 +303,71 @@ public class Event implements Comparable {
                 + category.getName() + ":::***:::***:::" + dateStart + ":::***:::***:::" + imageAsString;
     }
 
+    public String getFriendlyDate(){
+        String friendlyString;
+
+        //get date and parse
+        String currDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String[] dateSplits = currDate.split("-");
+        String currYear = dateSplits[0];
+        String currMonth = dateSplits[1];
+        String currDay = dateSplits[2];
+
+        //get time of day and parse out "hours:minutes:seconds"
+        Date time = Calendar.getInstance().getTime();
+        String currTime = time.toString();
+        String[] isolateTime = currTime.split(" ");
+        String timeofDay = isolateTime[3];
+
+        //parse into hours, minutes, seconds
+        String[] timeSplits = timeofDay.split(":");
+        String hourSplit = timeSplits[0];
+        String minuteSplit = timeSplits[1];
+
+
+
+        //check if this year
+        if(Integer.parseInt(currYear) == year){
+            if(Integer.parseInt(currMonth) == month) {
+                if (Integer.parseInt(currDay) == day) {
+                    //calculate hours until event
+                    int returnNum = (hourStart - Integer.valueOf(hourSplit));
+                    if (returnNum > 1) {
+                        return "in " + Integer.toString(returnNum) + " hours";
+                    } else if (returnNum == 1) {
+                        return "in " + Integer.toString(returnNum) + " hour";
+                    } else if (returnNum < 1) {
+                        int minutesLeft = (minuteStart - Integer.valueOf(minuteSplit));
+                        return "in " + Integer.toString(minutesLeft) + " minutes";
+                    }
+
+                } else if ((Integer.parseInt(currDay) - day) == -1) {
+                    //return "tomorrow at:
+                    return "tomorrow at " + Integer.toString(hourStart) + ":" + Integer.toString(minuteStart);
+                }
+            }
+        }
+        return Integer.toString(month) + "/" + Integer.toString(day) + " @ " + (hourStart < 10 ? 0 : "") + hourStart + ":" + (minuteStart < 10 ? 0 : "") + minuteStart;
+    }
+
+    public String getMonthText(){
+        //return text of month
+        String month;
+
+
+        return "blah";
+    }
+
     public String getDateString(){
         return month + "-" + (day < 10 ? 0 : "") + day + "-" + year;
     }
 
     public String getStartTime(){
-        return "" + (hourStart < 10 ? 0 : "") + hourStart + " : " + (minuteStart < 10 ? 0 : "") + minuteStart;
+        return "" + (hourStart < 10 ? 0 : "") + hourStart + ":" + (minuteStart < 10 ? 0 : "") + minuteStart;
     }
 
     public String getEndTime(){
-        return "" + (hourEnd < 10 ? 0 : "") + hourEnd + " : " + (minuteEnd < 10 ? 0 : "") + minuteEnd;
+        return "" + (hourEnd < 10 ? 0 : "") + hourEnd + ":" + (minuteEnd < 10 ? 0 : "") + minuteEnd;
     }
 
     public static String getTimeString(int hour, int minute){

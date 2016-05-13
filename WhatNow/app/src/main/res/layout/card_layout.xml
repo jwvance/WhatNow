@@ -112,17 +112,6 @@
                 android:layout_marginLeft="20dp"
                 />
 
-            <TextView
-                android:id="@+id/card_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Time"
-                android:textColor="#757575"
-                android:layout_above="@+id/card_people_image"
-                android:layout_toRightOf="@+id/card_date"
-                android:layout_toEndOf="@+id/card_date"/>
-
             <ImageView
                 android:id="@+id/card_people_image"
                 android:layout_width="30dp"
