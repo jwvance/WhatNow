@@ -24,6 +24,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+<<<<<<< HEAD
+=======
+import android.content.*;
+import android.preference.PreferenceManager;
+import android.view.View;
+
+>>>>>>> catPics
 import java.util.Calendar;
 import java.util.List;
 
@@ -95,6 +102,7 @@ public class Event implements Comparable {
 
     //Location stuff
     private LatLng myLoc;
+    private Context cont;
 
 
     public Event(){
@@ -102,7 +110,11 @@ public class Event implements Comparable {
     }
 
     public Event(int id, int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
+<<<<<<< HEAD
                  Host host, String name, String description, Category category, long dateStart, String imageAsString, boolean fromFirebase, long timeStamp) {
+=======
+                 Host host, String name, String description, Category category, long dateStart, String imagePath, Context cont) {
+>>>>>>> catPics
         this.id = id;
         this.hourStart = hourStart;
         this.minuteStart = minuteStart;
@@ -114,6 +126,7 @@ public class Event implements Comparable {
         this.description = description;
         this.category = category;
         this.dateStart = dateStart;
+<<<<<<< HEAD
         if (fromFirebase){
             this.timestamp=timeStamp;
         } else this.timestamp = System.currentTimeMillis();
@@ -125,6 +138,18 @@ public class Event implements Comparable {
             npe.printStackTrace();
         }
         this.imageAsString = imageAsString;
+=======
+        this.timestamp = System.currentTimeMillis();
+        this.cont = cont;
+
+		try {
+			this.myLoc = getLocationFromAddress(this.cont, this.location);
+		}catch(NullPointerException npe){
+			this.myLoc = new LatLng(36.9741,-122.0308);	//Santa Cruz
+			npe.printStackTrace();
+		}
+        this.imagePath = imagePath;
+>>>>>>> catPics
 
 
         Calendar calendar = Calendar.getInstance();

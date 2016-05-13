@@ -94,7 +94,11 @@ public class TabFragment extends Fragment{
 								(int) ((long) e.get("minuteStart")), (int) ((long) e.get("hourEnd")),
 								(int) ((long) e.get("minuteEnd")), (String) e.get("location"), host,
 								(String) e.get("name"), (String) e.get("description"), category,
+<<<<<<< HEAD
 								(long) e.get("dateStart"), (String) e.get("imageAsString"), true, timeStamp);
+=======
+								(long) e.get("dateStart"), (String) e.get("imagePath"), TabActivity.con);
+>>>>>>> catPics
 						event.setMyLoc(context);
 						cardsEventData.add(event);
 					//	Log.wtf("FIREBASE event name CEL", i + ": " + weirdEvents.get(i).get("name").toString());
@@ -146,8 +150,8 @@ public class TabFragment extends Fragment{
 		recyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view);
 		recyclerView.setHasFixedSize(true);
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));
-		//	cardsEventData = AddEventActivity.loadEvents(rootView.getContext());
 
+		cardsEventData = AddEventActivity.loadEvents(rootView.getContext());
 
 		// PLACE HERE CALL TO THE SERVER TO GET EVENTS FROM THE SPECIFIC CATEGORY
 		/*cardsEventData.add("Event 1");
@@ -160,10 +164,28 @@ public class TabFragment extends Fragment{
 		cardsEventData.add("Event 8");
 		cardsEventData.add("Event 9");*/
 
+<<<<<<< HEAD
 		//	recyclerAdapter = new RecyclerAdapter(cardsEventData);
+=======
+>>>>>>> catPics
 
 		recyclerView.setAdapter(recyclerAdapter);	// GIVES TO THE ADAPTER ONLY THE EVENTS RELEVANT TO THIS FRAGMENT
 
+
+		//This is to make sure that it works with either the ALL. Moved things here so as to make things more efficient.
+		//That is, be conservative with memory.
+		if(category.equals("ALL")){
+			//Sets all the events to view.
+			recyclerView.setAdapter(new RecyclerAdapter(cardsEventData));
+		}
+		else{
+			//This is for the appropriate category tab.
+			ArrayList<Event> appropriate = new ArrayList<Event>();
+			for(int i = 0; i<cardsEventData.size(); i++){
+				if(cardsEventData.get(i).getCategory().getName().equals(category)) appropriate.add(cardsEventData.get(i));
+			}
+			recyclerView.setAdapter(new RecyclerAdapter(appropriate));
+		}
 		return rootView;
 	}
 

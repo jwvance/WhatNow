@@ -159,10 +159,16 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 			st = new StringTokenizer(preferences.getString("EventArray_" + i, null), ":::***:::***:::");
 			try{
 				output.add(new Event(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
+<<<<<<< HEAD
 						Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), st.nextToken(),
 						new Host(st.nextToken()), st.nextToken(), st.nextToken(), new Category(st.nextToken()),
 						Long.parseLong(st.nextToken()), st.nextToken(""), false, 0));
 				Log.wtf("LOAD", "Just loaded one!");
+=======
+					Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), st.nextToken(),
+					new Host(st.nextToken()), st.nextToken(), st.nextToken(), new Category(st.nextToken()),
+					Long.parseLong(st.nextToken()), st.nextToken(), conEvent));
+>>>>>>> catPics
 			}catch(Exception e){
 				Log.wtf("LOAD", "Problem loading events: " + e.getMessage());
 			}
@@ -227,8 +233,12 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		calendar.set(iYear, iMonth, iDay);
 		event = new Event(new Random().nextInt(1000), iHour, iMinute, fHour, fMinute,
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), name,
+<<<<<<< HEAD
 				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category),
 				calendar.getTimeInMillis(), imageAsString, false, 0);
+=======
+				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category), calendar.getTimeInMillis(), imagePath, this);
+>>>>>>> catPics
 
 		events.add(event);
 

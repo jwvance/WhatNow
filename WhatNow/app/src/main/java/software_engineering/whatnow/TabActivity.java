@@ -34,6 +34,7 @@ package software_engineering.whatnow;
  * Created by Steve on 4/20/16.
  */
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -43,6 +44,7 @@ import android.content.DialogInterface;
 
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -102,7 +104,11 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab_layout);
 
+<<<<<<< HEAD
 		context = this;
+=======
+
+>>>>>>> catPics
 
 		//Get the location toolbox set up and its listener
 		//-------------------------------------------------
@@ -113,8 +119,32 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		locationData.getLocation();
 		locTool.requestLocationUpdate();
 		//locListener = locTool.getLocationListener();
+		Firebase.setAndroidContext(this);
 
 
+		final ProgressDialog dialog = new ProgressDialog(this); // this = YourActivity
+		dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		dialog.setMessage("Loading location. Please wait...");
+		dialog.setIndeterminate(false);
+		dialog.setCanceledOnTouchOutside(false);
+		dialog.show();
+
+		//Window with spinner waiting for location to be loaded
+		new Handler().postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				dialog.dismiss();
+				try{
+					LocationToolBox.storedLatitude= locationData.getLocation().getLatitude();
+					LocationToolBox.storedLongitude =  locationData.getLocation().getLongitude();
+					//I call onResume() again because it's the only thing i tried that worked.
+					onResume();
+				} catch (NullPointerException e){
+					e.printStackTrace();
+				}
+			}
+		}, 7000);
 
 		if(locationData.getLocation() != null){
 			LocationToolBox.storedLatitude= locationData.getLocation().getLatitude();

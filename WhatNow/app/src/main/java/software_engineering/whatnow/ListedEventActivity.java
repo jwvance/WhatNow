@@ -98,6 +98,15 @@ public class ListedEventActivity extends AppCompatActivity {
 
 		}
 
+<<<<<<< HEAD
+=======
+		this.setTitle(event.getName());
+		description.setText(event.getDescription());
+		date.setText(event.getDateString());
+		times.setText(event.getStartTime());
+		address.setText(event.getLocation());//event.getLocation()
+		distance.setText(event.getDistance()); //added distance ** Didn't work
+>>>>>>> catPics
 
 		/*
 		Bitmap bitmap = BitmapFactory.decodeFile(event.getImageAsString());
