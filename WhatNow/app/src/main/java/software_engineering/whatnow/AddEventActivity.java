@@ -125,23 +125,23 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 
 		initialDate = (Button) findViewById(R.id.new_event_initialDate);
 		iYear = mcurrentDate.get(Calendar.YEAR);
-		iMonth = mcurrentDate.get(Calendar.MONTH);
+		iMonth = 1 + mcurrentDate.get(Calendar.MONTH);
 		iDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
 		initialDate.setText(Event.getDateString(iYear,iMonth,iDay));
 		initialTime = (Button) findViewById(R.id.new_event_initialTime);
 		iHour = mcurrentDate.get(Calendar.HOUR_OF_DAY);
-		iMinute = mcurrentDate.get(Calendar.MINUTE);
+		iMinute = 0;
 		initialTime.setText(Event.getTimeString(iHour, iMinute));
 
 		mcurrentDate.add(Calendar.HOUR_OF_DAY, 2);
 		finalDate = (Button) findViewById(R.id.new_event_finalDate);
 		fYear = mcurrentDate.get(Calendar.YEAR);
-		fMonth = mcurrentDate.get(Calendar.MONTH);
+		fMonth = 1 + mcurrentDate.get(Calendar.MONTH);
 		fDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
 		finalDate.setText(Event.getDateString(fYear,fMonth,fDay));
 		finalTime = (Button) findViewById(R.id.new_event_finalTime);
 		fHour = mcurrentDate.get(Calendar.HOUR_OF_DAY);
-		fMinute = mcurrentDate.get(Calendar.MINUTE);
+		fMinute = 0;
 		finalTime.setText(Event.getTimeString(fHour, fMinute));
 
 		category = null;
@@ -267,11 +267,11 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		if(v.getId() == R.id.new_event_initialDate){
 			mDatePicker = new DatePickerDialog(this, this, iYear, iMonth, iDay);
 			initial = true;
-			mDatePicker.setTitle("Select Initial Date");
+			mDatePicker.setTitle("Starting Date:");
 		}else{
 			mDatePicker = new DatePickerDialog(this, this, fYear, fMonth, fDay);
 			initial = false;
-			mDatePicker.setTitle("Select Final Date");
+			mDatePicker.setTitle("Ending Date:");
 		}
 		mDatePicker.show();
 	}
@@ -280,11 +280,11 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		TimePickerDialog mTimePicker;
 		if (v.getId() == R.id.new_event_initialTime){
 			mTimePicker = new TimePickerDialog(this, this, iHour, iMinute, false);
-			mTimePicker.setTitle("Select Initial Time");
+			mTimePicker.setTitle("Starting Time:");
 			initial = true;
 		}else{
 			mTimePicker = new TimePickerDialog(this, this, fHour, fMinute, false);
-			mTimePicker.setTitle("Select Final Time");
+			mTimePicker.setTitle("Ending Time:");
 			initial = false;
 		}
 		mTimePicker.show();
@@ -306,7 +306,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 	public void chooseCategory(View v){
 		AlertDialog levelDialog;
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Sort by...");
+		builder.setTitle("Where should we place your event?");
 		builder.setSingleChoiceItems(categories, -1, this);
 		levelDialog = builder.create();
 		levelDialog.show();
