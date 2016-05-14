@@ -330,15 +330,15 @@ public class Event implements Comparable {
         if(Integer.parseInt(currYear) == year){
             if(Integer.parseInt(currMonth) == month) {
                 if (Integer.parseInt(currDay) == day) {
-                    //calculate hours until event
+                    //if event is today, calculate hours until event
                     int returnNum = (hourStart - Integer.valueOf(hourSplit));
                     if (returnNum > 1) {
                         return "in " + Integer.toString(returnNum) + " hours";
-                    } else if (returnNum == 1) {
-                        return "in " + Integer.toString(returnNum) + " hour";
-                    } else if (returnNum < 1) {
+
+                    }else{
+                        //calculate minutes until event
                         int minutesLeft = (minuteStart - Integer.valueOf(minuteSplit));
-                        return "in " + Integer.toString(minutesLeft) + " minutes";
+                        return "in " + Integer.toString(60+minutesLeft) + " minutes";
                     }
 
                 } else if ((Integer.parseInt(currDay) - day) == -1) {
@@ -469,7 +469,6 @@ public class Event implements Comparable {
     public int compareTo(Object otherEvent) {
         int result=0;
         Event event = (Event) otherEvent;
-
 
         switch (this.sortingCriteria) {
 
