@@ -143,12 +143,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 					//change bookmark icon and display snackbar
 					ImageView img = (ImageView)cardLayuot.findViewById(R.id.card_bookmark_button);
 					if(isBookmarked){
-						img.setImageResource(R.drawable.ic_bookmark_border_black_24dp);
+						img.setImageResource(R.drawable.ic_heart_outline);
 						isBookmarked = false;
 						snackbar = Snackbar.make(v, "Event removed from your profile", Snackbar.LENGTH_SHORT);
 					}
 					else{
-						img.setImageResource(R.drawable.ic_bookmark_black_24dp);
+						img.setImageResource(R.drawable.ic_heart);
 						isBookmarked = true;
 						snackbar = Snackbar.make(v, "Event saved for later, find it in your profile", Snackbar.LENGTH_LONG);
 					}
