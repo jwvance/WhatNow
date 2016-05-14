@@ -459,9 +459,9 @@ public class Event implements Comparable {
     //been created at the same time and -1 if the second event is more recent than this one
     public int compareToByCreationTime(Event event){
         if (this.getTimestamp()>event.getTimestamp())
-            return 1;
-        else if (this.getTimestamp()<event.getTimestamp())
             return -1;
+        else if (this.getTimestamp()<event.getTimestamp())
+            return 1;
         return 0;
     }
 
