@@ -129,7 +129,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 					String message;
 					Intent sendIntent = new Intent();
 					sendIntent.setAction(Intent.ACTION_SEND);
-					message = "Hey! " + cardEventName.getText() + " is happening on " + cardDate.getText() +	" at " + cardTimes.getText() + ". Find more info by downloading WhatNow from the Play Store!";
+					message = "Hey! " + cardEventName.getText() + " is happening on " + cardDate.getText() + ". Find more info by downloading WhatNow from the Play Store!";
 					sendIntent.putExtra(Intent.EXTRA_TEXT, message);
 					sendIntent.setType("text/plain");
 					v.getContext().startActivity(sendIntent);
