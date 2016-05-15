@@ -6,4 +6,12 @@
     <string name="title_activity_listed_event">ListedEventActivity</string>
     <string name="title_activity_my_profile">MyProfileActivity</string>
 
+    <string-array name="categories">
+        <item>BARS</item>
+        <item>CLUBS</item>
+        <item>FOOD</item>
+        <item>SHOPS</item>
+        <item>OTHER</item>
+    </string-array>
+    
 </resources>

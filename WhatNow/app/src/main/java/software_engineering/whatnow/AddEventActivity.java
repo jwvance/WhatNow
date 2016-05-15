@@ -51,10 +51,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -71,7 +74,7 @@ import java.util.StringTokenizer;
 
 import software_engineering.whatnow.firebase_stuff.Constants;
 
-public class AddEventActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, DialogInterface.OnClickListener{
+public class AddEventActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener /*DialogInterface.OnClickListener*/{
 
 	private static final int RESULT_LOAD_IMG = 1;
 	private EditText[] tv = new EditText[5];
@@ -105,6 +108,9 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 	private String imagePath;
 	private Bitmap image;
 	private String imageAsString;
+
+	private Spinner spinner;
+	ArrayAdapter<CharSequence> adapter;
 
 	//private String databaseURL;
 
@@ -146,8 +152,51 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 
 		category = null;
 
-		//databaseURL = Constants.FIREBASE_URL + "/events";
+		//initialize spinner
+		spinner = (Spinner)findViewById(R.id.spinner);
+		adapter = ArrayAdapter.createFromResource(this,R.array.categories, android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinner.setAdapter(adapter);
+		spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			  @Override
+			  public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				  category = (String)parent.getItemAtPosition((position));
+			  }
+
+			  @Override
+			  public void onNothingSelected(AdapterView<?> parent) {
+				  ;
+			  }
+		});
+
+
+				//databaseURL = Constants.FIREBASE_URL + "/events";
 	}
+
+
+
+
+
+
+
+
+
+	public void chooseCategory(View v){
+		spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				Toast.makeText(getBaseContext(),parent.getItemAtPosition(position)+ " selected", Toast.LENGTH_LONG).show();
+				Context context = getBaseContext();
+				//category = context.getItemAtPosition(position);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+
+			}
+		});
+	}
+
 
 	public static ArrayList<Event> loadEvents(Context context) {
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -303,21 +352,14 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		}
 	}
 
-	public void chooseCategory(View v){
-		AlertDialog levelDialog;
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Where should we place your event?");
-		builder.setSingleChoiceItems(categories, -1, this);
-		levelDialog = builder.create();
-		levelDialog.show();
-	}
 
-	@Override
+
+	/*?@Override
 	public void onClick(DialogInterface dialog, int which) {
 		category = categories[which];
 		((Button) findViewById(R.id.category_picker)).setText(category);
 		dialog.dismiss();
-	}
+	}*/
 
 
 	public void chooseImage(View v){
