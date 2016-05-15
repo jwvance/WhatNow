@@ -78,6 +78,7 @@ public class ListedEventActivity extends AppCompatActivity {
 			date.setText(event.getDateString());
 			times.setText(event.getStartTime());
 			address.setText(event.getLocation());
+			distance.setText(event.getDistance() + "away");
 
 			byte[] imageAsBytes = Base64.decode(event.getImageAsString(), Base64.DEFAULT);
 			Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);

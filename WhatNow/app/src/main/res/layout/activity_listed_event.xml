@@ -41,6 +41,7 @@
                     android:src="@drawable/img_ex"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"/>
+
             </RelativeLayout>
 
         </android.support.design.widget.CollapsingToolbarLayout>
