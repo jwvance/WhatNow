@@ -324,8 +324,6 @@ public class Event implements Comparable {
         String hourSplit = timeSplits[0];
         String minuteSplit = timeSplits[1];
 
-
-
         //check if this year
         if(Integer.parseInt(currYear) == year){
             if(Integer.parseInt(currMonth) == month) {
@@ -335,27 +333,38 @@ public class Event implements Comparable {
                     if (returnNum > 1) {
                         return "in " + Integer.toString(returnNum) + " hours";
 
-                    }else{
+                    }else if(returnNum == 1){
+                        int minutesLeft = (minuteStart - Integer.valueOf(minuteSplit));
+                        //show 1 hour
+                        if(minutesLeft > 0){
+                            return "in 1 hour";
+
+                        }else if(minutesLeft <= 0){
+                            int minuteMath = 60 - Integer.valueOf(minuteSplit) + minuteStart;
+                            return "in " + Integer.toString(minuteMath) + " minutes";
+                        }
+
+                    }else if(returnNum == 0) {
                         //calculate minutes until event
                         int minutesLeft = (minuteStart - Integer.valueOf(minuteSplit));
-                        return "in " + Integer.toString(60+minutesLeft) + " minutes";
+                        if (minutesLeft > 0) {
+                            return "in " + Integer.toString(minutesLeft) + " minutes";
+                        } else {
+                            return "Happening now!";
+                        }
+
+                    }else if(returnNum < 0){
+                        return "Happening now!";
                     }
 
-                } else if ((Integer.parseInt(currDay) - day) == -1) {
+                //event is tomorrow
+                }else if ((Integer.parseInt(currDay) - day) == -1) {
                     //return "tomorrow at:
-                    return "tomorrow at " + Integer.toString(hourStart) + ":" + Integer.toString(minuteStart);
+                    return "tomorrow at " + Integer.toString(hourStart) + ":" + (minuteStart < 10 ? 0 : "") + minuteStart;
                 }
             }
         }
         return Integer.toString(month) + "/" + Integer.toString(day) + " @ " + (hourStart < 10 ? 0 : "") + hourStart + ":" + (minuteStart < 10 ? 0 : "") + minuteStart;
-    }
-
-    public String getMonthText(){
-        //return text of month
-        String month;
-
-
-        return "blah";
     }
 
     public String getDateString(){
