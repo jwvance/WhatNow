@@ -49,15 +49,21 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -94,6 +100,10 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	ArrayList<String> categories;
 	private ArrayList<TabFragment> fragments;
 	private ArrayList<Event> events = new ArrayList<Event>();
+	private MenuItem searchAction;
+	private boolean isSearchOpened = false;
+	private EditText editSearch;
+	private int sortingCriteria;
 	//String[] categories = new String[{"ALL","BARS","CLUBS","FOOD","SHOPS","OTHERS"}];
 
 
@@ -121,14 +131,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			LocationToolBox.storedLongitude =  locationData.getLocation().getLongitude();
 		}
 		//-------------------------------------------------
-		categories = new ArrayList<String>();	// THESE WILL BE DOWNLOADED FROM OUR SERVER
-
-		categories.add("ALL");
-		categories.add("BARS");
-		categories.add("CLUBS");
-		categories.add("FOOD");
-		categories.add("SHOPS");
-		categories.add("OTHERS");
+		categories = Category.getCategories();
 
 		fragments = new ArrayList<TabFragment>();
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -220,8 +223,9 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	@Override
 	protected void onResume() {
 		super.onResume();
-		setupViewPager(viewPager);
-		tabLayout.setupWithViewPager(viewPager);
+		//setupViewPager(viewPager);
+		setSorting(sortingCriteria);
+	//	tabLayout.setupWithViewPager(viewPager);
 		locTool.requestLocationUpdate();
 		if(locationData.getLocation() != null){
 			LocationToolBox.storedLatitude= locationData.getLocation().getLatitude();
@@ -230,11 +234,24 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		}
 	}
 
+	public void onBackPressed(){
+		if(isSearchOpened){
+			closeSearch(getSupportActionBar());
+		}else
+			super.onBackPressed();
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// PROBABLY WORK IN HERE TO ADD ICONS IN THE TOP BAR (SEARCH, PROFILE, ORDER, ETC)
 		getMenuInflater().inflate(R.menu.menu_main, menu);
 		return true;
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		searchAction = menu.findItem(R.id.action_search);
+		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
@@ -256,9 +273,79 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		} else if (id == R.id.action_profile) {
 			startActivity(new Intent(this, MyProfileActivity.class));
 			return true;
+		} else if(id == R.id.action_search){
+			handleMenuSearch();
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	protected void handleMenuSearch(){
+		ActionBar action = getSupportActionBar();
+
+		if(isSearchOpened){ //test if the search is open
+			//closeSearch(action);
+			doSearch();
+		} else { //open the search entry
+
+			action.setDisplayShowCustomEnabled(true);
+			action.setCustomView(R.layout.search_bar);
+			action.setDisplayShowTitleEnabled(false);
+
+			editSearch = (EditText)action.getCustomView().findViewById(R.id.editSearch);
+
+			editSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+				@Override
+				public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+					if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+						doSearch();
+						return true;
+					}
+					return false;
+				}
+			});
+
+			editSearch.requestFocus();
+
+			//open the keyboard focused in the editSearch
+			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.showSoftInput(editSearch, /*InputMethodManager.SHOW_IMPLICIT*/0);
+
+			//add the close icon
+			//searchAction.setIcon(getResources().getDrawable(R.drawable.ic_search_black_24dp));
+
+			isSearchOpened = true;
+		}
+	}
+
+	private void closeSearch(ActionBar action) {
+		action.setDisplayShowCustomEnabled(false);
+		action.setDisplayShowTitleEnabled(true);
+
+		//hides the keyboard
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(editSearch.getWindowToken(), 0);
+	//	imm.hideSoftInputFromInputMethod(editSearch.getWindowToken(), 0);
+
+		//add the search icon in the action bar
+		//searchAction.setIcon(getResources().getDrawable(R.drawable.ic_search_black_24dp));
+
+		isSearchOpened = false;
+	}
+
+	private void doSearch() {
+		Toast toast = Toast.makeText(this, "Showing only events containing: \"" + editSearch.getText() + "\"", Toast.LENGTH_LONG);
+		toast.show();
+
+		int currentTab = viewPager.getCurrentItem();
+
+		Intent intent = new Intent(this, SearchResultsActivity.class);
+		intent.putExtra("search_query", editSearch.getText().toString());
+		intent.putExtra("current_tab", currentTab);
+
+		startActivity(intent);
+
+		closeSearch(getSupportActionBar());
 	}
 
 	private void showSortDialog() {
@@ -316,6 +403,14 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			fragment = new TabFragment();
 			fragment.setContext(this);
 			fragment.setCategory(categories.get(i));    //EITHER THIS OR DOWNLOAD EVENTS HERE AND USE setEvents(events)
+
+			if(i > 0) {
+				for (int j = events.size() - 1; j >= 0; j--) {
+					if (!events.get(j).getCategory().getName().equals(categories.get(i))) {
+						events.remove(j);
+					}
+				}
+			}
 			fragment.setEvents(events);
 			adapter.addFragment(fragment, categories.get(i));
 			fragments.add(fragment);
@@ -327,6 +422,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	public void onClick(DialogInterface dialog, int which) {
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		SharedPreferences.Editor editor = preferences.edit();
+		sortingCriteria = which;
 		editor.putInt("itemSelected", which);
 		editor.commit();
 		setSorting(which);
