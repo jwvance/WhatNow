@@ -44,6 +44,17 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Events only from category XYZ..."
                 android:id="@+id/categorySearch"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/search_no_events"
+                android:src="@drawable/ic_event_busy_black_48dp"
+                android:layout_alignTop="@+id/search_recycler_view"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"
+                android:adjustViewBounds="true"
+                android:layout_marginTop="30dp"/>
         </RelativeLayout>
 
     </ScrollView>

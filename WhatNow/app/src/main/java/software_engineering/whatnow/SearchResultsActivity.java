@@ -8,6 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -53,9 +55,16 @@ public class SearchResultsActivity extends AppCompatActivity {
 			searchDescriptions();
 			searchHosts();
 
+			if(searchedEvents.isEmpty()){
+				((ImageView) findViewById(R.id.search_no_events)).setVisibility(View.VISIBLE);
+				((TextView) findViewById(R.id.categorySearch)).setText("No results in " + category + "...");
+			}else{
+				((ImageView) findViewById(R.id.search_no_events)).setVisibility(View.GONE);
+				((TextView) findViewById(R.id.categorySearch)).setText("Events only from category " + category + "...");
+			}
+
 			recyclerAdapter = new RecyclerAdapter(searchedEvents);
 
-			((TextView) findViewById(R.id.categorySearch)).setText("Events only from category " + category + "...");
 		}catch(NullPointerException npe){
 			if(searchQuery == null)
 				Log.wtf("SEARCH", "search_query is null");

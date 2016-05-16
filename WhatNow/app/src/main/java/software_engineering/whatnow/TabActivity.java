@@ -103,6 +103,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	private MenuItem searchAction;
 	private boolean isSearchOpened = false;
 	private EditText editSearch;
+	private int sortingCriteria;
 	//String[] categories = new String[{"ALL","BARS","CLUBS","FOOD","SHOPS","OTHERS"}];
 
 
@@ -222,8 +223,9 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	@Override
 	protected void onResume() {
 		super.onResume();
-		setupViewPager(viewPager);
-		tabLayout.setupWithViewPager(viewPager);
+		//setupViewPager(viewPager);
+		setSorting(sortingCriteria);
+	//	tabLayout.setupWithViewPager(viewPager);
 		locTool.requestLocationUpdate();
 		if(locationData.getLocation() != null){
 			LocationToolBox.storedLatitude= locationData.getLocation().getLatitude();
@@ -279,20 +281,19 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	}
 
 	protected void handleMenuSearch(){
-		ActionBar action = getSupportActionBar(); //get the actionbar
+		ActionBar action = getSupportActionBar();
 
 		if(isSearchOpened){ //test if the search is open
-			closeSearch(action);
+			//closeSearch(action);
+			doSearch();
 		} else { //open the search entry
 
-			action.setDisplayShowCustomEnabled(true); //enable it to display a
-			// custom view in the action bar.
-			action.setCustomView(R.layout.search_bar);//add the custom view
-			action.setDisplayShowTitleEnabled(false); //hide the title
+			action.setDisplayShowCustomEnabled(true);
+			action.setCustomView(R.layout.search_bar);
+			action.setDisplayShowTitleEnabled(false);
 
-			editSearch = (EditText)action.getCustomView().findViewById(R.id.editSearch); //the text editor
+			editSearch = (EditText)action.getCustomView().findViewById(R.id.editSearch);
 
-			//this is a listener to do a search when the user clicks on search button
 			editSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 				@Override
 				public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -311,15 +312,15 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			imm.showSoftInput(editSearch, /*InputMethodManager.SHOW_IMPLICIT*/0);
 
 			//add the close icon
-			searchAction.setIcon(getResources().getDrawable(R.drawable.ic_search_black_24dp));
+			//searchAction.setIcon(getResources().getDrawable(R.drawable.ic_search_black_24dp));
 
 			isSearchOpened = true;
 		}
 	}
 
 	private void closeSearch(ActionBar action) {
-		action.setDisplayShowCustomEnabled(false); //disable a custom view inside the actionbar
-		action.setDisplayShowTitleEnabled(true); //show the title in the action bar
+		action.setDisplayShowCustomEnabled(false);
+		action.setDisplayShowTitleEnabled(true);
 
 		//hides the keyboard
 		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -327,7 +328,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	//	imm.hideSoftInputFromInputMethod(editSearch.getWindowToken(), 0);
 
 		//add the search icon in the action bar
-		searchAction.setIcon(getResources().getDrawable(R.drawable.ic_search_black_24dp));
+		//searchAction.setIcon(getResources().getDrawable(R.drawable.ic_search_black_24dp));
 
 		isSearchOpened = false;
 	}
@@ -421,6 +422,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	public void onClick(DialogInterface dialog, int which) {
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		SharedPreferences.Editor editor = preferences.edit();
+		sortingCriteria = which;
 		editor.putInt("itemSelected", which);
 		editor.commit();
 		setSorting(which);
