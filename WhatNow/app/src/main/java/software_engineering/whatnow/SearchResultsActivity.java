@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class SearchResultsActivity extends AppCompatActivity {
+public class SearchResultsActivity extends AppCompatActivity implements View.OnClickListener {
 	private ArrayList<Event> events;
 	private ArrayList<Event> searchedEvents;
 	private RecyclerAdapter recyclerAdapter;
@@ -30,6 +30,11 @@ public class SearchResultsActivity extends AppCompatActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		toolbar.setTitleTextColor(Color.parseColor("#ff757575"));
 		setSupportActionBar(toolbar);
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		toolbar.setNavigationOnClickListener(this);
 
 		Intent intent = getIntent();
 		searchQuery = intent.getStringExtra("search_query");
@@ -109,5 +114,11 @@ public class SearchResultsActivity extends AppCompatActivity {
 				searchedEvents.add(events.get(i));
 			}
 		}
+	}
+
+	//for back key top left corner
+	@Override
+	public void onClick(View v) {
+		super.onBackPressed();
 	}
 }

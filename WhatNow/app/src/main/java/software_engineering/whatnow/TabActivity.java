@@ -59,6 +59,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -99,11 +100,12 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	//-------------------------
 	ArrayList<String> categories;
 	private ArrayList<TabFragment> fragments;
-	private ArrayList<Event> events = new ArrayList<Event>();
+//	private ArrayList<Event> events = new ArrayList<Event>();
 	private MenuItem searchAction;
 	private boolean isSearchOpened = false;
 	private EditText editSearch;
 	private int sortingCriteria;
+	private ArrayList<ArrayList<Event>> eventsEvents;
 	//String[] categories = new String[{"ALL","BARS","CLUBS","FOOD","SHOPS","OTHERS"}];
 
 
@@ -124,7 +126,8 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		locTool.requestLocationUpdate();
 		//locListener = locTool.getLocationListener();
 
-
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		sortingCriteria = preferences.getInt("itemSelected", 1);
 
 		if(locationData.getLocation() != null){
 			LocationToolBox.storedLatitude= locationData.getLocation().getLatitude();
@@ -132,6 +135,11 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		}
 		//-------------------------------------------------
 		categories = Category.getCategories();
+
+		eventsEvents = new ArrayList<ArrayList<Event>>();
+		for (int i = 0; i < categories.size(); i++) {
+			eventsEvents.add(new ArrayList<Event>());
+		}
 
 		fragments = new ArrayList<TabFragment>();
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -169,6 +177,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 						//	String name = (String) e.get("name");
 						//	String description = (String) e.get("description");
 						Category category = new Category((String) ((HashMap) e.get("category")).get("name"));
+						int categoryN = categories.indexOf(category.getName());
 						long timeStamp = ((long) e.get("timestamp"));
 						//	long dateStart = (long) e.get("dateStart");
 						//	String imagePath = (String) e.get("imagePath");
@@ -178,21 +187,27 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 								(String) e.get("name"), (String) e.get("description"), category,
 								(long) e.get("dateStart"), (String) e.get("imageAsString"), true, timeStamp);
 						event.setMyLoc(context);
-						events.add(event);
+
+						eventsEvents.get(categoryN).add(event);	//specific category
+						eventsEvents.get(0).add(event);	//ALL
+
+					//	events.add(event);
 						Log.wtf("TabActivity", "Downloaded an event!");
 					}
 				}catch(Exception e){
 					Log.wtf("FIREBASE event name CEL", e.getMessage());
 				}
-				if(events.size() > 0 && events.get(0) == null) {
-					events.clear();
+				if(eventsEvents.get(0).size() > 0 && eventsEvents.get(0).get(0) == null) {
+					eventsEvents.clear();
 					Log.wtf("TabActivity", "Clearing events!");
 				}
 				try{
 					Log.wtf("TabActivity", "About to save!");
-					AddEventActivity.saveEvents(context, events, -1);
+					AddEventActivity.saveEvents(context, eventsEvents.get(0), -1);
 					//recyclerAdapter.notifyDataSetChanged();
-					setSorting(1);
+				//	findViewById(R.id.fragmentProgressBar).setVisibility(View.INVISIBLE);
+
+					setSorting(sortingCriteria);
 				}catch(NullPointerException e){
 					e.printStackTrace();
 				}
@@ -404,14 +419,15 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			fragment.setContext(this);
 			fragment.setCategory(categories.get(i));    //EITHER THIS OR DOWNLOAD EVENTS HERE AND USE setEvents(events)
 
-			if(i > 0) {
+		/*	if(i > 0) {
 				for (int j = events.size() - 1; j >= 0; j--) {
 					if (!events.get(j).getCategory().getName().equals(categories.get(i))) {
 						events.remove(j);
 					}
 				}
 			}
-			fragment.setEvents(events);
+			fragment.setEvents(events);*/
+			fragment.setEvents(eventsEvents.get(i));
 			adapter.addFragment(fragment, categories.get(i));
 			fragments.add(fragment);
 		}

@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -49,6 +50,7 @@ public class TabFragment extends Fragment{
 	private RecyclerAdapter recyclerAdapter;
 	private Context context;
 	private int sortingCriteria = 1; //default is incoming
+	//private ProgressBar progressBar;
 
 	public TabFragment() {}
 
@@ -148,6 +150,7 @@ public class TabFragment extends Fragment{
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));
 		//	cardsEventData = AddEventActivity.loadEvents(rootView.getContext());
 
+	//	progressBar = (ProgressBar) rootView.findViewById(R.id.fragmentProgressBar);
 
 		// PLACE HERE CALL TO THE SERVER TO GET EVENTS FROM THE SPECIFIC CATEGORY
 		/*cardsEventData.add("Event 1");
