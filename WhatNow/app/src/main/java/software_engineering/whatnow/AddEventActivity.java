@@ -173,14 +173,6 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 				//databaseURL = Constants.FIREBASE_URL + "/events";
 	}
 
-
-
-
-
-
-
-
-
 	public void chooseCategory(View v){
 		spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
@@ -351,16 +343,6 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 			finalTime.setText(Event.getTimeString(fHour,fMinute));
 		}
 	}
-
-
-
-	/*?@Override
-	public void onClick(DialogInterface dialog, int which) {
-		category = categories[which];
-		((Button) findViewById(R.id.category_picker)).setText(category);
-		dialog.dismiss();
-	}*/
-
 
 	public void chooseImage(View v){
 		// Create intent to Open Image applications like Gallery, Google Photos
