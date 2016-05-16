@@ -45,7 +45,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 			categorizeEvents();
 
 		try {
-			this.setTitle("Results for: " + searchQuery);
+			this.setTitle("Searched: " + searchQuery);
 
 			searchQuery.toLowerCase();
 
@@ -60,7 +60,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 				((TextView) findViewById(R.id.categorySearch)).setText("No results in " + category + "...");
 			}else{
 				((ImageView) findViewById(R.id.search_no_events)).setVisibility(View.GONE);
-				((TextView) findViewById(R.id.categorySearch)).setText("Events only from category " + category + "...");
+				((TextView) findViewById(R.id.categorySearch)).setText("Resuts for category " + category + "...");
 			}
 
 			recyclerAdapter = new RecyclerAdapter(searchedEvents);
