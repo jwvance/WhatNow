@@ -15,6 +15,7 @@ package software_engineering.whatnow;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -51,6 +52,9 @@ public class TabFragment extends Fragment{
 	private int sortingCriteria = 1; //default is incoming
 
 	public TabFragment() {}
+
+	//Swipe for refresh
+	private SwipeRefreshLayout swipeContainer;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -151,7 +155,24 @@ public class TabFragment extends Fragment{
 		recyclerView.setHasFixedSize(true);
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-	//	cardsEventData = AddEventActivity.loadEvents(rootView.getContext());
+		swipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeContainer); //Modify this part. It returns null
+		swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+			@Override
+			public void onRefresh() {
+				//Code for refreshing events
+				//swipeContainer.setRefreshing(false) on
+				//successful network request
+				fetchTimelineAsync(0);
+			}
+		});
+		//setting colors of refresh
+		swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+				android.R.color.holo_green_light,
+				android.R.color.holo_orange_light,
+				android.R.color.holo_red_light);
+
+
+		//	cardsEventData = AddEventActivity.loadEvents(rootView.getContext());
 
 		// PLACE HERE CALL TO THE SERVER TO GET EVENTS FROM THE SPECIFIC CATEGORY
 		/*cardsEventData.add("Event 1");
@@ -211,5 +232,12 @@ public class TabFragment extends Fragment{
 
 	public void setCategory(String category){
 		this.category = category;
+	}
+
+	public void fetchTimelineAsync(int page) {
+		//here there needs to be some code for the refreshing itself.
+		//A call to firebase needs to be made.
+		//What to do for a successful call and a failed call.
+
 	}
 }

@@ -100,30 +100,12 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	private ArrayList<Event> events = new ArrayList<Event>();
 	//String[] categories = new String[{"ALL","BARS","CLUBS","FOOD","SHOPS","OTHERS"}];
 
-	//For swipe refresh
-	private SwipeRefreshLayout swipeContainer;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab_layout);
-
-
-		swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer); //Modify this part. It returns null
-		swipeContainer.setOnRefreshListener(new OnRefreshListener() {
-												@Override
-												public void onRefresh() {
-													//Code for refreshing events
-													//swipeContainer.setRefreshing(false) on
-													//successful network request
-													fetchTimelineAsync(0);
-												}
-											});
-		//setting colors of refresh
-		swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-				android.R.color.holo_green_light,
-				android.R.color.holo_orange_light,
-				android.R.color.holo_red_light);
 
 		context = this;
 
@@ -444,14 +426,6 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	public void newEvent(View view) {
 		Intent intent = new Intent(this, AddEventActivity.class);
 		startActivity(intent);
-	}
-
-	//helper method
-	public void fetchTimelineAsync(int page) {
-		//here there needs to be some code for the refreshing itself.
-		//A call to firebase needs to be made.
-		//What to do for a successful call and a failed call.
-
 	}
 
 
