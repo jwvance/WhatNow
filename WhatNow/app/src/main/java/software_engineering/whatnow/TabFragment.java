@@ -238,6 +238,10 @@ public class TabFragment extends Fragment{
 		//here there needs to be some code for the refreshing itself.
 		//A call to firebase needs to be made.
 		//What to do for a successful call and a failed call.
+		//onSuccess{}
+		//onFail{}
+
+		swipeContainer.setRefreshing(false);
 
 	}
 }
