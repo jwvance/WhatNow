@@ -131,7 +131,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 		notifyDataSetChanged();
 	}
 
-	public void addAll(List<Event> list) {
+	public void addAll() {
 		//code for adding stuff to the list
 		notifyDataSetChanged();
 	}

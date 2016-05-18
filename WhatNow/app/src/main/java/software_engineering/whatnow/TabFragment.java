@@ -13,7 +13,10 @@ package software_engineering.whatnow;
  * Created by Steve on 4/20/16.
  */
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -50,6 +53,7 @@ public class TabFragment extends Fragment{
 	private RecyclerAdapter recyclerAdapter;
 	private Context context;
 	private int sortingCriteria = 1; //default is incoming
+	private TabActivity tabActivity;
 
 	public TabFragment() {}
 
@@ -241,7 +245,40 @@ public class TabFragment extends Fragment{
 		//onSuccess{}
 		//onFail{}
 
-		swipeContainer.setRefreshing(false);
+		//SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(tabActivity.getApplicationContext());
+		//int which = preferences.getInt("itemSelected", 0);
 
+
+		//tabActivity.setSorting(which);
+		//Firebase.setAndroidContext(tabActivity.getApplicationContext());
+		//Firebase firebase = new Firebase(Constants.DATABASE_URL/* + "/events_list"*/);
+		//firebase.keepSynced(true);
+		new Handler().postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				try{
+					Firebase.setAndroidContext(tabActivity.getApplicationContext());
+					Firebase firebase = new Firebase(Constants.DATABASE_URL/* + "/events_list"*/);
+					recyclerAdapter.clear();
+					firebase.keepSynced(true);
+					recyclerAdapter.addAll();
+					SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(tabActivity.getApplicationContext());
+					int which = preferences.getInt("itemSelected", 0);
+					swipeContainer.setRefreshing(false);
+
+				} catch (Error e){
+					e.printStackTrace();
+				}
+			}
+		}, 4000);
+
+
+
+
+	}
+
+	public void setTabActivity(TabActivity tabActivity) {
+		this.tabActivity = tabActivity;
 	}
 }

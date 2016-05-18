@@ -226,7 +226,39 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 			@Override
 			public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+				try{
+					HashMap<String, Event> eventHashMap = (HashMap<String, Event>) dataSnapshot.getValue();
+					ArrayList<HashMap> weirdEvents = new ArrayList(eventHashMap.values());
+					HashMap e;
+					events.clear();
+					for (int i = 0; i < weirdEvents.size(); i++) {
+						e = weirdEvents.get(i);
+						Host host = new Host((String) ((HashMap) e.get("host")).get("name"));
+						Category category = new Category((String) ((HashMap) e.get("category")).get("name"));
+						long timeStamp = ((long) e.get("timestamp"));
+						Event event = new Event((int) ((long) e.get("id")), (int) ((long) e.get("hourStart")),
+								(int) ((long) e.get("minuteStart")), (int) ((long) e.get("hourEnd")),
+								(int) ((long) e.get("minuteEnd")), (String) e.get("location"), host,
+								(String) e.get("name"), (String) e.get("description"), category,
+								(long) e.get("dateStart"), (String) e.get("imageAsString"), true, timeStamp, context);
+						event.setMyLoc(context);
+						events.add(event);
+						Log.wtf("TabActivity", "Downloaded an event!");
+					}
+				}catch(Exception e){
+					Log.wtf("FIREBASE event name CEL", e.getMessage());
+				}
+				if(events.size() > 0 && events.get(0) == null) {
+					events.clear();
+					Log.wtf("TabActivity", "Clearing events!");
+				}
+				try{
+					Log.wtf("TabActivity", "About to save!");
+					AddEventActivity.saveEvents(context, events, -1);
+					setSorting(1);
+				}catch(NullPointerException e){
+					e.printStackTrace();
+				}
 			}
 
 			@Override
@@ -342,6 +374,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			catEvents = new ArrayList<Event>(events);
 			fragment.setContext(this);
 			fragment.setCategory(categories.get(i));    //EITHER THIS OR DOWNLOAD EVENTS HERE AND USE setEvents(events)
+			fragment.setTabActivity(this);
 
 			if(i > 0)
 				for (int j = 0; j < catEvents.size(); j++) {
@@ -349,7 +382,8 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 						catEvents.remove(j);
 				}
 
-			fragment.setEvents(catEvents);
+		//	fragment.setEvents(catEvents);
+			fragment.setEvents(events);
 			adapter.addFragment(fragment, categories.get(i));
 			fragments.add(fragment);
 		}
@@ -388,7 +422,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		dialog.dismiss();
 	}
 
-	private void setSorting(int which) {
+	public void setSorting(int which) {
 		for (int i = 0; i < fragments.size(); i++) {
 			fragments.get(i).setSortingCriteria(which, this);
 		}
