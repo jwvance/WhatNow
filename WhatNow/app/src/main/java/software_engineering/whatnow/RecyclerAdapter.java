@@ -16,9 +16,11 @@
 package software_engineering.whatnow;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -59,34 +61,22 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 		holder.cardEventName.setText(event.getName());
 		holder.cardDescription.setText(event.getDescription());
 		holder.cardDate.setText(event.getFriendlyDate());
-		//holder.cardTimes.setText(event.getStartTime());
-
-
 
 		byte[] imageAsBytes = Base64.decode(event.getImageAsString(), Base64.DEFAULT);
 		Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
 		holder.cardImage.setImageBitmap(bitmap);
-
-
-	/*	File sd = Environment.getExternalStorageDirectory();
-		File image = new File(sd+event.getImageAsString(), imageName);
-		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-		Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
-		bitmap = Bitmap.createScaledBitmap(bitmap,parent.getWidth(),parent.getHeight(),true);
-		imageView.setImageBitmap(bitmap);*/
-
-		/*File imgFile = new File(event.getImageAsString());
-
-		if(imgFile.exists()) {
-			Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-			holder.cardImage.setImageBitmap(bitmap);
-		}*/
-
-		/*Bitmap bitmap = BitmapFactory.decodeFile(event.getImageAsString());
-		holder.cardImage.setImageBitmap(bitmap);*/
-		//	holder.cardImage.setImageURI(Uri.fromFile(new File(event.getImageAsString())));
-		//	holder.cardParticipants.setText("");
 		holder.cardDistance.setText(event.getDistance()); //test
+
+		//toggle bookmark icon on or off depending on saved preference
+		ImageView img = (ImageView)holder.itemView.findViewById(R.id.card_bookmark_button);
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(holder.itemView.getContext());
+		boolean bookmarkStatus = false;
+		bookmarkStatus = preferences.getBoolean("bookmarked" + event.getId(), false);
+		if(bookmarkStatus) {
+			img.setImageResource(R.drawable.ic_heart);
+		}else {
+			img.setImageResource(R.drawable.ic_heart_outline);
+		}
 	}
 
 	@Override
@@ -139,29 +129,32 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 			cardLayuot.findViewById(R.id.card_bookmark_button).setOnClickListener(new View.OnClickListener() {
 				@Override public void onClick(View v) {
 					Snackbar snackbar;
+					SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(v.getContext());
+					SharedPreferences.Editor editor = preferences.edit();
 
 					//change bookmark icon and display snackbar
 					ImageView img = (ImageView)cardLayuot.findViewById(R.id.card_bookmark_button);
 					if(isBookmarked){
 						img.setImageResource(R.drawable.ic_bookmark_border_black_24dp);
 						isBookmarked = false;
+
+						editor.putBoolean("bookmarked" + id, isBookmarked);
+
 						snackbar = Snackbar.make(v, "Event removed from your profile", Snackbar.LENGTH_SHORT);
 					}
 					else{
 						img.setImageResource(R.drawable.ic_bookmark_black_24dp);
 						isBookmarked = true;
+
+						editor.putBoolean("bookmarked" + id, isBookmarked);
+
 						snackbar = Snackbar.make(v, "Event saved for later, find it in your profile", Snackbar.LENGTH_LONG);
 					}
+					editor.apply();
 					snackbar.show();
 				}
 			});
-
-
-
-
 		}
-
-
 
 		public void setID(int id){
 			this.id = id;
