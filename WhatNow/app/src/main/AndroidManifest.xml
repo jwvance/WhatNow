@@ -52,7 +52,20 @@
             android:configChanges="orientation"
             android:label="My Profile"
             android:screenOrientation="portrait">
+        <!--    <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="facebook" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="fb" />
+            </intent-filter>-->
         </activity>
+
+
     </application>
 
 </manifest>
