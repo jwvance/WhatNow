@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:focusableInTouchMode="true"
     tools:context="software_engineering.whatnow.ListedEventActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -47,8 +48,7 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_listed_event"
-        />
+    <include layout="@layout/content_listed_event"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/listed_event_fab"

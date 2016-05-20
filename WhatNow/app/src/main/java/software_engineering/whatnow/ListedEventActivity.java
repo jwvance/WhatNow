@@ -16,19 +16,24 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 public class ListedEventActivity extends AppCompatActivity {
 	private TextView description;
+	private TextView category;
+	private TextView host;
 	private TextView date;
 	private TextView times;
 	private TextView participants;
@@ -38,6 +43,9 @@ public class ListedEventActivity extends AppCompatActivity {
 	private ArrayList<Event> events;
 	private int eventID;
 	private Event event;
+	private RecyclerAdapter recyclerAdapter;
+	private RecyclerView recyclerView;
+	private TextView pastHostEventsText;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +61,8 @@ public class ListedEventActivity extends AppCompatActivity {
 		Log.wtf("ListedEventActivity", "Event ID: " + eventID);
 
 		description = (TextView) findViewById(R.id.listed_event_description);
+		category = (TextView) findViewById(R.id.listed_event_category);
+		host = (TextView) findViewById(R.id.listed_event_host);
 		date = (TextView) findViewById(R.id.listed_event_date);
 		times = (TextView) findViewById(R.id.listed_event_times);
 		participants = (TextView) findViewById(R.id.listed_event_participants);
@@ -68,6 +78,7 @@ public class ListedEventActivity extends AppCompatActivity {
 			if(events.get(i).getId() == eventID) {
 				event = events.get(i);
 				Log.wtf("ListedEventActivity", "Found matching id!");
+				events.remove(i);	//TO FILL LATER THE LIST!
 				break;
 			}
 		}
@@ -75,16 +86,19 @@ public class ListedEventActivity extends AppCompatActivity {
 		if(event != null) {
 			this.setTitle(event.getName());
 			description.setText(event.getDescription());
-			date.setText(event.getDateString());
-			times.setText(event.getStartTime());
+			String categoryS = event.getCategory().getName().toLowerCase();
+			category.setText(categoryS.substring(0, 1).toUpperCase() + categoryS.substring(1));
+			host.setText(event.getHost().getName());
+			date.setText(event.getDateString());	//ADD multi date
+			times.setText(event.getStartTime() + " - " + event.getEndTime());
 			address.setText(event.getLocation());
-			distance.setText(event.getDistance() + "away");
+			distance.setText(event.getDistance() + " away");
 
 			byte[] imageAsBytes = Base64.decode(event.getImageAsString(), Base64.DEFAULT);
 			Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
 			image.setImageBitmap(bitmap);
 		}else{
-
+			//error
 		}
 
 
@@ -94,11 +108,45 @@ public class ListedEventActivity extends AppCompatActivity {
 		//image.setImageURI(Uri.fromFile(new File(event.getImageAsString())));
 
 		//	address.setText("Santa Cruz");
+
+		//THE EVENTS WILL BE DOWNLOADED FROM FIREBASE
+
+		recyclerView = (RecyclerView) findViewById(R.id.listed_event_recycler_view);
+		pastHostEventsText = (TextView) findViewById(R.id.listed_event_past_events);
+		//pastHostEventsText.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+		if(events.size() == 0) {
+			recyclerView.setVisibility(View.GONE);
+			pastHostEventsText.setText("This is the first event posted by this Host");
+		}else{
+			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) recyclerView.getLayoutParams();
+			params.width = RelativeLayout.LayoutParams.WRAP_CONTENT;
+			if(events.size() == 1){
+				params.height = RelativeLayout.LayoutParams.MATCH_PARENT;
+
+				pastHostEventsText.setText("This Host has already posted\nanother event\nthrough this app");
+			}else{
+				params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
+
+				pastHostEventsText.setText("This Host has already posted\n" + events.size() + " events\nthrough this app");
+			}
+			recyclerView.setLayoutParams(params);
+		}
+		recyclerAdapter = new RecyclerAdapter(events);
+		recyclerView.setHasFixedSize(true);
+		recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+		recyclerView.setAdapter(recyclerAdapter);
 	}
 
 	public void searchMap(View view){
 		String toMaps = "https://www.google.com/maps/place/" + address.getText();
 		Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(toMaps));
+		startActivity(i);
+	}
+
+	public void viewHost(View view){
+		Intent i = new Intent(this, MyProfileActivity.class);
 		startActivity(i);
 	}
 }

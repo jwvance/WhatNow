@@ -10,110 +10,336 @@
     tools:showIn="@layout/activity_listed_event">
 
     <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context=".AddEventActivity">
 
-        <TextView
-            android:id="@+id/listed_event_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Brief Description"
-            android:layout_margin="10dp"
-            />
+        <!--    <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/scrollView" >  -->
 
-        <ImageView
-            android:id="@+id/listed_event_pin_image"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_pin_drop_black_24dp"
-            android:layout_below="@+id/listed_event_clock_image"
-            android:layout_alignLeft="@+id/listed_event_clock_image"
-            android:layout_alignStart="@+id/listed_event_clock_image"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="20dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
 
-        <TextView
-            android:id="@+id/listed_event_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Address"
-            android:textColor="#757575"
-            android:layout_alignTop="@+id/listed_event_pin_image"
-            android:layout_toRightOf="@+id/listed_event_pin_image"
-            android:layout_toEndOf="@+id/listed_event_pin_image"
-            android:layout_marginRight="20dp"
-            android:onClick="searchMap"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_gravity="center_horizontal">
 
-        <TextView
-            android:id="@+id/listed_event_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Distance"
-            android:textColor="#757575"
-            android:layout_alignTop="@+id/listed_event_address"
-            android:layout_toRightOf="@+id/listed_event_address"
-            android:layout_toEndOf="@+id/listed_event_address"
-            android:layout_marginRight="20dp"/>
+                <ImageView
+                    android:id="@+id/imageView12"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_description_black_24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
 
-        <ImageView
-            android:id="@+id/listed_event_clock_image"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_access_time_black_24dp"
-            android:layout_below="@+id/listed_event_description"
-            android:layout_alignLeft="@+id/listed_event_description"
-            android:layout_alignStart="@+id/listed_event_description"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="20dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/listed_event_description"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Description"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView12"
+                    android:layout_toEndOf="@+id/imageView12"
+                    android:layout_marginLeft="10dp"/>
+            </RelativeLayout>
 
-        <TextView
-            android:id="@+id/listed_event_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Date"
-            android:textColor="#757575"
-            android:layout_below="@+id/listed_event_description"
-            android:layout_toRightOf="@+id/listed_event_clock_image"
-            android:layout_toEndOf="@+id/listed_event_clock_image"
-            android:layout_marginRight="20dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#e0e0e0"/>
 
-        <ImageView
-            android:id="@+id/listed_event_people_image"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_people_black_24dp"
-            android:layout_below="@+id/listed_event_pin_image"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
 
-        <TextView
-            android:id="@+id/listed_event_participants"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Participants"
-            android:textColor="#757575"
-            android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/listed_event_people_image"
-            android:layout_toStartOf="@+id/listed_event_people_image"/>
+                <ImageView
+                    android:id="@+id/imageView8"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_style_black_24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
 
-        <TextView
-            android:id="@+id/listed_event_times"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Times"
-            android:textColor="#757575"
-            android:layout_alignBottom="@+id/listed_event_date"
-            android:layout_toRightOf="@+id/listed_event_date"
-            android:layout_toEndOf="@+id/listed_event_date"
-            android:layout_marginRight="20dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/listed_event_category"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Category"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView8"
+                    android:layout_toEndOf="@+id/imageView8"
+                    android:layout_marginLeft="10dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView16"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_people_black_24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/listed_event_participants"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Participants"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView16"
+                    android:layout_toEndOf="@+id/imageView16"
+                    android:layout_marginLeft="10dp"/>
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#e0e0e0"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Click to see Host details..."
+                android:id="@+id/textView3"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/imageView9"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_business_black_24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/listed_event_host"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Host"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView9"
+                    android:layout_toEndOf="@+id/imageView9"
+                    android:layout_marginLeft="10dp"
+                    android:onClick="viewHost"/>
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#e0e0e0"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Click to open in Maps..."
+                android:id="@+id/textView4"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal"
+                android:onClick="searchMap"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView11"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_pin_drop_black_24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/listed_event_address"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Address"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView11"
+                    android:layout_toEndOf="@+id/imageView11"
+                    android:layout_marginLeft="10dp"
+                    android:onClick="searchMap"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_near_me_black_24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/listed_event_distance"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Distance"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView"
+                    android:layout_toEndOf="@+id/imageView"
+                    android:layout_marginLeft="10dp"
+                    android:onClick="searchMap"/>
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#e0e0e0"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+
+                <ImageView
+                    android:id="@+id/imageView13"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_access_time_black_24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/listed_event_times"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Times"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView13"
+                    android:layout_toEndOf="@+id/imageView13"
+                    android:layout_marginLeft="10dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+
+                <ImageView
+                    android:id="@+id/imageView14"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_event_black_24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/listed_event_date"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Date(s)"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView14"
+                    android:layout_toEndOf="@+id/imageView14"
+                    android:layout_marginLeft="10dp"
+                    />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#e0e0e0"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/profile_past_events_layout">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Past Events by Host..."
+                    android:id="@+id/listed_event_past_events"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center_horizontal"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/listed_event_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:scrollbars="horizontal"
+                    android:layout_below="@+id/listed_event_past_events"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#e0e0e0"/>
+
+        </LinearLayout>
+        <!--    </ScrollView>   -->
+
     </RelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>
+

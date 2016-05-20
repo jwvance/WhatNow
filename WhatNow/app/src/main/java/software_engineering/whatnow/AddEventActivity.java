@@ -77,7 +77,7 @@ import software_engineering.whatnow.firebase_stuff.Constants;
 public class AddEventActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener /*DialogInterface.OnClickListener*/{
 
 	private static final int RESULT_LOAD_IMG = 1;
-	private EditText[] tv = new EditText[5];
+	private EditText[] tv = new EditText[4];
 	//private DatePicker dp;
 	//private TimePicker tp;
 	private Event event;
@@ -264,12 +264,41 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 	}
 
 	public void addEvent(View v) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(iYear, iMonth, iDay);
+		if(name == null || name.equals("")){
+			Toast.makeText(AddEventActivity.this, "Choose a name first!", Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		for (int i = 1; i < tv.length; i++) {
+			if(tv[i] == null || tv[i].getText().equals("")) {
+				Toast.makeText(AddEventActivity.this, "Fill every field first!", Toast.LENGTH_SHORT).show();
+				return;
+			}
+		}
+
+		if(imageAsString == null || imageAsString.equals("")){
+			Toast.makeText(AddEventActivity.this, "Select a picture first!", Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		Calendar iCalendar = Calendar.getInstance();
+		iCalendar.set(iYear, iMonth, iDay);
+		Calendar fCalendar = iCalendar;
+		fCalendar.set(fYear, fMonth, fDay);
+
+		if(!iCalendar.before(fCalendar) && (iHour > fHour || (iHour == fHour && iMinute >= fMinute))){
+			Toast.makeText(AddEventActivity.this, "Start time must be before end time!", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		if(iCalendar.after(fCalendar)){
+			Toast.makeText(AddEventActivity.this, "Start date must be before end date!", Toast.LENGTH_SHORT).show();
+			return;
+		}
+
 		event = new Event(new Random().nextInt(1000), iHour, iMinute, fHour, fMinute,
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), name,
 				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category),
-				calendar.getTimeInMillis(), imageAsString, false, 0);
+				iCalendar.getTimeInMillis(), imageAsString, false, 0);
 
 		events.add(event);
 
@@ -295,6 +324,10 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 			iDay = dayOfMonth;
 			iYear = year;
 			initialDate.setText(Event.getDateString(iYear,iMonth,iDay));
+			fMonth = monthOfYear + 1;
+			fDay = dayOfMonth;
+			fYear = year;
+			finalDate.setText(Event.getDateString(fYear,fMonth,fDay));
 		}else{
 			fMonth = monthOfYear + 1;
 			fDay = dayOfMonth;
@@ -337,6 +370,9 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 			iHour = hourOfDay;
 			iMinute = minute;
 			initialTime.setText(Event.getTimeString(iHour,iMinute));
+			fHour = hourOfDay + 2;
+			fMinute = minute;
+			finalTime.setText(Event.getTimeString(fHour,fMinute));
 		}else{
 			fHour = hourOfDay;
 			fMinute = minute;

@@ -46,8 +46,8 @@ public class Event implements Comparable {
     @SerializedName("description")
     @Expose
     private String description;
-    @SerializedName("distance")
-    @Expose
+    /*@SerializedName("distance")
+    @Expose*/
     private String distance;
     @SerializedName("endTime")
     @Expose
@@ -82,12 +82,13 @@ public class Event implements Comparable {
     @SerializedName("startTime")
     @Expose
     private String startTime;
-
+    @SerializedName("dateEnd")
+    @Expose
+    private long dateEnd;
     //test
     LocationToolBox locationIs;
     //
 
-    private long dateEnd;
     private int month;
     private int year;
     private int day;
