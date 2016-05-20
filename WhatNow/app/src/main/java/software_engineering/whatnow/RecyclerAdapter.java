@@ -73,9 +73,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 		boolean bookmarkStatus = false;
 		bookmarkStatus = preferences.getBoolean("bookmarked" + event.getId(), false);
 		if(bookmarkStatus) {
-			img.setImageResource(R.drawable.ic_heart);
+			img.setImageResource(R.drawable.ic_bookmark_black_24dp);
 		}else {
-			img.setImageResource(R.drawable.ic_heart_outline);
+			img.setImageResource(R.drawable.ic_bookmark_border_black_24dp);
 		}
 	}
 

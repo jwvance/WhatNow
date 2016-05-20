@@ -17,7 +17,6 @@
         android:label="WhatNow"
         android:largeHeap="true"
         android:supportsRtl="true"
-<<<<<<< HEAD
         android:theme="@style/WhatNowTheme" >
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -25,9 +24,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-=======
-        android:theme="@style/WhatNowTheme">
->>>>>>> profile
         <activity
             android:name=".TabActivity"
             android:configChanges="orientation"
@@ -101,14 +97,11 @@
         </activity>
 
 
-<<<<<<< HEAD
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-=======
->>>>>>> profile
     </application>
 
 </manifest>

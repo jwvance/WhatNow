@@ -13,7 +13,6 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
-<<<<<<< HEAD
     }
 
     //Specify the maximum size, in bytes, of the memory allocation pool.
@@ -22,8 +21,6 @@ android {
     // The default value is chosen at runtime based on system configuration.
     dexOptions {
         javaMaxHeapSize "4g"
-=======
->>>>>>> profile
     }
 
     buildTypes {
@@ -52,13 +49,8 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:8.4.0'
     compile 'com.firebase:firebase-client-android:2.3.1'
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
-<<<<<<< HEAD
-
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.facebook.android:facebook-android-sdk:4.11.0'
-=======
-    compile 'com.android.support:multidex:1.0.0'
->>>>>>> profile
 }
 
 //http://stackoverflow.com/questions/30527369/error-could-not-find-com-google-gmsgoogle-services1-0-when-adding-google-ser

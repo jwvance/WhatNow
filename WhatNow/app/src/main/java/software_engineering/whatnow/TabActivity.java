@@ -57,10 +57,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import android.util.Log;
-<<<<<<< HEAD
-=======
 import android.view.KeyEvent;
->>>>>>> profile
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -114,16 +111,13 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	//-------------------------
 	ArrayList<String> categories;
 	private ArrayList<TabFragment> fragments;
-<<<<<<< HEAD
 	private SharedPreferences mSharedPref;
-=======
 //	private ArrayList<Event> events = new ArrayList<Event>();
 	private MenuItem searchAction;
 	private boolean isSearchOpened = false;
 	private EditText editSearch;
 	private int sortingCriteria;
 	private ArrayList<ArrayList<Event>> eventsEvents;
->>>>>>> profile
 	//String[] categories = new String[{"ALL","BARS","CLUBS","FOOD","SHOPS","OTHERS"}];
 
 
@@ -317,20 +311,17 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		} else if (id == R.id.action_profile) {
 			startActivity(new Intent(this, MyProfileActivity.class));
 			return true;
-<<<<<<< HEAD
 		} else if(id == R.id.action_logout){
 			logout();
 			return true;
-=======
 		} else if(id == R.id.action_search){
 			handleMenuSearch();
->>>>>>> profile
+			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
 	}
 
-<<<<<<< HEAD
 	private void logout() {
 		Log.wtf("LOGOUT", "inside Base about to log out");
 
@@ -357,7 +348,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 			if (mProvider.equals(Constants.GOOGLE_PROVIDER)) {
 
-                try{
+				try {
 					/* Logout from Google+ */
 					Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
 							new ResultCallback<Status>() {
@@ -366,7 +357,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 									//nothing
 								}
 							});
-				}catch (Exception e){
+				} catch (Exception e) {
 					//hide like there's no tomorrow
 				}
 			}
@@ -377,7 +368,8 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		editor.commit();
 		startActivity(new Intent(this, LoginActivity.class));
 		finish();
-=======
+	}
+
 	protected void handleMenuSearch(){
 		ActionBar action = getSupportActionBar();
 
@@ -444,7 +436,6 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		startActivity(intent);
 
 		closeSearch(getSupportActionBar());
->>>>>>> profile
 	}
 
 	private void showSortDialog() {

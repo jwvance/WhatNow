@@ -6,7 +6,6 @@
     <string name="title_activity_listed_event">ListedEventActivity</string>
     <string name="title_activity_my_profile">MyProfileActivity</string>
 
-<<<<<<< HEAD
 
     <string name="facebook_app_id">532498350256407</string>
     <string name="server_client_id">823024199502-vdik5gj9vf4dmcqnlfgo2obs0om9ui1a.apps.googleusercontent.com</string>
@@ -70,7 +69,6 @@
     <!-- Log Messages -->
     <string name="log_message_password_changed_successfully">Password changed successfully from temporary password to </string>
     <string name="log_message_auth_successful">auth successful.</string>
-=======
     <string-array name="categories">
         <item>BARS</item>
         <item>CLUBS</item>
@@ -169,6 +167,5 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="title_activity_search_res">Search</string>
->>>>>>> profile
 
 </resources>
