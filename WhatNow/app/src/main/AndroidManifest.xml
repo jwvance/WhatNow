@@ -11,12 +11,19 @@
         android:maxSdkVersion="23"/>
 
     <application
+        android:name=".WhatNowApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="WhatNow"
         android:largeHeap="true"
         android:supportsRtl="true"
-        android:theme="@style/WhatNowTheme">
+        android:theme="@style/WhatNowTheme" >
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
         <activity
             android:name=".TabActivity"
             android:configChanges="orientation"
@@ -54,6 +61,30 @@
             android:label="New Event"
             android:screenOrientation="portrait">
         </activity>
+
+        <activity
+            android:name=".login.MainActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustPan"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+
+            <!-- <meta-data -->
+            <!-- android:name="android.support.PARENT_ACTIVITY" -->
+            <!-- android:value=".ui.MainActivity" /> -->
+
+        </activity>
+        <activity
+            android:name=".login.base.LoginActivity"
+            android:label="Log in"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+            <!--<intent-filter android:label="@string/app_name" >
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
+        </activity>
         <activity
             android:name=".MyProfileActivity"
             android:configChanges="orientation"
@@ -73,6 +104,11 @@
         </activity>
 
 
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
 
 </manifest>
