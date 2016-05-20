@@ -194,30 +194,23 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 		Firebase.setAndroidContext(context);
 		Firebase firebase = new Firebase(Constants.DATABASE_URL/* + "/events_list"*/);
+
+
 		firebase.addChildEventListener(new ChildEventListener() {
 			@Override
 			public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
 				try{
+
 					HashMap<String, Event> eventHashMap = (HashMap<String, Event>) dataSnapshot.getValue();
 					ArrayList<HashMap> weirdEvents = new ArrayList(eventHashMap.values());
 					HashMap e;
 					for (int i = 0; i < weirdEvents.size(); i++) {
 						e = weirdEvents.get(i);
-						//	int id = (int) ((long) e.get("id"));
-						//	int hourStart = (int) ((long) e.get("hourStart"));
-						//	int minuteStart = (int) ((long) e.get("minuteStart"));
-						//	int hourEnd = (int) ((long) e.get("hourEnd"));
-						//	int minuteEnd = (int) ((long) e.get("minuteEnd"));
-						//	String location = (String) e.get("location");
 						Host host = new Host((String) ((HashMap) e.get("host")).get("name"));
-						//	String name = (String) e.get("name");
-						//	String description = (String) e.get("description");
 						Category category = new Category((String) ((HashMap) e.get("category")).get("name"));
 						int categoryN = categories.indexOf(category.getName());
 						long timeStamp = ((long) e.get("timestamp"));
-						//	long dateStart = (long) e.get("dateStart");
-						//	String imagePath = (String) e.get("imagePath");
 						Event event = new Event((int) ((long) e.get("id")), (int) ((long) e.get("hourStart")),
 								(int) ((long) e.get("minuteStart")), (int) ((long) e.get("hourEnd")),
 								(int) ((long) e.get("minuteEnd")), (String) e.get("location"), host,
@@ -320,6 +313,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 			}
 		});
+		setSorting(sortingCriteria);
 	}
 
 	@Override
@@ -504,6 +498,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		//ArrayList<Event> catEvents;
 		for (int i = 0; i < categories.size(); i++) {
 			fragment = new TabFragment();
+			fragment.setTabActivity(this);//added this; Carlos
 			//catEvents = new ArrayList<Event>(events);
 			fragment.setContext(this);
 			fragment.setCategory(categories.get(i));    //EITHER THIS OR DOWNLOAD EVENTS HERE AND USE setEvents(events)

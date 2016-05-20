@@ -261,14 +261,18 @@ public class TabFragment extends Fragment{
 
 			@Override
 			public void run() {
+				swipeContainer.setRefreshing(false);
 				try{
-					swipeContainer.setRefreshing(false);
+					SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(tabActivity.getApplicationContext());
+					int which = preferences.getInt("itemSelected", 0);
+					tabActivity.setSorting(which);
+
 
 				} catch (Error e){
 					e.printStackTrace();
 				}
 			}
-		}, 4000);
+		}, 3000);
 
 
 
