@@ -29,6 +29,13 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".BookmarkActivity"
+            android:configChanges="orientation"
+            android:label="Bookmarks"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhatNowTheme">
+        </activity>
+        <activity
             android:name=".SearchResultsActivity"
             android:configChanges="orientation"
             android:label="Search"

@@ -288,12 +288,27 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		} else if (id == R.id.action_profile) {
 			startActivity(new Intent(this, MyProfileActivity.class));
 			return true;
+
 		} else if(id == R.id.action_search){
 			handleMenuSearch();
+
+		}else if(id == R.id.action_bookmarks){
+			startActivity(new Intent(this, BookmarkActivity.class));
 		}
 
 		return super.onOptionsItemSelected(item);
 	}
+
+
+	/*protected void handleBookmarks(){
+		ActionBar action = getSupportActionBar();
+
+		action.setDisplayShowCustomEnabled(true);
+		action.setCustomView(R.layout.search_bar);
+		action.setDisplayShowTitleEnabled(false);
+
+	}*/
+
 
 	protected void handleMenuSearch(){
 		ActionBar action = getSupportActionBar();

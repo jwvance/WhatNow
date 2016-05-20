@@ -37,6 +37,12 @@
         android:title="Search"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/action_bookmarks"
+        android:orderInCategory="99"
+        android:title="Saved Events"
+        app:showAsAction="never"/>
+
 
 
 </menu>
