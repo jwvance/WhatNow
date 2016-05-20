@@ -39,6 +39,7 @@ public class Constants {
 	public static final String KEY_PROVIDER = "PROVIDER";
 	public static final String KEY_ENCODED_EMAIL = "ENCODED_EMAIL";
 	public static final String KEY_GOOGLE_EMAIL = "GOOGLE_EMAIL";
+	public static final String KEY_FACEBOOK_EMAIL = "FACEBOOK_EMAIL";
 
 
 	/**

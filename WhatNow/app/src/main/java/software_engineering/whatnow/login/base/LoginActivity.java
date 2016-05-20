@@ -9,17 +9,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -27,11 +23,9 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firebase.client.AuthData;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ServerValue;
-import com.firebase.client.ValueEventListener;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -44,9 +38,9 @@ import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.Scope;
 
+import software_engineering.whatnow.TabActivity;
 import software_engineering.whatnow.firebase_stuff.Constants;
 import software_engineering.whatnow.login.BaseActivity;
-import software_engineering.whatnow.login.MainActivity;
 import software_engineering.whatnow.utils.*;
 import software_engineering.whatnow.model.User;
 
@@ -82,13 +76,24 @@ public class LoginActivity extends BaseActivity {
     private LoginButton loginButton;
 
     private CallbackManager callBack;
+	private boolean google;
+	private boolean facebook;
 
-    @Override
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         mSharedPrefEditor = mSharedPref.edit();
+
+    /*    if(mSharedPref.getBoolean("logged_in", false)){
+            Log.wtf("LOGIN", "come back from Base, inside LoginActivity");
+           // Intent intent = new Intent(this, TabActivity.class);
+           // startActivity(intent);
+            finish();
+            return;
+        }*/
 
         /**
          * Create Firebase references
@@ -106,6 +111,14 @@ public class LoginActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
+        /*if(mSharedPref.getBoolean("logged_in", false)){
+            Log.wtf("LOGIN", "about to open TabActivity");
+            Intent intent = new Intent(this, TabActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }*/
+
         /**
          * This is the authentication listener that maintains the current user session
          * and signs in automatically on application launch
@@ -121,7 +134,7 @@ public class LoginActivity extends BaseActivity {
                  * already holds userName/provider data from the latest session
                  */
                 if (authData != null) {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, TabActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
@@ -210,17 +223,20 @@ public class LoginActivity extends BaseActivity {
                  * If user has logged in with Google provider
                  */
                 if (authData.getProvider().equals(Constants.GOOGLE_PROVIDER)) {
-                    setAuthenticatedUserGoogle(authData);
-                } else {
-                    Log.e(LOG_TAG, getString(R.string.log_error_invalid_provider) + authData.getProvider());
-                }
+                    setAuthenticatedUser(authData);
+                } else if(authData.getProvider().equals(Constants.FACEBOOK_PROVIDER)) {
+					setAuthenticatedUser(authData);
+				}else{
+					Log.e(LOG_TAG, getString(R.string.log_error_invalid_provider) + authData.getProvider());
+				}
+
 
                 /* Save provider name and encodedEmail for later use and start MainActivity */
                 mSharedPrefEditor.putString(Constants.KEY_PROVIDER, authData.getProvider()).apply();
                 mSharedPrefEditor.putString(Constants.KEY_ENCODED_EMAIL, mEncodedEmail).apply();
 
                 /* Go to main activity */
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                Intent intent = new Intent(LoginActivity.this, TabActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
@@ -260,16 +276,19 @@ public class LoginActivity extends BaseActivity {
      *
      * @param authData AuthData object returned from onAuthenticated
      */
-    private void setAuthenticatedUserGoogle(final AuthData authData) {
+    private void setAuthenticatedUser(final AuthData authData) {
         /**
          * If google api client is connected, get the lowerCase user email
          * and save in sharedPreferences
          */
         String unprocessedEmail;
-        if (mGoogleApiClient.isConnected()) {
+        if (google && mGoogleApiClient.isConnected()) {
             unprocessedEmail = mGoogleAccount.getEmail().toLowerCase();
             mSharedPrefEditor.putString(Constants.KEY_GOOGLE_EMAIL, unprocessedEmail).apply();
-        } else {
+        } else if(facebook) {
+			unprocessedEmail = authData.getProviderData().get("displayName") + "";
+			mSharedPrefEditor.putString(Constants.KEY_FACEBOOK_EMAIL, unprocessedEmail).apply();
+		}else{
             unprocessedEmail = mSharedPref.getString(Constants.KEY_GOOGLE_EMAIL, null);
         }
 
@@ -338,6 +357,7 @@ public class LoginActivity extends BaseActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.wtf("LOGIN", "about to open Google Login");
                 onSignInGooglePressed(v);
             }
         });
@@ -345,7 +365,7 @@ public class LoginActivity extends BaseActivity {
 
     private void setupFacebookSignIn(){
         loginButton = (LoginButton) findViewById(R.id.login_with_facebook);
-        AccessToken facebookToken = AccessToken.getCurrentAccessToken();
+        final AccessToken facebookToken = AccessToken.getCurrentAccessToken();
         RC_FACEBOOK_LOGIN = loginButton.getRequestCode();
         Log.e(LOG_TAG, "facebook request code:" + RC_FACEBOOK_LOGIN);
 
@@ -355,17 +375,20 @@ public class LoginActivity extends BaseActivity {
             public void onSuccess(LoginResult loginResult) {
                 Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(loginIntent);
+				facebook = true;
             }
 
             @Override
             public void onCancel() {
                 showErrorToast("Log In was cancelled.");
+				facebook = false;
             }
 
             @Override
             public void onError(FacebookException error) {
                 showErrorToast("Log In failed.");
                 Log.e(LOG_TAG, "Facebook Error: " + error);
+				facebook = false;
             }
         });
 
@@ -377,9 +400,18 @@ public class LoginActivity extends BaseActivity {
      * Sign in with Google plus when user clicks "Sign in with Google" textView (button)
      */
     public void onSignInGooglePressed(View view) {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_GOOGLE_LOGIN);
-        mAuthProgressDialog.show();
+    	try {
+			google = true;
+			Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+			startActivityForResult(signInIntent, RC_GOOGLE_LOGIN);
+			mAuthProgressDialog.show();
+        	Log.wtf("LOGIN", "about to save in the preferences");
+        	mSharedPrefEditor.putBoolean("logged_in", true);
+        	mSharedPrefEditor.commit();
+		}catch(Exception e){
+			Log.wtf("LOGIN PROBLEM", e.getMessage());
+			e.printStackTrace();
+		}
 
     }
 

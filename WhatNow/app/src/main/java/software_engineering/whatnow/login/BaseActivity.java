@@ -21,6 +21,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
 import software_engineering.whatnow.R;
+import software_engineering.whatnow.TabActivity;
 import software_engineering.whatnow.firebase_stuff.Constants;
 import software_engineering.whatnow.login.base.LoginActivity;
 import software_engineering.whatnow.utils.*;
@@ -41,10 +42,21 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected GoogleApiClient mGoogleApiClient;
     protected Firebase.AuthStateListener mAuthListener;
     protected Firebase mFirebaseRef;
+    private SharedPreferences mSharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+    /*    mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if(mSharedPref.getBoolean("logged_in", false)){
+            Log.wtf("LOGIN", "about to open TabActivity from Base");
+            Intent intent = new Intent(this, TabActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }*/
 
         /* Setup the Google API object to allow Google logins */
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -118,7 +130,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
 
         if (id == R.id.action_logout) {
-            logout();
+			Log.wtf("LOGOUT", "inside Base about to call logout()");
+			logout();
             return true;
         }
 
@@ -145,6 +158,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
      */
     protected void logout() {
 
+		Log.wtf("LOGOUT", "inside Base about to log out");
         /* Logout if mProvider is not null */
         if (mProvider != null) {
             Log.e(LOG_TAG, "PROVIDER:" + mProvider);
@@ -163,6 +177,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
                         });
             }
         }
+		mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences.Editor editor = mSharedPref.edit();
+		editor.remove("logged_in");
+		editor.commit();
     }
 
     private void takeUserToLoginScreenOnUnAuth() {

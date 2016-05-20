@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,20 +25,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+
 import software_engineering.whatnow.firebase_stuff.Constants;
+import software_engineering.whatnow.login.BaseActivity;
+import software_engineering.whatnow.login.base.LoginActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TabActivity extends AppCompatActivity implements DialogInterface.OnClickListener{
+public class TabActivity extends AppCompatActivity implements DialogInterface.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
 	//Test for location
 	public static Context con;
@@ -60,12 +72,24 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	//-------------------------
 	ArrayList<String> categories;
 	private ArrayList<TabFragment> fragments;
+	private SharedPreferences mSharedPref;
 	//String[] categories = new String[{"ALL","BARS","CLUBS","FOOD","SHOPS","OTHERS"}];
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		Log.wtf("LOGIN", "inside TabActivity");
+		mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		if(!mSharedPref.getBoolean("logged_in", false)){
+			Log.wtf("LOGIN", "inside Tab, going to LoginActivity");
+			Intent intent = new Intent(this, LoginActivity.class);
+			startActivity(intent);
+			finish();
+			return;
+		}
+
 		setContentView(R.layout.tab_layout);
 
 		Firebase.setAndroidContext(this);
@@ -146,9 +170,60 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			startActivity(new Intent(this, MyProfileActivity.class));
 
 			return true;
+		} else if(id == R.id.action_logout){
+			logout();
+			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void logout() {
+		Log.wtf("LOGOUT", "inside Base about to log out");
+
+		GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+				.requestEmail()
+				.build();
+		/**
+		 * Build a GoogleApiClient with access to the Google Sign-In API and the
+		 * options specified by gso.
+		 */
+
+        /* Setup the Google API object to allow Google+ logins */
+		GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this)
+				.enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+				.addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+				.build();
+
+		String mProvider = mSharedPref.getString(Constants.KEY_PROVIDER, null);
+        /* Logout if mProvider is not null */
+		if (mProvider != null) {
+			Log.e(LOG_TAG, "PROVIDER:" + mProvider);
+
+			(new Firebase(Constants.FIREBASE_URL)).unauth();
+
+			if (mProvider.equals(Constants.GOOGLE_PROVIDER)) {
+
+                try{
+					/* Logout from Google+ */
+					Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+							new ResultCallback<Status>() {
+								@Override
+								public void onResult(Status status) {
+									//nothing
+								}
+							});
+				}catch (Exception e){
+					//hide like there's no tomorrow
+				}
+			}
+		}
+
+		SharedPreferences.Editor editor = mSharedPref.edit();
+		editor.remove("logged_in");
+		editor.commit();
+		startActivity(new Intent(this, LoginActivity.class));
+		finish();
 	}
 
 	private void showSortDialog() {
@@ -248,6 +323,11 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		for (int i = 0; i < fragments.size(); i++) {
 			fragments.get(i).setSortingCriteria(which, this);
 		}
+	}
+
+	@Override
+	public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
 	}
 
 	class ViewPagerAdapter extends FragmentPagerAdapter {
