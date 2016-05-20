@@ -13,8 +13,12 @@ package software_engineering.whatnow;
  * Created by Steve on 4/20/16.
  */
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -50,9 +54,13 @@ public class TabFragment extends Fragment{
 	private RecyclerAdapter recyclerAdapter;
 	private Context context;
 	private int sortingCriteria = 1; //default is incoming
-	//private ProgressBar progressBar;
+
+	private TabActivity tabActivity;
 
 	public TabFragment() {}
+
+	//Swipe for refresh
+	private SwipeRefreshLayout swipeContainer;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -96,7 +104,11 @@ public class TabFragment extends Fragment{
 								(int) ((long) e.get("minuteStart")), (int) ((long) e.get("hourEnd")),
 								(int) ((long) e.get("minuteEnd")), (String) e.get("location"), host,
 								(String) e.get("name"), (String) e.get("description"), category,
+<<<<<<< HEAD
 								(long) e.get("dateStart"), (String) e.get("imageAsString"), true, timeStamp);
+=======
+								(long) e.get("dateStart"), (String) e.get("imagePath"), TabActivity.con);
+>>>>>>> catPics
 						event.setMyLoc(context);
 						cardsEventData.add(event);
 					//	Log.wtf("FIREBASE event name CEL", i + ": " + weirdEvents.get(i).get("name").toString());
@@ -148,9 +160,27 @@ public class TabFragment extends Fragment{
 		recyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view);
 		recyclerView.setHasFixedSize(true);
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
+
+		swipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeContainer); //Modify this part. It returns null
+		swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+			@Override
+			public void onRefresh() {
+				//Code for refreshing events
+				//swipeContainer.setRefreshing(false) on
+				//successful network request
+				fetchTimelineAsync(0);
+			}
+		});
+		//setting colors of refresh
+		swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+				android.R.color.holo_green_light,
+				android.R.color.holo_orange_light,
+				android.R.color.holo_red_light);
+
+
 		//	cardsEventData = AddEventActivity.loadEvents(rootView.getContext());
 
-	//	progressBar = (ProgressBar) rootView.findViewById(R.id.fragmentProgressBar);
 
 		// PLACE HERE CALL TO THE SERVER TO GET EVENTS FROM THE SPECIFIC CATEGORY
 		/*cardsEventData.add("Event 1");
@@ -163,10 +193,25 @@ public class TabFragment extends Fragment{
 		cardsEventData.add("Event 8");
 		cardsEventData.add("Event 9");*/
 
-		//	recyclerAdapter = new RecyclerAdapter(cardsEventData);
+		recyclerAdapter = new RecyclerAdapter(cardsEventData);
 
 		recyclerView.setAdapter(recyclerAdapter);	// GIVES TO THE ADAPTER ONLY THE EVENTS RELEVANT TO THIS FRAGMENT
 
+
+		//This is to make sure that it works with either the ALL. Moved things here so as to make things more efficient.
+		//That is, be conservative with memory.
+	/*	if(category.equals("ALL")){
+			//Sets all the events to view.
+			recyclerView.setAdapter(new RecyclerAdapter(cardsEventData));
+		}
+		else{
+			//This is for the appropriate category tab.
+			ArrayList<Event> appropriate = new ArrayList<Event>();
+			for(int i = 0; i<cardsEventData.size(); i++){
+				if(cardsEventData.get(i).getCategory().getName().equals(category)) appropriate.add(cardsEventData.get(i));
+			}
+			recyclerView.setAdapter(new RecyclerAdapter(appropriate));
+		}*/
 		return rootView;
 	}
 
@@ -195,5 +240,42 @@ public class TabFragment extends Fragment{
 
 	public void setCategory(String category){
 		this.category = category;
+	}
+
+	public void fetchTimelineAsync(int page) {
+		//here there needs to be some code for the refreshing itself.
+		//A call to firebase needs to be made.
+		//What to do for a successful call and a failed call.
+		//onSuccess{}
+		//onFail{}
+
+		//SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(tabActivity.getApplicationContext());
+		//int which = preferences.getInt("itemSelected", 0);
+
+
+		//tabActivity.setSorting(which);
+		//Firebase.setAndroidContext(tabActivity.getApplicationContext());
+		//Firebase firebase = new Firebase(Constants.DATABASE_URL/* + "/events_list"*/);
+		//firebase.keepSynced(true);
+		new Handler().postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				try{
+					swipeContainer.setRefreshing(false);
+
+				} catch (Error e){
+					e.printStackTrace();
+				}
+			}
+		}, 4000);
+
+
+
+
+	}
+
+	public void setTabActivity(TabActivity tabActivity) {
+		this.tabActivity = tabActivity;
 	}
 }

@@ -35,7 +35,11 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+
 import java.util.Date;
+
+import java.util.List;
+
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 	private ArrayList<Event> eventDataSource;
@@ -159,5 +163,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 		public void setID(int id){
 			this.id = id;
 		}
+	}
+
+	public void clear() {
+		//code for cleaning stuff
+		notifyDataSetChanged();
+	}
+
+	public void addAll() {
+		//code for adding stuff to the list
+		notifyDataSetChanged();
 	}
 }

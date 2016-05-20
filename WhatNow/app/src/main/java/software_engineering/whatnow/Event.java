@@ -24,7 +24,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+
 import java.text.SimpleDateFormat;
+
+import android.content.*;
+import android.preference.PreferenceManager;
+import android.view.View;
+
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -97,6 +104,7 @@ public class Event implements Comparable {
 
     //Location stuff
     private LatLng myLoc;
+    private Context cont;
 
 
     public Event(){
@@ -104,7 +112,7 @@ public class Event implements Comparable {
     }
 
     public Event(int id, int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
-                 Host host, String name, String description, Category category, long dateStart, String imageAsString, boolean fromFirebase, long timeStamp) {
+                 Host host, String name, String description, Category category, long dateStart, String imageAsString, boolean fromFirebase, long timeStamp, Context cont) {
         this.id = id;
         this.hourStart = hourStart;
         this.minuteStart = minuteStart;
@@ -127,7 +135,8 @@ public class Event implements Comparable {
             npe.printStackTrace();
         }
         this.imageAsString = imageAsString;
-
+        this.timestamp = System.currentTimeMillis();
+        this.cont = cont;
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(dateStart);

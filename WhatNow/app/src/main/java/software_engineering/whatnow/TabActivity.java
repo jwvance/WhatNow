@@ -34,22 +34,29 @@ package software_engineering.whatnow;
  * Created by Steve on 4/20/16.
  */
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationListener;
 
 import android.content.DialogInterface;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+
 import android.support.v7.app.ActionBar;
+
+import android.support.v4.widget.SwipeRefreshLayout;
+
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -109,6 +116,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	//String[] categories = new String[{"ALL","BARS","CLUBS","FOOD","SHOPS","OTHERS"}];
 
 
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -125,9 +133,37 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		locationData.getLocation();
 		locTool.requestLocationUpdate();
 		//locListener = locTool.getLocationListener();
+		Firebase.setAndroidContext(this);
+
+
 
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		sortingCriteria = preferences.getInt("itemSelected", 1);
+
+		final ProgressDialog dialog = new ProgressDialog(this); // this = YourActivity
+		dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		dialog.setMessage("Loading location. Please wait...");
+		dialog.setIndeterminate(false);
+		dialog.setCanceledOnTouchOutside(false);
+		dialog.show();
+
+		//Window with spinner waiting for location to be loaded
+		new Handler().postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				dialog.dismiss();
+				try{
+					LocationToolBox.storedLatitude= locationData.getLocation().getLatitude();
+					LocationToolBox.storedLongitude =  locationData.getLocation().getLongitude();
+					//I call onResume() again because it's the only thing i tried that worked.
+					onResume();
+				} catch (NullPointerException e){
+					e.printStackTrace();
+				}
+			}
+		}, 7000);
+
 
 		if(locationData.getLocation() != null){
 			LocationToolBox.storedLatitude= locationData.getLocation().getLatitude();
@@ -161,6 +197,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		firebase.addChildEventListener(new ChildEventListener() {
 			@Override
 			public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
 				try{
 					HashMap<String, Event> eventHashMap = (HashMap<String, Event>) dataSnapshot.getValue();
 					ArrayList<HashMap> weirdEvents = new ArrayList(eventHashMap.values());
@@ -185,7 +222,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 								(int) ((long) e.get("minuteStart")), (int) ((long) e.get("hourEnd")),
 								(int) ((long) e.get("minuteEnd")), (String) e.get("location"), host,
 								(String) e.get("name"), (String) e.get("description"), category,
-								(long) e.get("dateStart"), (String) e.get("imageAsString"), true, timeStamp);
+								(long) e.get("dateStart"), (String) e.get("imageAsString"), true, timeStamp, context);
 						event.setMyLoc(context);
 
 						eventsEvents.get(categoryN).add(event);	//specific category
@@ -215,7 +252,57 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 			@Override
 			public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+				try{
+					HashMap<String, Event> eventHashMap = (HashMap<String, Event>) dataSnapshot.getValue();
+					ArrayList<HashMap> weirdEvents = new ArrayList(eventHashMap.values());
+					HashMap e;
+					eventsEvents.clear();
+					for (int i = 0; i < weirdEvents.size(); i++) {
+						e = weirdEvents.get(i);
+						//	int id = (int) ((long) e.get("id"));
+						//	int hourStart = (int) ((long) e.get("hourStart"));
+						//	int minuteStart = (int) ((long) e.get("minuteStart"));
+						//	int hourEnd = (int) ((long) e.get("hourEnd"));
+						//	int minuteEnd = (int) ((long) e.get("minuteEnd"));
+						//	String location = (String) e.get("location");
+						Host host = new Host((String) ((HashMap) e.get("host")).get("name"));
+						//	String name = (String) e.get("name");
+						//	String description = (String) e.get("description");
+						Category category = new Category((String) ((HashMap) e.get("category")).get("name"));
+						int categoryN = categories.indexOf(category.getName());
+						long timeStamp = ((long) e.get("timestamp"));
+						//	long dateStart = (long) e.get("dateStart");
+						//	String imagePath = (String) e.get("imagePath");
+						Event event = new Event((int) ((long) e.get("id")), (int) ((long) e.get("hourStart")),
+								(int) ((long) e.get("minuteStart")), (int) ((long) e.get("hourEnd")),
+								(int) ((long) e.get("minuteEnd")), (String) e.get("location"), host,
+								(String) e.get("name"), (String) e.get("description"), category,
+								(long) e.get("dateStart"), (String) e.get("imageAsString"), true, timeStamp, context);
+						event.setMyLoc(context);
 
+						eventsEvents.get(categoryN).add(event);	//specific category
+						eventsEvents.get(0).add(event);	//ALL
+
+						//	events.add(event);
+						Log.wtf("TabActivity", "Downloaded an event!");
+					}
+				}catch(Exception e){
+					Log.wtf("FIREBASE event name CEL", e.getMessage());
+				}
+				if(eventsEvents.get(0).size() > 0 && eventsEvents.get(0).get(0) == null) {
+					eventsEvents.clear();
+					Log.wtf("TabActivity", "Clearing events!");
+				}
+				try{
+					Log.wtf("TabActivity", "About to save!");
+					AddEventActivity.saveEvents(context, eventsEvents.get(0), -1);
+					//recyclerAdapter.notifyDataSetChanged();
+					//	findViewById(R.id.fragmentProgressBar).setVisibility(View.INVISIBLE);
+
+					setSorting(sortingCriteria);
+				}catch(NullPointerException e){
+					e.printStackTrace();
+				}
 			}
 
 			@Override
@@ -414,10 +501,13 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	private void setupViewPager(ViewPager viewPager) {
 		ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 		TabFragment fragment;
+		//ArrayList<Event> catEvents;
 		for (int i = 0; i < categories.size(); i++) {
 			fragment = new TabFragment();
+			//catEvents = new ArrayList<Event>(events);
 			fragment.setContext(this);
 			fragment.setCategory(categories.get(i));    //EITHER THIS OR DOWNLOAD EVENTS HERE AND USE setEvents(events)
+
 
 		/*	if(i > 0) {
 				for (int j = events.size() - 1; j >= 0; j--) {
@@ -428,6 +518,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			}
 			fragment.setEvents(events);*/
 			fragment.setEvents(eventsEvents.get(i));
+
 			adapter.addFragment(fragment, categories.get(i));
 			fragments.add(fragment);
 		}
@@ -467,7 +558,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		dialog.dismiss();
 	}
 
-	private void setSorting(int which) {
+	public void setSorting(int which) {
 		for (int i = 0; i < fragments.size(); i++) {
 			fragments.get(i).setSortingCriteria(which, this);
 		}
@@ -501,4 +592,12 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			return mFragmentTitleList.get(position);
 		}
 	}
+
+	public void newEvent(View view) {
+		Intent intent = new Intent(this, AddEventActivity.class);
+		startActivity(intent);
+	}
+
+
+
 }
