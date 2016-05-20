@@ -1,6 +1,21 @@
+/*  CLASS DESCRIPTION:
+    -   This is the class that has all the info about a single event
+    -   there are many fields and others will be added soon, they all have getters
+        and setters, there are also additional methods
+    -   getDistance and the one with meters (made by Carlos) calculates the distance,
+        they need to be fixed though (many exceptions and crashes)
+    -   toString is used by the saveEvents function
+    -   utility methods to get the date as a String MM-DD-YYYY (instead of a long),
+        the time as a String like HH:MM, also static versions of both
+    -   getLocationFromAddress is another utility function to get a lat&lng pair from
+        an address like "Santa Cruz", "College Nine Road, Santa Cruz" or whatever
+    -   the following methods are related to the sorting functionality: it was
+        implemented so that the compareTo calls different comparing methods depending
+        on the sorting criteria set
+*/
+
 package software_engineering.whatnow;
 
-import android.app.Activity;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
@@ -9,10 +24,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import android.content.*;
-import android.preference.PreferenceManager;
-
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,9 +64,9 @@ public class Event implements Comparable {
     @SerializedName("id")
     @Expose
     private Integer id;
-    @SerializedName("imagePath")
+    @SerializedName("imageAsString")
     @Expose
-    private String imagePath;
+    private String imageAsString;
     @SerializedName("location")
     @Expose
     private String location;
@@ -90,7 +104,7 @@ public class Event implements Comparable {
     }
 
     public Event(int id, int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
-                 Host host, String name, String description, Category category, long dateStart, String imagePath) {
+                 Host host, String name, String description, Category category, long dateStart, String imageAsString, boolean fromFirebase, long timeStamp) {
         this.id = id;
         this.hourStart = hourStart;
         this.minuteStart = minuteStart;
@@ -102,15 +116,17 @@ public class Event implements Comparable {
         this.description = description;
         this.category = category;
         this.dateStart = dateStart;
-        this.timestamp = System.currentTimeMillis();
+        if (fromFirebase){
+            this.timestamp=timeStamp;
+        } else this.timestamp = System.currentTimeMillis();
 
-		try {
-			this.myLoc = getLocationFromAddress(AddEventActivity.conEvent, this.location);
-		}catch(NullPointerException npe){
-			this.myLoc = new LatLng(36.9741,-122.0308);	//Santa Cruz
-			npe.printStackTrace();
-		}
-        this.imagePath = imagePath;
+        try {
+            this.myLoc = getLocationFromAddress(AddEventActivity.conEvent, this.location);
+        }catch(NullPointerException npe){
+            this.myLoc = new LatLng(36.9741,-122.0308);	//Santa Cruz
+            npe.printStackTrace();
+        }
+        this.imageAsString = imageAsString;
 
 
         Calendar calendar = Calendar.getInstance();
@@ -253,12 +269,12 @@ public class Event implements Comparable {
         this.id = id;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getImageAsString() {
+        return imageAsString;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setImageAsString(String imageAsString) {
+        this.imageAsString = imageAsString;
     }
 
     public int getNumberOfGuests() {
@@ -281,10 +297,74 @@ public class Event implements Comparable {
 
     @Override
     public String toString() {
-        return id + ":::" + hourStart + ":::" + minuteStart + ":::" +
-                hourEnd + ":::" + minuteEnd + ":::" + location + ":::" +
-                host.getName() + ":::" + name + ":::" +description + ":::"
-                + category.getName() + ":::" + dateStart + ":::" + imagePath;
+        return id + ":::***:::***:::" + hourStart + ":::***:::***:::" + minuteStart + ":::***:::***:::" +
+                hourEnd + ":::***:::***:::" + minuteEnd + ":::***:::***:::" + location + ":::***:::***:::" +
+                host.getName() + ":::***:::***:::" + name + ":::***:::***:::" +description + ":::***:::***:::"
+                + category.getName() + ":::***:::***:::" + dateStart + ":::***:::***:::" + imageAsString;
+    }
+
+    public String getFriendlyDate(){
+        String friendlyString;
+
+        //get date and parse
+        String currDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String[] dateSplits = currDate.split("-");
+        String currYear = dateSplits[0];
+        String currMonth = dateSplits[1];
+        String currDay = dateSplits[2];
+
+        //get time of day and parse out "hours:minutes:seconds"
+        Date time = Calendar.getInstance().getTime();
+        String currTime = time.toString();
+        String[] isolateTime = currTime.split(" ");
+        String timeofDay = isolateTime[3];
+
+        //parse into hours, minutes, seconds
+        String[] timeSplits = timeofDay.split(":");
+        String hourSplit = timeSplits[0];
+        String minuteSplit = timeSplits[1];
+
+        //check if this year
+        if(Integer.parseInt(currYear) == year){
+            if(Integer.parseInt(currMonth) == month) {
+                if (Integer.parseInt(currDay) == day) {
+                    //if event is today, calculate hours until event
+                    int returnNum = (hourStart - Integer.valueOf(hourSplit));
+                    if (returnNum > 1) {
+                        return "in " + Integer.toString(returnNum) + " hours";
+
+                    }else if(returnNum == 1){
+                        int minutesLeft = (minuteStart - Integer.valueOf(minuteSplit));
+                        //show 1 hour
+                        if(minutesLeft > 0){
+                            return "in 1 hour";
+
+                        }else if(minutesLeft <= 0){
+                            int minuteMath = 60 - Integer.valueOf(minuteSplit) + minuteStart;
+                            return "in " + Integer.toString(minuteMath) + " minutes";
+                        }
+
+                    }else if(returnNum == 0) {
+                        //calculate minutes until event
+                        int minutesLeft = (minuteStart - Integer.valueOf(minuteSplit));
+                        if (minutesLeft > 0) {
+                            return "in " + Integer.toString(minutesLeft) + " minutes";
+                        } else {
+                            return "Happening now!";
+                        }
+
+                    }else if(returnNum < 0){
+                        return "Happening now!";
+                    }
+
+                //event is tomorrow
+                }else if ((Integer.parseInt(currDay) - day) == -1) {
+                    //return "tomorrow at:
+                    return "tomorrow at " + Integer.toString(hourStart) + ":" + (minuteStart < 10 ? 0 : "") + minuteStart;
+                }
+            }
+        }
+        return Integer.toString(month) + "/" + Integer.toString(day) + " @ " + (hourStart < 10 ? 0 : "") + hourStart + ":" + (minuteStart < 10 ? 0 : "") + minuteStart;
     }
 
     public String getDateString(){
@@ -292,27 +372,27 @@ public class Event implements Comparable {
     }
 
     public String getStartTime(){
-        return "" + (hourStart < 10 ? 0 : "") + hourStart + " : " + (minuteStart < 10 ? 0 : "") + minuteStart;
+        return "" + (hourStart < 10 ? 0 : "") + hourStart + ":" + (minuteStart < 10 ? 0 : "") + minuteStart;
     }
 
-	public String getEndTime(){
-		return "" + (hourEnd < 10 ? 0 : "") + hourEnd + " : " + (minuteEnd < 10 ? 0 : "") + minuteEnd;
-	}
+    public String getEndTime(){
+        return "" + (hourEnd < 10 ? 0 : "") + hourEnd + ":" + (minuteEnd < 10 ? 0 : "") + minuteEnd;
+    }
 
-	public static String getTimeString(int hour, int minute){
-		return "" + (hour < 10 ? 0 : "") + hour + " : " + (minute < 10 ? 0 : "") + minute;
-	}
+    public static String getTimeString(int hour, int minute){
+        return "" + (hour < 10 ? 0 : "") + hour + ":" + (minute < 10 ? 0 : "") + minute;
+    }
 
-	public static String getDateString(int year, int month, int day){
-		return month + "-" + (day < 10 ? 0 : "") + day + "-" + year;
-	}
+    public static String getDateString(int year, int month, int day){
+        return month + "-" + (day < 10 ? 0 : "") + day + "-" + year;
+    }
     public void setSortingCriteria(int sortingCriteria) {
         this.sortingCriteria = sortingCriteria;
     }
 
-	public void setMyLoc(Context context){
-		this.myLoc = getLocationFromAddress(context, this.location);
-	}
+    public void setMyLoc(Context context){
+        this.myLoc = getLocationFromAddress(context, this.location);
+    }
 
     public LatLng getLocationFromAddress(Context context, String strAddress) {
 
@@ -339,42 +419,39 @@ public class Event implements Comparable {
         return p1;
     }
 
-    //returns 1 if this is before the other event, 0 if they are at the same time
-    //and -1 if the second event is before this one
+    //returns -1 if this is before the other event, 0 if they are at the same time
+    //and 1 if the second event is before this one
     public int compareToByTime(Event event){
         if (this.getYear()<event.getYear())
-            return 1;
+            return -1;
         else if (this.getYear()>event.getYear())
-            return -1;
+            return 1;
         if (this.getMonth()<event.getMonth())
-            return 1;
+            return -1;
         else if (this.getMonth()>event.getMonth())
-            return -1;
+            return 1;
         if (this.getDay()<event.getDay())
-            return 1;
+            return -1;
         else if (this.getDay()>event.getDay())
-            return -1;
+            return 1;
         if (this.getHourStart()<event.getHourStart())
-            return 1;
-        else if (this.getHourStart()<event.getHourStart())
             return -1;
+        else if (this.getHourStart()>event.getHourStart())
+            return 1;
         if (this.getMinuteStart()<event.getMinuteStart())
-            return 1;
-        else if (this.getMinuteStart()<event.getMinuteStart())
             return -1;
+        else if (this.getMinuteStart()>event.getMinuteStart())
+            return 1;
+
 
         return 0;
     }
 
 
-    //returns 1 if this is closer than the other event, 0 if they are at the same distance
-    //and -1 if the second event is closer to this one
+    //returns -1 if this is closer than the other event, 0 if they are at the same distance
+    //and 1 if the second event is closer to this one
     public int compareToByDistance(Event event){
-        if (this.getDistanceInMeters()>event.getDistanceInMeters())
-            return 1;
-        else if (this.getDistanceInMeters()<event.getDistanceInMeters())
-            return -1;
-        return 0;
+        return (this.getDistanceInMeters()-event.getDistanceInMeters());
     }
 
     //returns 1 if this has more attendences than the other event, 0 if they have the same
@@ -391,9 +468,9 @@ public class Event implements Comparable {
     //been created at the same time and -1 if the second event is more recent than this one
     public int compareToByCreationTime(Event event){
         if (this.getTimestamp()>event.getTimestamp())
-            return 1;
-        else if (this.getTimestamp()<event.getTimestamp())
             return -1;
+        else if (this.getTimestamp()<event.getTimestamp())
+            return 1;
         return 0;
     }
 
@@ -401,7 +478,6 @@ public class Event implements Comparable {
     public int compareTo(Object otherEvent) {
         int result=0;
         Event event = (Event) otherEvent;
-
 
         switch (this.sortingCriteria) {
 

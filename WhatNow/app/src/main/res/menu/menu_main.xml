@@ -17,11 +17,18 @@
         app:showAsAction="never"/>
 
     <item
+        android:id="@+id/action_addEvent"
+        android:icon="@drawable/ic_add_black_24dp"
+        android:orderInCategory="2"
+        android:title="Add Event"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/action_profile"
         android:icon="@drawable/ic_person_outline_black_24dp"
-        android:orderInCategory="0"
+        android:orderInCategory="3"
         android:title="Profile"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_sort"
@@ -33,8 +40,10 @@
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_black_24dp"
-        android:orderInCategory="2"
+        android:orderInCategory="0"
         android:title="Search"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
+
+
 
 </menu>

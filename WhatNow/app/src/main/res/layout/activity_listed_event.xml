@@ -41,6 +41,7 @@
                     android:src="@drawable/img_ex"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"/>
+
             </RelativeLayout>
 
         </android.support.design.widget.CollapsingToolbarLayout>
@@ -56,6 +57,8 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_person_add_black_24dp"
         app:layout_anchor="@id/app_bar"
-        app:layout_anchorGravity="bottom|end"/>
+        app:layout_anchorGravity="bottom|end"
+        android:clickable="true"
+        android:onClick="addPartecipant()" />
 
 </android.support.design.widget.CoordinatorLayout>

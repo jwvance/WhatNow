@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="software_engineering.whatnow" >
+<manifest package="software_engineering.whatnow"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="23"/>
 
     <application
         android:name=".WhatNowApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="WhatNow"
+        android:largeHeap="true"
         android:supportsRtl="true"
+<<<<<<< HEAD
         android:theme="@style/WhatNowTheme" >
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -20,6 +25,9 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+=======
+        android:theme="@style/WhatNowTheme">
+>>>>>>> profile
         <activity
             android:name=".TabActivity"
             android:configChanges="orientation"
@@ -32,12 +40,23 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".SearchResultsActivity"
+            android:configChanges="orientation"
+            android:label="Search"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhatNowTheme">
+        </activity>
+        <activity
             android:name=".ListedEventActivity"
-            android:label="Event" >
+            android:configChanges="orientation"
+            android:label="Event"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".AddEventActivity"
-            android:label="New Event" >
+            android:configChanges="orientation"
+            android:label="New Event"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity
@@ -65,15 +84,31 @@
         </activity>
         <activity
             android:name=".MyProfileActivity"
-            android:label="My Profile" >
+            android:configChanges="orientation"
+            android:label="My Profile"
+            android:screenOrientation="portrait">
+        <!--    <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="facebook" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="fb" />
+            </intent-filter>-->
         </activity>
 
 
+<<<<<<< HEAD
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+=======
+>>>>>>> profile
     </application>
 
 </manifest>

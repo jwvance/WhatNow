@@ -1,3 +1,9 @@
+/*  CLASS DESCRIPTION:
+    -   This is the class related to the Host idea
+    -   It's very empty now, but it's gonna contain much more info soon
+    -   every Event obj has a reference to a Host obj
+*/
+
 package software_engineering.whatnow;
 
 import com.google.gson.annotations.Expose;

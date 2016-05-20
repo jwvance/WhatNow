@@ -1,3 +1,34 @@
+/* 	CLASS DESCRIPTION:
+	-	This is the activity that allows the user to add an event.
+	-	The related layout file is activity_add_event that contains content_add_event.
+	-	It implements three interfaces rispectively for: DatePicker, TimePicker and
+		the Dialog to get an image from the gallery.
+	-	Inside OnCreate, except for the usual layout setting, there is the setting of
+		default dates and times.
+	-	initialize is simply to get a reference to the various EditText (Francesco made
+		that) and the listener part doesn't work properly.
+	-	addEvent is to add an Event to Firebase, after getting all the info from the
+		fields and creating the Event obj.
+	-	saveEvents is the method used to save the events to the Preferences, I might
+		reuse that to temporarly save them (instead of getting everything from Firebase)
+	-	onDateSet is called at the click of OK in the DatePicker, it saves the date
+	-	chooseDate is called at the click of the date buttons in the activity,
+		it launches the DatePicker
+	-	chooseTime is called at the click of the time buttons in the activity,
+		it launches the TimePicker
+	-	onTimeSet is called at the click of OK in the TimePicker, it saves the time
+	-	chooseCategory is called at the click of the choose category button,
+		it launches a Dialog to choose the Category
+	-	onClick is called when a category is chosen, it saves it
+	-	chooseImage is called at the click of the choose image button,
+		it launches the gallery
+	-	onActivityResult is called automatically when an image is chosen from the
+		gallery, it puts it in the top part of the activity layout and saves the path;
+		it's going to be uploaded on Firebase
+	-	getRealPathFromURI is simply to save the real path instead of a weird thumbnail
+		path that doesn't bring you anywhere
+*/
+
 package software_engineering.whatnow;
 
 import android.app.DatePickerDialog;
@@ -8,6 +39,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -19,16 +51,22 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+import com.firebase.client.utilities.Base64;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
@@ -36,7 +74,7 @@ import java.util.StringTokenizer;
 
 import software_engineering.whatnow.firebase_stuff.Constants;
 
-public class AddEventActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, DialogInterface.OnClickListener{
+public class AddEventActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener /*DialogInterface.OnClickListener*/{
 
 	private static final int RESULT_LOAD_IMG = 1;
 	private EditText[] tv = new EditText[5];
@@ -49,6 +87,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 	//Stuff
 	public static Context conEvent;
 
+	private final static int MAX_IMAGE_DIMENSION=400;
 	private Button initialDate;
 	private Button finalDate;
 	private Button initialTime;
@@ -68,6 +107,10 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 	private String[] categories = {"BARS","CLUBS","FOOD","SHOPS","OTHERS"};
 	private String imagePath;
 	private Bitmap image;
+	private String imageAsString;
+
+	private Spinner spinner;
+	ArrayAdapter<CharSequence> adapter;
 
 	//private String databaseURL;
 
@@ -88,49 +131,104 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 
 		initialDate = (Button) findViewById(R.id.new_event_initialDate);
 		iYear = mcurrentDate.get(Calendar.YEAR);
-		iMonth = mcurrentDate.get(Calendar.MONTH);
+		iMonth = 1 + mcurrentDate.get(Calendar.MONTH);
 		iDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
 		initialDate.setText(Event.getDateString(iYear,iMonth,iDay));
 		initialTime = (Button) findViewById(R.id.new_event_initialTime);
 		iHour = mcurrentDate.get(Calendar.HOUR_OF_DAY);
-		iMinute = mcurrentDate.get(Calendar.MINUTE);
+		iMinute = 0;
 		initialTime.setText(Event.getTimeString(iHour, iMinute));
 
 		mcurrentDate.add(Calendar.HOUR_OF_DAY, 2);
 		finalDate = (Button) findViewById(R.id.new_event_finalDate);
 		fYear = mcurrentDate.get(Calendar.YEAR);
-		fMonth = mcurrentDate.get(Calendar.MONTH);
+		fMonth = 1 + mcurrentDate.get(Calendar.MONTH);
 		fDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
 		finalDate.setText(Event.getDateString(fYear,fMonth,fDay));
 		finalTime = (Button) findViewById(R.id.new_event_finalTime);
 		fHour = mcurrentDate.get(Calendar.HOUR_OF_DAY);
-		fMinute = mcurrentDate.get(Calendar.MINUTE);
+		fMinute = 0;
 		finalTime.setText(Event.getTimeString(fHour, fMinute));
 
 		category = null;
 
-		//databaseURL = Constants.FIREBASE_URL + "/events";
+		//initialize spinner
+		spinner = (Spinner)findViewById(R.id.spinner);
+		adapter = ArrayAdapter.createFromResource(this,R.array.categories, android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinner.setAdapter(adapter);
+		spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			  @Override
+			  public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				  category = (String)parent.getItemAtPosition((position));
+			  }
+
+			  @Override
+			  public void onNothingSelected(AdapterView<?> parent) {
+				  ;
+			  }
+		});
+
+
+				//databaseURL = Constants.FIREBASE_URL + "/events";
 	}
+
+	public void chooseCategory(View v){
+		spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				Toast.makeText(getBaseContext(),parent.getItemAtPosition(position)+ " selected", Toast.LENGTH_LONG).show();
+				Context context = getBaseContext();
+				//category = context.getItemAtPosition(position);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+
+			}
+		});
+	}
+
 
 	public static ArrayList<Event> loadEvents(Context context) {
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-		SharedPreferences.Editor editor = preferences.edit();
 
 		ArrayList<Event> output = new ArrayList<Event>();
 		int size = preferences.getInt("EventsArray_size", 0);
 		StringTokenizer st;
 		for (int i = 0; i < size; i++) {
-			st = new StringTokenizer(preferences.getString("EventArray_" + i, null), ":::");
+			st = new StringTokenizer(preferences.getString("EventArray_" + i, null), ":::***:::***:::");
 			try{
 				output.add(new Event(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
-					Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), st.nextToken(),
-					new Host(st.nextToken()), st.nextToken(), st.nextToken(), new Category(st.nextToken()),
-					Long.parseLong(st.nextToken()), st.nextToken()));
+						Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), st.nextToken(),
+						new Host(st.nextToken()), st.nextToken(), st.nextToken(), new Category(st.nextToken()),
+						Long.parseLong(st.nextToken()), st.nextToken(""), false, 0));
+				Log.wtf("LOAD", "Just loaded one!");
 			}catch(Exception e){
 				Log.wtf("LOAD", "Problem loading events: " + e.getMessage());
 			}
 		}
 		return output;
+	}
+
+	public static void saveEvents(Context context, ArrayList<Event> events, int oldSize) {
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = preferences.edit();
+
+		if(oldSize < 0) 		// it means "I don't know it!"
+			oldSize = preferences.getInt("EventsArray_size", 0);
+
+		editor.remove("EventsArray_size");
+		editor.putInt("EventsArray_size", events.size());
+
+		for(int i=0;i < oldSize; i++)
+			editor.remove("EventArray_" + i);
+		for (int i = 0; i < events.size(); i++) {
+			editor.putString("EventArray_" + i, events.get(i).toString());
+			Log.wtf("SAVE", "Just saved one!");
+		}
+
+		editor.commit();
 	}
 
 	private void initialize(){
@@ -153,14 +251,14 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				name = s.toString();
 				addEventActivity.setTitle(name);
-			//	((TextView) findViewById(R.id.textView)).setText(s);
+				//	((TextView) findViewById(R.id.textView)).setText(s);
 			}
 
 			@Override
 			public void afterTextChanged(Editable s) {
 				name = s.toString();
 				addEventActivity.setTitle(name);
-			//	((TextView) findViewById(R.id.textView)).setText(s);
+				//	((TextView) findViewById(R.id.textView)).setText(s);
 			}
 		});
 	}
@@ -170,13 +268,15 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		calendar.set(iYear, iMonth, iDay);
 		event = new Event(new Random().nextInt(1000), iHour, iMinute, fHour, fMinute,
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), name,
-				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category), calendar.getTimeInMillis(), imagePath);
+				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category),
+				calendar.getTimeInMillis(), imageAsString, false, 0);
 
 		events.add(event);
 
 		saveEvents(getApplicationContext(), events, events.size() - 1);
 
-		new Firebase(Constants.DATABASE_URL + "/events/events_list").push().setValue(event);
+		Firebase.setAndroidContext(this);
+		new Firebase(Constants.DATABASE_URL + "/events_list").push().setValue(event);
 
 		//reinitializeUI();
 		finish();
@@ -186,23 +286,6 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		for (int i=0; i<5; i++){
 			tv[i].setText("");
 		}
-	}
-
-	public static void saveEvents(Context context, ArrayList<Event> events, int oldSize) {
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-		SharedPreferences.Editor editor = preferences.edit();
-
-		editor.remove("EventsArray_size");
-		editor.putInt("EventsArray_size", events.size());
-
-        for(int i=0;i<oldSize;i++)
-            editor.remove("EventArray_" + i);
-        for (int i = 0; i < events.size(); i++) {
-            //assicurati che la toString() sia come serve a te
-            editor.putString("EventArray_" + i, events.get(i).toString());
-        }
-
-        editor.commit();
 	}
 
 	@Override
@@ -225,11 +308,11 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		if(v.getId() == R.id.new_event_initialDate){
 			mDatePicker = new DatePickerDialog(this, this, iYear, iMonth, iDay);
 			initial = true;
-			mDatePicker.setTitle("Select Initial Date");
+			mDatePicker.setTitle("Starting Date:");
 		}else{
 			mDatePicker = new DatePickerDialog(this, this, fYear, fMonth, fDay);
 			initial = false;
-			mDatePicker.setTitle("Select Final Date");
+			mDatePicker.setTitle("Ending Date:");
 		}
 		mDatePicker.show();
 	}
@@ -238,11 +321,11 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		TimePickerDialog mTimePicker;
 		if (v.getId() == R.id.new_event_initialTime){
 			mTimePicker = new TimePickerDialog(this, this, iHour, iMinute, false);
-			mTimePicker.setTitle("Select Initial Time");
+			mTimePicker.setTitle("Starting Time:");
 			initial = true;
 		}else{
 			mTimePicker = new TimePickerDialog(this, this, fHour, fMinute, false);
-			mTimePicker.setTitle("Select Final Time");
+			mTimePicker.setTitle("Ending Time:");
 			initial = false;
 		}
 		mTimePicker.show();
@@ -261,23 +344,6 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		}
 	}
 
-	public void chooseCategory(View v){
-		AlertDialog levelDialog;
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Sort by...");
-		builder.setSingleChoiceItems(categories, -1, this);
-		levelDialog = builder.create();
-		levelDialog.show();
-	}
-
-	@Override
-	public void onClick(DialogInterface dialog, int which) {
-		category = categories[which];
-		((Button) findViewById(R.id.category_picker)).setText(category);
-		dialog.dismiss();
-	}
-
-
 	public void chooseImage(View v){
 		// Create intent to Open Image applications like Gallery, Google Photos
 		Intent galleryIntent = new Intent(Intent.ACTION_PICK,
@@ -295,25 +361,96 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 			Uri uri = data.getData();
 
 			try {
-				Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+				String boh= "";
+				grantUriPermission(boh, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+				//Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
 				// Log.d(TAG, String.valueOf(bitmap));
 
+
 				imagePath = getRealPathFromURI(this, uri);
-				image = bitmap;
+				image = scaleImage(this, uri);
 				Log.wtf("IMAGE", imagePath);
 
+
+				/*Bitmap bmp = (Bitmap) data.getExtras().get("data");
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+				bmp.recycle();
+				byte[] byteArray = stream.toByteArray();
+				String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);*/
+
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
+
+
+				byte[] byteArray = stream.toByteArray();
+				imageAsString = android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT);
+
 				ImageView imageView = (ImageView) findViewById(R.id.new_event_image);
-				imageView.setImageBitmap(bitmap);
-			//	imageView.setVisibility(View.VISIBLE);
-			//	imageView.bringToFront();
-			//	findViewById(R.id.choose_image).setVisibility(View.INVISIBLE);
-			//	((TextView) findViewById(R.id.textViewPic)).setText("Click image to change it");
+				imageView.setImageBitmap(image);
+
+
+				//	imageView.setVisibility(View.VISIBLE);
+				//	imageView.bringToFront();
+				//	findViewById(R.id.choose_image).setVisibility(View.INVISIBLE);
+				//	((TextView) findViewById(R.id.textViewPic)).setText("Click image to change it");
 				((Button) findViewById(R.id.choose_image)).setText("Change image");
 			} catch (IOException e) {
 				e.printStackTrace();
 				Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
 			}
 		}
+	}
+
+	public static Bitmap scaleImage(Context context, Uri photoUri) throws IOException {
+		InputStream is = context.getContentResolver().openInputStream(photoUri);
+		BitmapFactory.Options dbo = new BitmapFactory.Options();
+		dbo.inJustDecodeBounds = true;
+		BitmapFactory.decodeStream(is, null, dbo);
+		is.close();
+
+		int rotatedWidth, rotatedHeight;
+		int orientation = 0;
+
+
+		rotatedWidth = dbo.outWidth;
+		rotatedHeight = dbo.outHeight;
+
+
+		Bitmap srcBitmap;
+		is = context.getContentResolver().openInputStream(photoUri);
+		if (rotatedWidth > MAX_IMAGE_DIMENSION || rotatedHeight > MAX_IMAGE_DIMENSION) {
+			float widthRatio = ((float) rotatedWidth) / ((float) MAX_IMAGE_DIMENSION);
+			float heightRatio = ((float) rotatedHeight) / ((float) MAX_IMAGE_DIMENSION);
+			float maxRatio = Math.max(widthRatio, heightRatio);
+
+			// Create the bitmap from file
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inSampleSize = (int) maxRatio;
+			srcBitmap = BitmapFactory.decodeStream(is, null, options);
+		} else {
+			srcBitmap = BitmapFactory.decodeStream(is);
+		}
+		is.close();
+
+    /*
+     * if the orientation is not 0 (or -1, which means we don't know), we
+     * have to do a rotation.
+     */
+
+
+		String type = context.getContentResolver().getType(photoUri);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		if (type.equals("image/png")) {
+			srcBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+		} else if (type.equals("image/jpg") || type.equals("image/jpeg")) {
+			srcBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+		}
+		byte[] bMapArray = baos.toByteArray();
+		baos.close();
+		return BitmapFactory.decodeByteArray(bMapArray, 0, bMapArray.length);
 	}
 
 	public String getRealPathFromURI(Context context, Uri contentUri) {

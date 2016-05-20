@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="software_engineering.whatnow.MyProfileActivity">
+    tools:context="software_engineering.whatnow.SearchResultsActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -22,48 +22,19 @@
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-<<<<<<< HEAD
-            android:background="@drawable/background_image">
-
-=======
             android:background="@color/material_deep_teal_200">
->>>>>>> profile
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/WhatNowTheme.PopupOverlay"/>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/listed_event_image"
-                    android:src="@drawable/img_ex"
-                    android:adjustViewBounds="true"
-                    android:scaleType="centerCrop"/>
-
-            </RelativeLayout>
+                app:popupTheme="@style/WhatNowTheme.PopupOverlay"
+                />
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_my_profile"/>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/facebook_logo"
-        app:layout_anchor="@id/app_bar"
-        app:layout_anchorGravity="bottom|end"
-        app:backgroundTint="#ffffff"/>
+    <include layout="@layout/content_search_res"/>
 
 </android.support.design.widget.CoordinatorLayout>

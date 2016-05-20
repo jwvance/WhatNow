@@ -8,21 +8,17 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical"
+        android:layout_marginBottom="10dp"/>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fragment_fab"
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
-        android:src="@drawable/ic_add_black_24dp"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:scrollIndicators="none"
-        android:onClick="newEvent"/>
+        android:id="@+id/fragmentProgressBar"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:indeterminate="false"/>
 
 </RelativeLayout>
