@@ -237,7 +237,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 					//recyclerAdapter.notifyDataSetChanged();
 				//	findViewById(R.id.fragmentProgressBar).setVisibility(View.INVISIBLE);
 
-					setSorting(sortingCriteria);
+					//setSorting(sortingCriteria);
 				}catch(NullPointerException e){
 					e.printStackTrace();
 				}
