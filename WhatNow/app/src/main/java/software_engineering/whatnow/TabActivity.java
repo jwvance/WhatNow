@@ -136,12 +136,6 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			return;
 		}
 
-		//delete events
-		//SharedPreferences.Editor editor = mSharedPref.edit();
-		//editor.putInt("EventsArray_size", 0);
-
-
-
 		setContentView(R.layout.tab_layout);
 
 		context = this;
@@ -184,11 +178,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		tabLayout = (TabLayout) findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(viewPager);
 
-		//	setupTabIcons();	// TO ADD AN ICON INSIDE THE TAB NAME
-
 		AddEventActivity.deleteEvents(context);
-
-
 
 		Firebase.setAndroidContext(context);
 		Firebase firebase = new Firebase(Constants.DATABASE_URL);
@@ -196,24 +186,12 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			@Override
 			public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 				try{
-					SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-					SharedPreferences.Editor editor = preferences.edit();
-
 					HashMap e = dataSnapshot.getValue(HashMap.class);
-
-					editor.putString("firebaseKey" + e.get("id"), dataSnapshot.getKey());
-					Log.wtf("LOLWTF", e.get("description") + dataSnapshot.getKey() + "  " + e.get("id"));
-					editor.apply();
 
 					Host host = new Host((String) ((HashMap) e.get("host")).get("name"));
 					Category category = new Category(((HashMap) e.get("category")).get("name").toString());
 
-					Log.wtf("CATEGORY DEBUG", category.getName());
-
 					int categoryN = categories.indexOf(category.getName());
-
-					Log.wtf("CATEGORY DEBUG", Integer.toString(categoryN));
-
 
 					long timeStamp = Long.parseLong(e.get("timestamp").toString());
 
@@ -221,7 +199,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 							Integer.valueOf(e.get("minuteStart").toString()), Integer.valueOf(e.get("hourEnd").toString()),
 							Integer.valueOf(e.get("minuteEnd").toString()), e.get("location").toString(), host,
 							(String) e.get("name"), (String) e.get("description"), category,
-							Long.parseLong(e.get("dateStart").toString()), (String) e.get("imageAsString"), true, timeStamp);
+							Long.parseLong(e.get("dateStart").toString()), (String) e.get("imageAsString"), dataSnapshot.getKey(), true, timeStamp);
 
 					event.setMyLoc(context);
 					eventsEvents.get(categoryN).add(event);	//specific category
@@ -246,7 +224,9 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			@Override
 			public void onChildRemoved(DataSnapshot dataSnapshot) {
 				//search through local events, remove
-
+				String key = dataSnapshot.getKey();
+				Log.wtf("delete", "removing event");
+				AddEventActivity.deleteLocalEvent(context, key);
 			}
 
 			@Override

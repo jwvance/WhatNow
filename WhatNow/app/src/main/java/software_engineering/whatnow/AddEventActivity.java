@@ -125,8 +125,6 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		AddEventActivity.conEvent = this;
 		initialize();
 
-		//events = loadEvents(this);
-
 		Calendar mcurrentDate = Calendar.getInstance();
 
 		initialDate = (Button) findViewById(R.id.new_event_initialDate);
@@ -196,10 +194,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 				output.add(new Event(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
 						Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), st.nextToken(),
 						new Host(st.nextToken()), st.nextToken(), st.nextToken(), new Category(st.nextToken()),
-						Long.parseLong(st.nextToken()), st.nextToken(""), false, 0));
-
-				Log.wtf("category", output.get(i).getCategory().getName());
-
+						Long.parseLong(st.nextToken()), st.nextToken(), st.nextToken(), false, 0));
 			}catch(Exception e){
 				Log.wtf("LOAD", "Problem loading events: " + e.getMessage());
 			}
@@ -213,7 +208,6 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 
 		int arraySize = preferences.getInt("EventsArray_size", 0);
 
-
 		editor.putString("EventArray_" + (arraySize), event.toString());
 		arraySize++;
 		editor.putInt("EventsArray_size", arraySize);
@@ -221,12 +215,55 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		editor.apply();
 	}
 
+	//refreshes local array for initial app startup
 	public static void deleteEvents(Context context) {
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 		SharedPreferences.Editor editor = preferences.edit();
 		editor.putInt("EventsArray_size", 0);
 		editor.apply();
 
+	}
+
+	public static void saveLocalEvent(Context context, String key) {
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = preferences.edit();
+
+	}
+
+		//when event is removed from server, delete it locally as well
+	public static void deleteLocalEvent(Context context, String key) {
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = preferences.edit();
+
+		//load event list
+		ArrayList<Event> events;
+		events = AddEventActivity.loadEvents(context);
+
+		Log.wtf("SIZE", Integer.toString(events.size()));
+
+		//find the local event, remove it
+		for(Event currEvent : events) {
+			if(key.equals(currEvent.getKey())) {
+				Log.wtf("removed:", currEvent.getName());
+				events.remove(currEvent);
+			}
+		}
+
+		//delete all events
+		editor.putInt("EventsArray_size", 0);
+
+		//resave new array
+		int arraySize = 0;
+
+		Log.wtf("SIZE", Integer.toString(events.size()));
+		for(Event currEvent : events) {
+			Log.wtf("re-added", currEvent.getName());
+			editor.putString("EventArray_" + (arraySize), currEvent.toString());
+			arraySize++;
+			editor.putInt("EventsArray_size", arraySize);
+		}
+
+		editor.apply();
 	}
 
 	private void initialize(){
@@ -296,7 +333,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		event = new Event(new Random().nextInt(1000), iHour, iMinute, fHour, fMinute,
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), name,
 				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category),
-				iCalendar.getTimeInMillis(), imageAsString, false, 0);
+				iCalendar.getTimeInMillis(), imageAsString, "", false, 0);
 
 		//add to arraylist
 		//events.add(event);

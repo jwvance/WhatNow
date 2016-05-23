@@ -66,11 +66,7 @@ public class ListedEventActivity extends AppCompatActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarEvent);
 		setSupportActionBar(toolbar);
 
-
-		//	this.setTitle(getIntent().getStringExtra("Name"));
 		eventID = getIntent().getIntExtra("Event_ID", -1);
-		//Log.wtf("ListedEventActivity", "Event ID: " + eventID);
-
 		description = (TextView) findViewById(R.id.listed_event_description);
 		category = (TextView) findViewById(R.id.listed_event_category);
 		host = (TextView) findViewById(R.id.listed_event_host);
@@ -107,8 +103,6 @@ public class ListedEventActivity extends AppCompatActivity {
 			byte[] imageAsBytes = Base64.decode(event.getImageAsString(), Base64.DEFAULT);
 			Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
 			image.setImageBitmap(bitmap);
-
-			Log.wtf("IS IT THERE?? ", event.getDescription());
 
 		}else{
 			//error
@@ -184,19 +178,10 @@ public class ListedEventActivity extends AppCompatActivity {
 	}
 
 	public void deleteEvent(View view) {
-		//find event ID
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
-		SharedPreferences.Editor editor = preferences.edit();//
-
-		String deleteKey = preferences.getString("firebaseKey" + eventID, "Can't find key");
-		editor.remove("firebaseKey" + eventID);
-		//Log.wtf("LOLWTF", description.getText() + deleteKey + "  " + Integer.toString(eventID));
-
 		//call to firebase to delete
 		Firebase.setAndroidContext(this);
 		firebaseEvents = new Firebase(Constants.DATABASE_URL);
-		firebaseEvents.child(deleteKey).removeValue();
-
+		firebaseEvents.child(event.getKey()).removeValue();
 
 		//status message... not working
 		Snackbar snackbar;
