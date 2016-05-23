@@ -35,6 +35,9 @@ android {
         exclude 'META-INF/NOTICE'
     }
 }
+repositories {
+    mavenCentral()
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -50,7 +53,7 @@ dependencies {
     compile 'com.firebase:firebase-client-android:2.3.1'
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.facebook.android:facebook-android-sdk:4.11.0'
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 }
 
 //http://stackoverflow.com/questions/30527369/error-could-not-find-com-google-gmsgoogle-services1-0-when-adding-google-ser

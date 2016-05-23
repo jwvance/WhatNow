@@ -375,6 +375,7 @@ public class LoginActivity extends BaseActivity {
             public void onSuccess(LoginResult loginResult) {
                 Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(loginIntent);
+
 				facebook = true;
             }
 
