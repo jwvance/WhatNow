@@ -25,12 +25,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,7 +76,6 @@ public class ListedEventActivity extends AppCompatActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarEvent);
 		setSupportActionBar(toolbar);
 
-
 		galArray = new ArrayList<Bitmap>(100);
 		viewArray = new ArrayList<ImageView>(100);
 
@@ -117,13 +118,10 @@ public class ListedEventActivity extends AppCompatActivity {
 
 		}
 
+		//hide scroll bar
+		HorizontalScrollView horizontalScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
+		horizontalScrollView.setHorizontalScrollBarEnabled(false);
 
-		/*
-		Bitmap bitmap = BitmapFactory.decodeFile(event.getImageAsString());
-		image.setImageBitmap(bitmap);*/
-		//image.setImageURI(Uri.fromFile(new File(event.getImageAsString())));
-
-		//	address.setText("Santa Cruz");
 	}
 
 
@@ -178,19 +176,25 @@ public class ListedEventActivity extends AppCompatActivity {
 				galArray.clear();
 				Log.wtf("IMAGE Array ", "clear");
 
-				((Button) findViewById(R.id.choose_image_for_gallery)).setText("Add image");
+				((Button) findViewById(R.id.choose_gallery)).setText("Add image");
 			} catch (IOException e) {
 				e.printStackTrace();
 				Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
 			}
 		}
 	}
-//
+
 	private View getImages(Bitmap image) {
 		final ImageView imageView = new ImageView(getApplicationContext());
+//		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)imageView.getLayoutParams();
+//		params.addRule(RelativeLayout.BELOW, R.id.choose_gallery);
+//		imageView.setLayoutParams(params);
+//
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		lp.setMargins(0,0,0,0);
 		imageView.setLayoutParams(lp);
+		imageView.setPadding(10,0,10,0);
+
 		imageView.setImageBitmap(image);
 		imageView.setOnClickListener(new View.OnClickListener(){
 			@Override

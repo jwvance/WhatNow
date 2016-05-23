@@ -19,8 +19,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Brief Description"
-            android:layout_margin="10dp"
-            />
+            android:layout_margin="10dp"       />
 
         <ImageView
             android:id="@+id/listed_event_pin_image"
@@ -115,5 +114,7 @@
             android:layout_toEndOf="@+id/listed_event_date"
             android:layout_marginRight="20dp"/>
     </RelativeLayout>
+
+
 
 </android.support.v4.widget.NestedScrollView>
