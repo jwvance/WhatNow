@@ -11,11 +11,17 @@
 
 package software_engineering.whatnow;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,7 +34,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.firebase.client.Firebase;
+
 import java.util.ArrayList;
+
+import software_engineering.whatnow.firebase_stuff.Constants;
 
 public class ListedEventActivity extends AppCompatActivity {
 	private TextView description;
@@ -46,6 +56,7 @@ public class ListedEventActivity extends AppCompatActivity {
 	private RecyclerAdapter recyclerAdapter;
 	private RecyclerView recyclerView;
 	private TextView pastHostEventsText;
+	private Firebase firebaseEvents;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +69,7 @@ public class ListedEventActivity extends AppCompatActivity {
 
 		//	this.setTitle(getIntent().getStringExtra("Name"));
 		eventID = getIntent().getIntExtra("Event_ID", -1);
-		Log.wtf("ListedEventActivity", "Event ID: " + eventID);
+		//Log.wtf("ListedEventActivity", "Event ID: " + eventID);
 
 		description = (TextView) findViewById(R.id.listed_event_description);
 		category = (TextView) findViewById(R.id.listed_event_category);
@@ -70,15 +81,12 @@ public class ListedEventActivity extends AppCompatActivity {
 		distance = (TextView) findViewById(R.id.listed_event_distance);
 		image = (ImageView) findViewById(R.id.listed_event_image);
 
-		Log.wtf("ListedEventActivity", "About to load!");
 		events = AddEventActivity.loadEvents(getApplicationContext());
 		event = null;
-
 		for (int i = 0; i < events.size(); i++) {
 			if(events.get(i).getId() == eventID) {
 				event = events.get(i);
-				Log.wtf("ListedEventActivity", "Found matching id!");
-				events.remove(i);	//TO FILL LATER THE LIST!
+				events.remove(i);	//TO FILL THE LIST LATER!
 				break;
 			}
 		}
@@ -89,27 +97,22 @@ public class ListedEventActivity extends AppCompatActivity {
 			String categoryS = event.getCategory().getName().toLowerCase();
 			category.setText(categoryS.substring(0, 1).toUpperCase() + categoryS.substring(1));
 			host.setText(event.getHost().getName());
+			host.setTextColor(Color.parseColor("#33a0ff"));
 			date.setText(event.getDateString());	//ADD multi date
 			times.setText(event.getStartTime() + " - " + event.getEndTime());
 			address.setText(event.getLocation());
+			address.setTextColor(Color.parseColor("#33a0ff"));
 			distance.setText(event.getDistance() + " away");
 
 			byte[] imageAsBytes = Base64.decode(event.getImageAsString(), Base64.DEFAULT);
 			Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
 			image.setImageBitmap(bitmap);
+
+			Log.wtf("IS IT THERE?? ", event.getDescription());
+
 		}else{
 			//error
 		}
-
-
-		/*
-		Bitmap bitmap = BitmapFactory.decodeFile(event.getImageAsString());
-		image.setImageBitmap(bitmap);*/
-		//image.setImageURI(Uri.fromFile(new File(event.getImageAsString())));
-
-		//	address.setText("Santa Cruz");
-
-		//THE EVENTS WILL BE DOWNLOADED FROM FIREBASE
 
 		recyclerView = (RecyclerView) findViewById(R.id.listed_event_recycler_view);
 		pastHostEventsText = (TextView) findViewById(R.id.listed_event_past_events);
@@ -117,18 +120,18 @@ public class ListedEventActivity extends AppCompatActivity {
 
 		if(events.size() == 0) {
 			recyclerView.setVisibility(View.GONE);
-			pastHostEventsText.setText("This is the first event posted by this Host");
+			pastHostEventsText.setText("This is the only event by this host:");
 		}else{
 			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) recyclerView.getLayoutParams();
 			params.width = RelativeLayout.LayoutParams.WRAP_CONTENT;
 			if(events.size() == 1){
 				params.height = RelativeLayout.LayoutParams.MATCH_PARENT;
 
-				pastHostEventsText.setText("This Host has already posted\nanother event\nthrough this app");
+				pastHostEventsText.setText("Other events from this host:");
 			}else{
 				params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
 
-				pastHostEventsText.setText("This Host has already posted\n" + events.size() + " events\nthrough this app");
+				pastHostEventsText.setText("This host has " + events.size() + " postings:");
 			}
 			recyclerView.setLayoutParams(params);
 		}
@@ -149,4 +152,70 @@ public class ListedEventActivity extends AppCompatActivity {
 		Intent i = new Intent(this, MyProfileActivity.class);
 		startActivity(i);
 	}
+
+	public void deleteDialogue(final View view){
+
+		//dialogue "are you sure"
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(view.getContext());
+		alertDialogBuilder
+				.setMessage("Are you sure you want to delete this event?")
+				.setCancelable(false)
+				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						deleteEvent(view);
+					}
+				})
+
+				.setNegativeButton("No", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				});
+
+		//show dialogue
+		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialog.show();
+
+
+
+	}
+
+	public void deleteEvent(View view) {
+		//find event ID
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+		SharedPreferences.Editor editor = preferences.edit();//
+
+		String deleteKey = preferences.getString("firebaseKey" + eventID, "Can't find key");
+		editor.remove("firebaseKey" + eventID);
+		//Log.wtf("LOLWTF", description.getText() + deleteKey + "  " + Integer.toString(eventID));
+
+		//call to firebase to delete
+		Firebase.setAndroidContext(this);
+		firebaseEvents = new Firebase(Constants.DATABASE_URL);
+		firebaseEvents.child(deleteKey).removeValue();
+
+
+		//status message... not working
+		Snackbar snackbar;
+		snackbar = Snackbar.make(view, "Event deleted", Snackbar.LENGTH_LONG);
+		snackbar.show();
+
+		//exit to previous activity
+		finish();
+	}
+
+
+	public void editEvent(View view){
+
+		//call to firebase to delete
+
+		//call to preferences to delete
+
+		//call to
+
+	}
+
 }
