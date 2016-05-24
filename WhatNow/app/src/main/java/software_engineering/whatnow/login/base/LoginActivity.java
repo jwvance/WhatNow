@@ -373,7 +373,8 @@ public class LoginActivity extends BaseActivity {
         loginButton.registerCallback(callBack, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                //Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                Intent loginIntent = new Intent(getApplicationContext(), TabActivity.class);
                 startActivity(loginIntent);
 
 				facebook = true;
