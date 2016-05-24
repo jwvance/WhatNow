@@ -61,86 +61,8 @@ public class TabFragment extends Fragment{
 		recyclerAdapter = new RecyclerAdapter(cardsEventData);
 
 		context = getContext();
-		//cardsEventData = new ArrayList<Event>();	//AddEventActivity.loadEvents(getContext());
-
-		// Use Firebase to populate the list.
-		/*Firebase.setAndroidContext(context);
-		Firebase firebase = new Firebase(Constants.DATABASE_URL);
-
-		firebase.addChildEventListener(new ChildEventListener() {
-			@Override
-			public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-				//ArrayList<Event> events;
-				try{
-					//for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
-					//ArrayList<Event> events = (ArrayList<Event>) dataSnapshot.getValue();
-					HashMap<String, Event> eventHashMap = (HashMap<String, Event>) dataSnapshot.getValue();
-					ArrayList<HashMap> weirdEvents = new ArrayList(eventHashMap.values());
-					HashMap e;
-					for (int i = 0; i < weirdEvents.size(); i++) {
-						e = weirdEvents.get(i);
-					//	int id = (int) ((long) e.get("id"));
-					//	int hourStart = (int) ((long) e.get("hourStart"));
-					//	int minuteStart = (int) ((long) e.get("minuteStart"));
-					//	int hourEnd = (int) ((long) e.get("hourEnd"));
-					//	int minuteEnd = (int) ((long) e.get("minuteEnd"));
-					//	String location = (String) e.get("location");
-						Host host = new Host((String) ((HashMap) e.get("host")).get("name"));
-					//	String name = (String) e.get("name");
-					//	String description = (String) e.get("description");
-						Category category = new Category((String) ((HashMap) e.get("category")).get("name"));
-						long timeStamp = ((long) e.get("timestamp"));
-					//	long dateStart = (long) e.get("dateStart");
-					//	String imagePath = (String) e.get("imagePath");
-						Event event = new Event((int) ((long) e.get("id")), (int) ((long) e.get("hourStart")),
-								(int) ((long) e.get("minuteStart")), (int) ((long) e.get("hourEnd")),
-								(int) ((long) e.get("minuteEnd")), (String) e.get("location"), host,
-								(String) e.get("name"), (String) e.get("description"), category,
-								(long) e.get("dateStart"), (String) e.get("imageAsString"), true, timeStamp);
-						event.setMyLoc(context);
-						cardsEventData.add(event);
-					//	Log.wtf("FIREBASE event name CEL", i + ": " + weirdEvents.get(i).get("name").toString());
-					}
-				}catch(Exception e){
-					Log.wtf("FIREBASE event name CEL", e.getMessage());
-				}
-				if(cardsEventData.size() > 0 && cardsEventData.get(0) == null)
-					cardsEventData.clear();
-				try{
-					recyclerAdapter.notifyDataSetChanged();
-					setSortingCriteria(sortingCriteria, context);
-				}catch(NullPointerException e){
-					e.printStackTrace();
-				}
-			}
-
-			@Override
-			public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-			}
-
-			@Override
-			public void onChildRemoved(DataSnapshot dataSnapshot) {
-			//	cardsEventData.remove((Event) dataSnapshot.child("title").getValue());
-			//	try{
-			//		recyclerAdapter.notifyDataSetChanged();
-			//	}catch(NullPointerException e){
-			//		e.printStackTrace();
-			//	}
-			}
-
-			@Override
-			public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-			}
-
-			@Override
-			public void onCancelled(FirebaseError firebaseError) {
-
-			}
-		});*/
 	}
-
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {

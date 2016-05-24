@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            >
+            android:id="@+id/linearLayout">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -337,6 +337,43 @@
                 android:background="#e0e0e0"/>
 
         </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/linearLayout"
+            android:layout_centerHorizontal="true"
+            android:foregroundGravity="center_horizontal"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/editEvent"
+                android:background="@drawable/ic_create_black_24dp"
+                android:adjustViewBounds="true"
+                android:scaleX=".25"
+                android:scaleY=".25"
+                android:onClick="editEvent"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/deleteEvent"
+                android:background="@drawable/ic_delete_black_24dp"
+                android:adjustViewBounds="true"
+                android:scaleX=".25"
+                android:scaleY=".25"
+                android:onClick="deleteDialogue"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/editEvent"
+                android:layout_toEndOf="@+id/editEvent" />
+
+
+        </RelativeLayout>
         <!--    </ScrollView>   -->
 
     </RelativeLayout>

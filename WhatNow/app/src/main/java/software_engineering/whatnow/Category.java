@@ -39,7 +39,7 @@ public class Category {
         categories.add("CLUBS");
         categories.add("FOOD");
         categories.add("SHOPS");
-        categories.add("OTHERS");
+        categories.add("OTHER");
 
         return categories;
     }
