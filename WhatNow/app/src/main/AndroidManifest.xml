@@ -56,6 +56,12 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
+            android:name=".GalleryActivity"
+            android:configChanges="orientation"
+            android:label="Gallery"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
             android:name=".AddEventActivity"
             android:configChanges="orientation"
             android:label="New Event"

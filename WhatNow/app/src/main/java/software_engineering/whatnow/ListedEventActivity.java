@@ -82,8 +82,10 @@ public class ListedEventActivity extends AppCompatActivity {
 	private String imgArr[];
 	private String imageAsString;
 	private boolean onGalleryclick;
-	private	ArrayList<Bitmap> galArray;
-	private	ArrayList<ImageView> viewArray;
+	public	ArrayList<Bitmap> galArray;
+	private	ArrayList<String> strArray;
+
+	private byte[] byteArray;
 
 	ImageView lastClicked = null;
 	boolean isImageFit;
@@ -97,9 +99,6 @@ public class ListedEventActivity extends AppCompatActivity {
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarEvent);
 		setSupportActionBar(toolbar);
-
-		galArray = new ArrayList<Bitmap>(100);
-		viewArray = new ArrayList<ImageView>(100);
 
 		//	this.setTitle(getIntent().getStringExtra("Name"));
 
@@ -169,12 +168,10 @@ public class ListedEventActivity extends AppCompatActivity {
 		recyclerAdapter = new RecyclerAdapter(events);
 		recyclerView.setHasFixedSize(true);
 		recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
 		recyclerView.setAdapter(recyclerAdapter);
 
-
 		galArray = new ArrayList<Bitmap>(100);
-
+		strArray = new ArrayList<String>(100);
 		//hide scroll bar
 		HorizontalScrollView horizontalScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
 		horizontalScrollView.setHorizontalScrollBarEnabled(false);
@@ -217,9 +214,6 @@ public class ListedEventActivity extends AppCompatActivity {
 		//show dialogue
 		AlertDialog alertDialog = alertDialogBuilder.create();
 		alertDialog.show();
-
-
-
 	}
 
 	public void deleteEvent(View view) {
@@ -277,8 +271,12 @@ public class ListedEventActivity extends AppCompatActivity {
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
 				imageG.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 
-				byte[] byteArray = stream.toByteArray();
+				byteArray = stream.toByteArray();
 				imageAsString = android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT);
+
+				strArray.add(imageAsString);
+
+//				Log.wtf("IMAGE String Array ", strArray.toString());
 
 				//add images to gallery
 //				ImageView imageView = (ImageView) findViewById(R.id.image_display_gallery);
@@ -288,7 +286,6 @@ public class ListedEventActivity extends AppCompatActivity {
 				LinearLayout imageGallery = (LinearLayout)findViewById(R.id.my_gallery);
 				for(Bitmap image: galArray){
 					imageGallery.addView(getImages(image));
-//					imageView.setImageBitmap(imageG);
 				}
 				//clear array
 				galArray.clear();
@@ -318,6 +315,10 @@ public class ListedEventActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View v)
 			{
+				Log.wtf("IMAGE click ", "on picture");
+				Intent intent = new Intent(ListedEventActivity.this, GalleryActivity.class);
+				intent.putExtra("image", byteArray);
+				startActivity(intent);
 
 				//go to gallery activity
 //				if(isImageFit) {
@@ -363,10 +364,8 @@ public class ListedEventActivity extends AppCompatActivity {
 		int rotatedWidth, rotatedHeight;
 		int orientation = 0;
 
-
 		rotatedWidth = dbo.outWidth;
 		rotatedHeight = dbo.outHeight;
-
 
 		Bitmap srcBitmap;
 		is = context.getContentResolver().openInputStream(photoUri);
