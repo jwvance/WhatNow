@@ -48,7 +48,12 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_listed_event"/>
+    <include layout="@layout/content_listed_event"
+        android:id="@+id/content_listed"
+        />
+    <include layout="@layout/content_images"
+        android:id="@+id/content_images" />
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/listed_event_fab"
