@@ -173,12 +173,11 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 		viewPager = (ViewPager) findViewById(R.id.viewpager);
 
+
 		setupViewPager(viewPager);
 
 		tabLayout = (TabLayout) findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(viewPager);
-
-		AddEventActivity.deleteEvents(context);
 
 		Firebase.setAndroidContext(context);
 		Firebase firebase = new Firebase(Constants.DATABASE_URL);
@@ -205,7 +204,11 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 					eventsEvents.get(categoryN).add(event);	//specific category
 					eventsEvents.get(0).add(event);
 
-					AddEventActivity.appendEvent(context, event);
+					((GlobalEvents) getApplication()).appendEvent(event);
+					Log.wtf("LOGGED?", event.getKey());
+
+					setupViewPager(viewPager);
+
 
 				}catch(Exception e){
 					Log.wtf("FIREBASE error", e.getMessage());
@@ -218,15 +221,37 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 			@Override
 			public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+				//refresh cards
+				Event event = dataSnapshot.getValue(Event.class);
+				((GlobalEvents) getApplication()).updateEvent(dataSnapshot.getKey(), event);
+
+
+				for(int i = 0; i < eventsEvents.size(); i++){
+					for(int j = 0; j < eventsEvents.get(i).size(); j++){
+						if(eventsEvents.get(i).get(j).getKey().equals(dataSnapshot.getKey())){
+							eventsEvents.get(i).remove(j);
+						}
+					}
+				}
+
+				setupViewPager(viewPager);
 
 			}
 
 			@Override
 			public void onChildRemoved(DataSnapshot dataSnapshot) {
-				//search through local events, remove
-				String key = dataSnapshot.getKey();
-				Log.wtf("delete", "removing event");
-				AddEventActivity.deleteLocalEvent(context, key);
+				((GlobalEvents) getApplication()).deleteEvent(dataSnapshot.getKey());
+
+
+				for(int i = 0; i < eventsEvents.size(); i++){
+					for(int j = 0; j < eventsEvents.get(i).size(); j++){
+						if(eventsEvents.get(i).get(j).getKey().equals(dataSnapshot.getKey())){
+							eventsEvents.get(i).remove(j);
+						}
+					}
+				}
+
+				setupViewPager(viewPager);
 			}
 
 			@Override
@@ -477,14 +502,6 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			fragment.setContext(this);
 			fragment.setCategory(categories.get(i));    //EITHER THIS OR DOWNLOAD EVENTS HERE AND USE setEvents(events)
 
-		/*	if(i > 0) {
-				for (int j = events.size() - 1; j >= 0; j--) {
-					if (!events.get(j).getCategory().getName().equals(categories.get(i))) {
-						events.remove(j);
-					}
-				}
-			}
-			fragment.setEvents(events);*/
 			fragment.setEvents(eventsEvents.get(i));
 			adapter.addFragment(fragment, categories.get(i));
 			fragments.add(fragment);

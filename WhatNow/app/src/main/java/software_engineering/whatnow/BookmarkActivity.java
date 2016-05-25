@@ -47,8 +47,7 @@ public class BookmarkActivity extends AppCompatActivity implements View.OnClickL
 
         Intent intent = getIntent();
 
-        events = AddEventActivity.loadEvents(this);
-
+        events = ((GlobalEvents) getApplication()).getEventList();
 
         this.setTitle("Saved Events: ");
 
