@@ -49,7 +49,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_listed_event"/>
-    <include layout="@layout/content_images"/>
+
 
 
     <android.support.design.widget.FloatingActionButton

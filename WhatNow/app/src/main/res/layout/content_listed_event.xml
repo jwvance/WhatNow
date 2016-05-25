@@ -344,7 +344,8 @@
             android:layout_below="@+id/linearLayout"
             android:layout_centerHorizontal="true"
             android:foregroundGravity="center_horizontal"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:id="@+id/rvlayout">
 
             <Button
                 android:layout_width="wrap_content"
@@ -376,6 +377,38 @@
         </RelativeLayout>
         <!--    </ScrollView>   -->
 
-    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rvlayout"
+        android:layout_centerHorizontal="true"
+        android:foregroundGravity="center_horizontal"
+        android:gravity="center_horizontal">
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Image"
+            style="?android:attr/borderlessButtonStyle"
+            android:id="@+id/choose_gallery"
+            android:onClick="chooseImageGal"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/choose_gallery"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" >
+            <LinearLayout
+                android:id="@+id/my_gallery"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"/>
+        </HorizontalScrollView>
+        </RelativeLayout>
+    </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>
