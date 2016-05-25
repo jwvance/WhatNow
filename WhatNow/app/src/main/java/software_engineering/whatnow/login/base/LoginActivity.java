@@ -20,6 +20,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -383,9 +384,11 @@ public class LoginActivity extends BaseActivity {
             public void onSuccess(LoginResult loginResult) {
                 //Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
                 Intent loginIntent = new Intent(LoginActivity.this, TabActivity.class);
-                startActivity(loginIntent);
+                FacebookLoginActivity.setProfile(Profile.getCurrentProfile());
+                FacebookLoginActivity.setToken(loginResult.getAccessToken());
                 mSharedPrefEditor.putBoolean("logged_in", true);
                 mSharedPrefEditor.commit();
+                startActivity(loginIntent);
 				facebook = true;
             }
 
