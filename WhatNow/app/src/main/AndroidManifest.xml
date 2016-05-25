@@ -53,7 +53,8 @@
             android:name=".ListedEventActivity"
             android:configChanges="orientation"
             android:label="Event"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            >
         </activity>
         <activity
             android:name=".GalleryActivity"

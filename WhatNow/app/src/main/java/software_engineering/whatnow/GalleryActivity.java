@@ -8,6 +8,7 @@ import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -33,6 +34,13 @@ public class GalleryActivity extends AppCompatActivity {
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(lp);
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        imageView.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
 
 
