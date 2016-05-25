@@ -86,6 +86,7 @@ import software_engineering.whatnow.login.base.LoginActivity;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TabActivity extends AppCompatActivity implements DialogInterface.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
@@ -177,62 +178,41 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		tabLayout = (TabLayout) findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(viewPager);
 
-		//	setupTabIcons();	// TO ADD AN ICON INSIDE THE TAB NAME
+		AddEventActivity.deleteEvents(context);
 
 		Firebase.setAndroidContext(context);
-		Firebase firebase = new Firebase(Constants.DATABASE_URL/* + "/events_list"*/);
+		Firebase firebase = new Firebase(Constants.DATABASE_URL);
 		firebase.addChildEventListener(new ChildEventListener() {
 			@Override
 			public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 				try{
-					HashMap<String, Event> eventHashMap = (HashMap<String, Event>) dataSnapshot.getValue();
-					ArrayList<HashMap> weirdEvents = new ArrayList(eventHashMap.values());
-					HashMap e;
-					for (int i = 0; i < weirdEvents.size(); i++) {
-						e = weirdEvents.get(i);
-						//	int id = (int) ((long) e.get("id"));
-						//	int hourStart = (int) ((long) e.get("hourStart"));
-						//	int minuteStart = (int) ((long) e.get("minuteStart"));
-						//	int hourEnd = (int) ((long) e.get("hourEnd"));
-						//	int minuteEnd = (int) ((long) e.get("minuteEnd"));
-						//	String location = (String) e.get("location");
-						Host host = new Host((String) ((HashMap) e.get("host")).get("name"));
-						//	String name = (String) e.get("name");
-						//	String description = (String) e.get("description");
-						Category category = new Category((String) ((HashMap) e.get("category")).get("name"));
-						int categoryN = categories.indexOf(category.getName());
-						long timeStamp = ((long) e.get("timestamp"));
-						//	long dateStart = (long) e.get("dateStart");
-						//	String imagePath = (String) e.get("imagePath");
-						Event event = new Event((int) ((long) e.get("id")), (int) ((long) e.get("hourStart")),
-								(int) ((long) e.get("minuteStart")), (int) ((long) e.get("hourEnd")),
-								(int) ((long) e.get("minuteEnd")), (String) e.get("location"), host,
-								(String) e.get("name"), (String) e.get("description"), category,
-								(long) e.get("dateStart"), (String) e.get("imageAsString"), true, timeStamp);
-						event.setMyLoc(context);
+					HashMap e = dataSnapshot.getValue(HashMap.class);
 
-						eventsEvents.get(categoryN).add(event);	//specific category
-						eventsEvents.get(0).add(event);	//ALL
+					Host host = new Host((String) ((HashMap) e.get("host")).get("name"));
+					Category category = new Category(((HashMap) e.get("category")).get("name").toString());
 
-					//	events.add(event);
-						Log.wtf("TabActivity", "Downloaded an event!");
-					}
+					int categoryN = categories.indexOf(category.getName());
+
+					long timeStamp = Long.parseLong(e.get("timestamp").toString());
+
+					Event event = new Event(Integer.valueOf(e.get("id").toString()), Integer.valueOf(e.get("hourStart").toString()),
+							Integer.valueOf(e.get("minuteStart").toString()), Integer.valueOf(e.get("hourEnd").toString()),
+							Integer.valueOf(e.get("minuteEnd").toString()), e.get("location").toString(), host,
+							(String) e.get("name"), (String) e.get("description"), category,
+							Long.parseLong(e.get("dateStart").toString()), (String) e.get("imageAsString"), dataSnapshot.getKey(), true, timeStamp);
+
+					event.setMyLoc(context);
+					eventsEvents.get(categoryN).add(event);	//specific category
+					eventsEvents.get(0).add(event);
+
+					AddEventActivity.appendEvent(context, event);
+
 				}catch(Exception e){
-					Log.wtf("FIREBASE event name CEL", e.getMessage());
+					Log.wtf("FIREBASE error", e.getMessage());
 				}
 				if(eventsEvents.get(0).size() > 0 && eventsEvents.get(0).get(0) == null) {
 					eventsEvents.clear();
 					Log.wtf("TabActivity", "Clearing events!");
-				}
-				try{
-					Log.wtf("TabActivity", "About to save!");
-					AddEventActivity.saveEvents(context, eventsEvents.get(0), -1);
-					//recyclerAdapter.notifyDataSetChanged();
-				//	findViewById(R.id.fragmentProgressBar).setVisibility(View.INVISIBLE);
-
-					setSorting(sortingCriteria);
-				}catch(NullPointerException e){
-					e.printStackTrace();
 				}
 			}
 
@@ -243,7 +223,10 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 			@Override
 			public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+				//search through local events, remove
+				String key = dataSnapshot.getKey();
+				Log.wtf("delete", "removing event");
+				AddEventActivity.deleteLocalEvent(context, key);
 			}
 
 			@Override

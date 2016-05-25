@@ -46,8 +46,8 @@ public class Event implements Comparable {
     @SerializedName("description")
     @Expose
     private String description;
-    @SerializedName("distance")
-    @Expose
+    /*@SerializedName("distance")
+    @Expose*/
     private String distance;
     @SerializedName("endTime")
     @Expose
@@ -82,12 +82,16 @@ public class Event implements Comparable {
     @SerializedName("startTime")
     @Expose
     private String startTime;
-
+    @SerializedName("firebaseKey")
+    @Expose
+    private String firebaseKey;
+    @SerializedName("dateEnd")
+    @Expose
+    private long dateEnd;
     //test
     LocationToolBox locationIs;
     //
 
-    private long dateEnd;
     private int month;
     private int year;
     private int day;
@@ -104,7 +108,7 @@ public class Event implements Comparable {
     }
 
     public Event(int id, int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
-                 Host host, String name, String description, Category category, long dateStart, String imageAsString, boolean fromFirebase, long timeStamp) {
+                 Host host, String name, String description, Category category, long dateStart, String imageAsString, String firebaseKey, boolean fromFirebase, long timeStamp) {
         this.id = id;
         this.hourStart = hourStart;
         this.minuteStart = minuteStart;
@@ -116,6 +120,7 @@ public class Event implements Comparable {
         this.description = description;
         this.category = category;
         this.dateStart = dateStart;
+        this.firebaseKey = firebaseKey;
         if (fromFirebase){
             this.timestamp=timeStamp;
         } else this.timestamp = System.currentTimeMillis();
@@ -180,6 +185,8 @@ public class Event implements Comparable {
     public String getLocation() {
         return location;
     }
+
+    public String getKey() { return firebaseKey; }
 
     //Carlos's test for getting distance.
     public String getDistance() {
@@ -300,7 +307,7 @@ public class Event implements Comparable {
         return id + ":::***:::***:::" + hourStart + ":::***:::***:::" + minuteStart + ":::***:::***:::" +
                 hourEnd + ":::***:::***:::" + minuteEnd + ":::***:::***:::" + location + ":::***:::***:::" +
                 host.getName() + ":::***:::***:::" + name + ":::***:::***:::" +description + ":::***:::***:::"
-                + category.getName() + ":::***:::***:::" + dateStart + ":::***:::***:::" + imageAsString;
+                + category.getName() + ":::***:::***:::" + dateStart + ":::***:::***:::" + imageAsString + ":::***:::***:::" + firebaseKey;
     }
 
     public String getFriendlyDate(){

@@ -39,7 +39,8 @@
                     android:singleLine="true"
                     android:hint="Event Name..."
                     android:textColorHint="#bdbdbd"
-                    android:textColor="#000000"/>
+                    android:textColor="#000000"
+                    android:capitalize="words"/>
 
                 <EditText
                     android:layout_width="match_parent"
@@ -48,7 +49,7 @@
                     android:textColor="#616161"
                     android:hint="Description..."
                     android:textColorHint="#bdbdbd"
-                    />
+                    android:capitalize="sentences"/>
 
                 <View
                     android:layout_width="match_parent"
@@ -72,14 +73,20 @@
 
                     <ImageView
                         android:id="@+id/imageViewPhoto"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
                         android:src="@drawable/ic_add_a_photo_black_24dp"
                         android:layout_centerVertical="true"
                         android:layout_toLeftOf="@+id/choose_image"
-                        android:layout_toStartOf="@+id/choose_image" />
+                        android:layout_toStartOf="@+id/choose_image"
+                        android:onClick="chooseImage" />
 
                 </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="#e0e0e0"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -105,7 +112,8 @@
                         android:layout_alignParentBottom="true"
                         android:layout_toRightOf="@+id/imageView3"
                         android:layout_toEndOf="@+id/imageView3"
-                        android:layout_marginLeft="10dp"/>
+                        android:layout_marginLeft="10dp"
+                        android:capitalize="words"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -132,7 +140,8 @@
                         android:layout_toEndOf="@+id/imageView2"
                         android:layout_marginLeft="10dp"
                         android:hint="Address..."
-                        android:textColorHint="#bdbdbd"/>
+                        android:textColorHint="#bdbdbd"
+                        android:capitalize="words"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -159,24 +168,29 @@
                         android:layout_alignParentBottom="true"
                         android:layout_toRightOf="@+id/imageView"
                         android:layout_toEndOf="@+id/imageView"
-                        android:layout_marginLeft="10dp"/>
+                        android:layout_marginLeft="10dp"
+                        android:inputType="phone"/>
                 </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="#e0e0e0"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <Spinner
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
                         android:id="@+id/spinner"
-                        android:layout_centerVertical="true"
-                        android:layout_marginTop="45dp"
-                        android:layout_marginBottom="15dp"
                         android:clickable="false"
-                        android:entries="@array/categories" />
+                        android:entries="@array/categories"
+                        android:layout_below="@+id/textView5"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"/>
 
                     <TextView
                         android:layout_width="wrap_content"
