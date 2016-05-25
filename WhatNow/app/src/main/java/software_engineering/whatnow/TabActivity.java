@@ -126,7 +126,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Log.wtf("LOGIN", "inside TabActivity");
+	//	Log.wtf("LOGIN", "inside TabActivity");
 		mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		if(!mSharedPref.getBoolean("logged_in", false)){
 			Log.wtf("LOGIN", "inside Tab, going to LoginActivity");
@@ -135,6 +135,8 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			finish();
 			return;
 		}
+
+		Log.wtf("LOGIN: logged in as", mSharedPref.getString(Constants.KEY_SIGNUP_EMAIL, null));
 
 		setContentView(R.layout.tab_layout);
 
@@ -189,6 +191,12 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 					HashMap e = dataSnapshot.getValue(HashMap.class);
 
 					Host host = new Host((String) ((HashMap) e.get("host")).get("name"));
+					String email = (String) ((HashMap) e.get("host")).get("businessEmail");
+					if(email == null)
+						email = (String) ((HashMap) e.get("host")).get("email");
+					host.setBusinessEmail(email);
+					Log.wtf("HOST DOWNLOADING", host.getBusinessEmail());
+
 					Category category = new Category(((HashMap) e.get("category")).get("name").toString());
 
 					int categoryN = categories.indexOf(category.getName());

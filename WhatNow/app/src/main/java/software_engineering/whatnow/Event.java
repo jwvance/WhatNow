@@ -19,6 +19,7 @@ package software_engineering.whatnow;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
@@ -190,22 +191,31 @@ public class Event implements Comparable {
 
     //Carlos's test for getting distance.
     public String getDistance() {
-
-        Double storedLatitude = LocationToolBox.storedLatitude;
-        Double storedLongitude = LocationToolBox.storedLongitude;
-        StringBuilder isKM = new StringBuilder("no");
-        Integer dis = locationIs.distance(storedLatitude, storedLongitude, this.myLoc.latitude, this.myLoc.longitude, isKM);
-        String disIs = ((isKM.toString().equals("yes")) ? dis.toString() + "km" : dis.toString() + "m");
-        return disIs;
+        try {
+            Double storedLatitude = LocationToolBox.storedLatitude;
+            Double storedLongitude = LocationToolBox.storedLongitude;
+            StringBuilder isKM = new StringBuilder("no");
+            Integer dis = locationIs.distance(storedLatitude, storedLongitude, this.myLoc.latitude, this.myLoc.longitude, isKM);
+            String disIs = ((isKM.toString().equals("yes")) ? dis.toString() + "km" : dis.toString() + "m");
+            return disIs;
+        }catch (Exception e){
+            Log.wtf("DISTANCE", "failed");
+            return "err";
+        }
     }
 
     public int getDistanceInMeters(){
-        Double storedLatitude = LocationToolBox.storedLatitude;
-        Double storedLongitude = LocationToolBox.storedLongitude;
-        StringBuilder isKM = new StringBuilder("no");
-        Integer dis = locationIs.distance(storedLatitude, storedLongitude, this.myLoc.latitude, this.myLoc.longitude, isKM);
+        try{
+            Double storedLatitude = LocationToolBox.storedLatitude;
+            Double storedLongitude = LocationToolBox.storedLongitude;
+            StringBuilder isKM = new StringBuilder("no");
+            Integer dis = locationIs.distance(storedLatitude, storedLongitude, this.myLoc.latitude, this.myLoc.longitude, isKM);
 
-        return dis;
+            return dis;
+        }catch (Exception e){
+            Log.wtf("DISTANCE", "failed");
+            return -1;
+        }
     }
 
     public void setLocation(String location) {
@@ -306,7 +316,7 @@ public class Event implements Comparable {
     public String toString() {
         return id + ":::***:::***:::" + hourStart + ":::***:::***:::" + minuteStart + ":::***:::***:::" +
                 hourEnd + ":::***:::***:::" + minuteEnd + ":::***:::***:::" + location + ":::***:::***:::" +
-                host.getName() + ":::***:::***:::" + name + ":::***:::***:::" +description + ":::***:::***:::"
+                host.getName() + ":::***:::***:::" + host.getBusinessEmail() + ":::***:::***:::" + name + ":::***:::***:::" +description + ":::***:::***:::"
                 + category.getName() + ":::***:::***:::" + dateStart + ":::***:::***:::" + imageAsString + ":::***:::***:::" + firebaseKey;
     }
 

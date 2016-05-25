@@ -63,6 +63,9 @@ import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.firebase.client.utilities.Base64;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -193,7 +196,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 			try{
 				output.add(new Event(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
 						Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), st.nextToken(),
-						new Host(st.nextToken()), st.nextToken(), st.nextToken(), new Category(st.nextToken()),
+						new Host(st.nextToken(), st.nextToken()), st.nextToken(), st.nextToken(), new Category(st.nextToken()),
 						Long.parseLong(st.nextToken()), st.nextToken(), st.nextToken(), false, 0));
 			}catch(Exception e){
 				Log.wtf("LOAD", "Problem loading events: " + e.getMessage());
@@ -317,21 +320,35 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		}
 
 		Calendar iCalendar = Calendar.getInstance();
-		iCalendar.set(iYear, iMonth, iDay);
+		iCalendar.set(iYear, iMonth, iDay, iHour, iMinute);
 		Calendar fCalendar = iCalendar;
-		fCalendar.set(fYear, fMonth, fDay);
+		fCalendar.set(fYear, fMonth, fDay, fHour, fMinute);
 
-		if(!iCalendar.before(fCalendar) && (iHour > fHour || (iHour == fHour && iMinute >= fMinute))){
-			Toast.makeText(AddEventActivity.this, "Start time must be before end time!", Toast.LENGTH_SHORT).show();
+		if(!iCalendar.before(fCalendar)){
+			Toast.makeText(AddEventActivity.this, "Start date/time must be before end time!", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		if(iCalendar.after(fCalendar)){
+	/*	if(iCalendar.after(fCalendar)){
 			Toast.makeText(AddEventActivity.this, "Start date must be before end date!", Toast.LENGTH_SHORT).show();
 			return;
+		}*/
+
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		Host host = new Host(tv[3].getText().toString());
+
+		String email = preferences.getString(Constants.KEY_GOOGLE_EMAIL, null);
+		if(email == null) {
+			email = preferences.getString(Constants.KEY_ENCODED_EMAIL, null);
+			email.replace(",", ".");
 		}
+		if(email != null) {
+			host.setBusinessEmail(email);
+			Log.wtf("HOST ADD EVENT", email);
+		}else
+			Log.wtf("HOST ADD EVENT", "email is NULL!!");
 
 		event = new Event(new Random().nextInt(1000), iHour, iMinute, fHour, fMinute,
-				tv[2].getText().toString(), new Host(tv[3].getText().toString()), name,
+				tv[2].getText().toString(), host, name,
 				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category),
 				iCalendar.getTimeInMillis(), imageAsString, "", false, 0);
 

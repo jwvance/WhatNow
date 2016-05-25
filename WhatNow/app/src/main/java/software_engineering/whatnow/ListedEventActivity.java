@@ -34,11 +34,18 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import software_engineering.whatnow.firebase_stuff.Constants;
+import software_engineering.whatnow.model.User;
+import software_engineering.whatnow.utils.Utils;
 
 public class ListedEventActivity extends AppCompatActivity {
 	private TextView description;
@@ -103,6 +110,55 @@ public class ListedEventActivity extends AppCompatActivity {
 			byte[] imageAsBytes = Base64.decode(event.getImageAsString(), Base64.DEFAULT);
 			Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
 			image.setImageBitmap(bitmap);
+
+			Log.wtf("HOST LISTED EVENT", event.getHost().getBusinessEmail());
+			String encodedEmail = Utils.encodeEmail(event.getHost().getBusinessEmail());
+			Firebase firebase = new Firebase(Constants.FIREBASE_URL + "users/" + encodedEmail);
+			firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+				@Override
+				public void onDataChange(DataSnapshot dataSnapshot) {
+					//for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+					HashMap e = dataSnapshot.getValue(HashMap.class);
+						//User user = dataSnapshot.getValue(User.class);
+						Log.wtf("HOST LISTED EVENT", e.get("name").toString());
+					//}
+				}
+
+				@Override
+				public void onCancelled(FirebaseError firebaseError) {
+
+				}
+			});
+			/*firebase.addChildEventListener(new ChildEventListener() {
+				@Override
+				public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+					for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+						User user = userSnapshot.getValue(User.class);
+						System.out.println(user.getName());
+					}
+					//HashMap e = dataSnapshot.getValue(HashMap.class);
+				}
+
+				@Override
+				public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+				}
+
+				@Override
+				public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+				}
+
+				@Override
+				public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+				}
+
+				@Override
+				public void onCancelled(FirebaseError firebaseError) {
+
+				}
+			});*/
 
 		}else{
 			//error

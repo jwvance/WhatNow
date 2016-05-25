@@ -3,15 +3,21 @@ package software_engineering.whatnow.login.base;
 import software_engineering.whatnow.R;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -36,7 +42,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
 
 import software_engineering.whatnow.TabActivity;
 import software_engineering.whatnow.firebase_stuff.Constants;
@@ -45,13 +54,14 @@ import software_engineering.whatnow.utils.*;
 import software_engineering.whatnow.model.User;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Represents Sign in screen and functionality of the app
  */
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity{
 
     private static final String LOG_TAG = LoginActivity.class.getSimpleName();
     /* A dialog that is presented until the Firebase authentication finished. */
@@ -79,12 +89,13 @@ public class LoginActivity extends BaseActivity {
 	private boolean google;
 	private boolean facebook;
 
+
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        mSharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mSharedPrefEditor = mSharedPref.edit();
 
     /*    if(mSharedPref.getBoolean("logged_in", false)){
@@ -106,6 +117,37 @@ public class LoginActivity extends BaseActivity {
         initializeScreen();
 
     }
+
+	private void hostDialogue(){
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder
+				.setMessage("Are you a host with a business?")
+				.setCancelable(false)
+				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+
+						//start HostQActivity
+					}
+				})
+
+				.setNegativeButton("No", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+						//start TabActivity
+						Intent intent = new Intent(LoginActivity.this, TabActivity.class);
+						intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+						startActivity(intent);
+						finish();
+					}
+				});
+
+		//show dialogue
+		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialog.show();
+	}
 
     @Override
     protected void onResume() {
@@ -134,10 +176,11 @@ public class LoginActivity extends BaseActivity {
                  * already holds userName/provider data from the latest session
                  */
                 if (authData != null) {
-                    Intent intent = new Intent(LoginActivity.this, TabActivity.class);
+					hostDialogue();
+                  /*  Intent intent = new Intent(LoginActivity.this, TabActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
-                    finish();
+                    finish();*/
                 }
             }
         };
@@ -235,11 +278,12 @@ public class LoginActivity extends BaseActivity {
                 mSharedPrefEditor.putString(Constants.KEY_PROVIDER, authData.getProvider()).apply();
                 mSharedPrefEditor.putString(Constants.KEY_ENCODED_EMAIL, mEncodedEmail).apply();
 
-                /* Go to main activity */
-                Intent intent = new Intent(LoginActivity.this, TabActivity.class);
+                /* open host dialogue */
+				hostDialogue();
+                /*Intent intent = new Intent(LoginActivity.this, TabActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
-                finish();
+                finish();*/
             }
         }
 
@@ -285,13 +329,16 @@ public class LoginActivity extends BaseActivity {
         if (google && mGoogleApiClient.isConnected()) {
             unprocessedEmail = mGoogleAccount.getEmail().toLowerCase();
             mSharedPrefEditor.putString(Constants.KEY_GOOGLE_EMAIL, unprocessedEmail).apply();
+			mSharedPrefEditor.commit();
         } else if(facebook) {
 			unprocessedEmail = authData.getProviderData().get("displayName") + "";
 			mSharedPrefEditor.putString(Constants.KEY_FACEBOOK_EMAIL, unprocessedEmail).apply();
+			mSharedPrefEditor.commit();
 		}else{
             unprocessedEmail = mSharedPref.getString(Constants.KEY_GOOGLE_EMAIL, null);
         }
 
+        Log.wtf("LOGIN", mSharedPref.getString(Constants.KEY_GOOGLE_EMAIL, null));
         /**
          * Encode user email replacing "." with "," to be able to use it
          * as a Firebase db key

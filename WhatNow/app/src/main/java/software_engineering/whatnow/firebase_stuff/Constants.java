@@ -8,7 +8,8 @@ public class Constants {
 	//	public static final String FIREBASE_URL = "https://ucscwhatnow.firebaseio.com";
 	public static final String FIREBASE_URL = "https://flickering-heat-2569.firebaseio.com/";
 
-	public static final String DATABASE_URL = "https://ucscwhatnow.firebaseio.com/events";
+	//public static final String DATABASE_URL = "https://ucscwhatnow.firebaseio.com/events";
+	public static final String DATABASE_URL = "https://ucscwhatnow.firebaseio.com/events/test";
 
 	/**
 	 * Constants related to locations in Firebase, such as the name of the node
