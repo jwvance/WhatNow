@@ -62,7 +62,7 @@ public class TabFragment extends Fragment{
 
 		context = getContext();
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
