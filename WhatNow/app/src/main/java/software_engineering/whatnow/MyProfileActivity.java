@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import software_engineering.whatnow.Event;
 import software_engineering.whatnow.R;
 import software_engineering.whatnow.RecyclerAdapter;
+import software_engineering.whatnow.login.base.FacebookLoginActivity;
 
 public class MyProfileActivity extends AppCompatActivity implements View.OnClickListener{
 	private ArrayList<Event> events;
@@ -100,17 +101,54 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
 
 		recyclerView.setAdapter(recyclerAdapter);
 
+		GraphRequest request = GraphRequest.newMeRequest(
+				FacebookLoginActivity.token,
+				new GraphRequest.GraphJSONObjectCallback() {
+					@Override
+					public void onCompleted(
+							JSONObject object,
+							GraphResponse response) {
+						Log.v("LoginActivity Response ", response.toString());
+
+						try {
+							Name = object.getString("name");
+
+							//FElink = object.getString("link");
+							sex = object.getString("gender");
+							//city = object.getString("location");
+
+							host_name.setText(Name);
+							host_sex.setText(sex);
+							//host_city.setText(city);
+
+							//Log.v("link = ", " " + FElink);
+							Log.v("name = ", " " + Name);
+							Log.v("gender = ", " " + sex);
+							Log.v("location = ", " " + city);
+							Toast.makeText(getApplicationContext(), "Name " + Name, Toast.LENGTH_LONG).show();
+
+
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+		Bundle parameters = new Bundle();
+		parameters.putString("fields", "id,name,email,gender, birthday");
+		request.setParameters(parameters);
+		request.executeAsync();
+		/**
 		FacebookCallback<LoginResult> callback = new FacebookCallback<LoginResult>() {
 			@Override
 			public void onSuccess(LoginResult loginResult) {
 				AccessToken accessToken = loginResult.getAccessToken();
-				Profile profile = Profile.getCurrentProfile();
+				Profile profile = FacebookLoginActivity.profile;
 				//Uri uri = Uri.parse("https://www.facebook.com/carlos.espinosa.56");
 				//Profile profile = new Profile(uri);
 
 				// Facebook Email address
 				GraphRequest request = GraphRequest.newMeRequest(
-						loginResult.getAccessToken(),
+						FacebookLoginActivity.token,
 						new GraphRequest.GraphJSONObjectCallback() {
 							@Override
 							public void onCompleted(
@@ -160,7 +198,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
 
 			}
 		};
-
+		**/
 
 	}
 
