@@ -1,33 +1,7 @@
-/* 	CLASS DESCRIPTION:
-	-	This is the activity that allows the user to add an event.
-	-	The related layout file is activity_add_event that contains content_add_event.
-	-	It implements three interfaces rispectively for: DatePicker, TimePicker and
-		the Dialog to get an image from the gallery.
-	-	Inside OnCreate, except for the usual layout setting, there is the setting of
-		default dates and times.
-	-	initialize is simply to get a reference to the various EditText (Francesco made
-		that) and the listener part doesn't work properly.
-	-	addEvent is to add an Event to Firebase, after getting all the info from the
-		fields and creating the Event obj.
-	-	saveEvents is the method used to save the events to the Preferences, I might
-		reuse that to temporarly save them (instead of getting everything from Firebase)
-	-	onDateSet is called at the click of OK in the DatePicker, it saves the date
-	-	chooseDate is called at the click of the date buttons in the activity,
-		it launches the DatePicker
-	-	chooseTime is called at the click of the time buttons in the activity,
-		it launches the TimePicker
-	-	onTimeSet is called at the click of OK in the TimePicker, it saves the time
-	-	chooseCategory is called at the click of the choose category button,
-		it launches a Dialog to choose the Category
-	-	onClick is called when a category is chosen, it saves it
-	-	chooseImage is called at the click of the choose image button,
-		it launches the gallery
-	-	onActivityResult is called automatically when an image is chosen from the
-		gallery, it puts it in the top part of the activity layout and saves the path;
-		it's going to be uploaded on Firebase
-	-	getRealPathFromURI is simply to save the real path instead of a weird thumbnail
-		path that doesn't bring you anywhere
-*/
+
+/**
+ * Created by Jason on 5/23/2016.
+ */
 
 package software_engineering.whatnow;
 
@@ -41,10 +15,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -55,10 +28,13 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -116,9 +92,17 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
 			key = bundle.getString("KEY");
 		}
 
-		setContentView(R.layout.activity_edit_event);
-		Toolbar toolbar = (Toolbar) findViewById(R.id.edit_event_toolbar);
+		setContentView(R.layout.activity_add_event);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.new_event_toolbar);
 		setSupportActionBar(toolbar);
+
+		findViewById(R.id.fab_new_event).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				editEvent(findViewById(android.R.id.content));
+			}
+		});
+
 
 		EditEventActivity.conEvent = this;
 		initialize();
@@ -133,50 +117,53 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
 			}
 		}
 
-		EditText oldName = (EditText) findViewById(R.id.edit_event_name);
+		EditText oldName = (EditText) findViewById(R.id.new_event_name);
 		oldName.setText(event.getName());
 		tv[0].setText(event.getName());
 		name = event.getName();
 
-		EditText oldDescription = (EditText) findViewById(R.id.edit_event_description);
+		EditText oldDescription = (EditText) findViewById(R.id.new_event_description);
 		oldDescription.setText(event.getDescription());
 		tv[1].setText(event.getDescription());
 
-		EditText oldHost = (EditText) findViewById(R.id.edit_event_host);
+		EditText oldHost = (EditText) findViewById(R.id.new_event_host);
 		oldHost.setText(event.getHost().getName());
 		tv[3].setText(event.getHost().getName());
 
-		EditText oldAddress = (EditText) findViewById(R.id.edit_event_location);
+		EditText oldAddress = (EditText) findViewById(R.id.new_event_location);
 		oldAddress.setText(event.getLocation());
 		tv[2].setText(event.getLocation());
 
-		ImageView oldImage = (ImageView) findViewById(R.id.edit_event_image);
+		ImageView oldImage = (ImageView) findViewById(R.id.new_event_image);
 		byte[] imageAsBytes = Base64.decode(event.getImageAsString(), Base64.DEFAULT);
 		Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
 		oldImage.setImageBitmap(bitmap);
 		imageAsString = event.getImageAsString();
 
+		TextView chooseImage = (TextView) findViewById(R.id.choose_image);
+		chooseImage.setText("Edit Image");
+
 		final EditEventActivity editEventActivity = this;
 		editEventActivity.setTitle("");
 
 		Calendar mcurrentDate = Calendar.getInstance();
-		initialDate = (Button) findViewById(R.id.edit_event_initialDate);
+		initialDate = (Button) findViewById(R.id.new_event_initialDate);
 		iYear = mcurrentDate.get(Calendar.YEAR);
 		iMonth = 1 + mcurrentDate.get(Calendar.MONTH);
 		iDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
 		initialDate.setText(Event.getDateString(iYear,iMonth,iDay));
-		initialTime = (Button) findViewById(R.id.edit_event_initialTime);
+		initialTime = (Button) findViewById(R.id.new_event_initialTime);
 		iHour = mcurrentDate.get(Calendar.HOUR_OF_DAY);
 		iMinute = 0;
 		initialTime.setText(Event.getTimeString(iHour, iMinute));
 
 		mcurrentDate.add(Calendar.HOUR_OF_DAY, 2);
-		finalDate = (Button) findViewById(R.id.edit_event_finalDate);
+		finalDate = (Button) findViewById(R.id.new_event_finalDate);
 		fYear = mcurrentDate.get(Calendar.YEAR);
 		fMonth = 1 + mcurrentDate.get(Calendar.MONTH);
 		fDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
 		finalDate.setText(Event.getDateString(fYear,fMonth,fDay));
-		finalTime = (Button) findViewById(R.id.edit_event_finalTime);
+		finalTime = (Button) findViewById(R.id.new_event_finalTime);
 		fHour = mcurrentDate.get(Calendar.HOUR_OF_DAY);
 		fMinute = 0;
 		finalTime.setText(Event.getTimeString(fHour, fMinute));
@@ -215,10 +202,10 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
 	}
 
 	private void initialize(){
-		tv[0] = (EditText) findViewById(R.id.edit_event_name);
-		tv[1] = (EditText) findViewById(R.id.edit_event_description);
-		tv[2] = (EditText) findViewById(R.id.edit_event_location);
-		tv[3] = (EditText) findViewById(R.id.edit_event_host);
+		tv[0] = (EditText) findViewById(R.id.new_event_name);
+		tv[1] = (EditText) findViewById(R.id.new_event_description);
+		tv[2] = (EditText) findViewById(R.id.new_event_location);
+		tv[3] = (EditText) findViewById(R.id.new_event_host);
 	}
 
 	public void editEvent(View v) {
@@ -264,11 +251,8 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
 
 		Log.wtf("key", newEvent.getKey());
 
-		//remove from firebase
-		firebase.child(newEvent.getKey()).removeValue();
-
-		//upload to firebase
-		firebase.push().setValue(newEvent);
+		//update item
+		firebase.child(newEvent.getKey()).setValue(newEvent);
 
 		//return to previous activity
 		Toast.makeText(this, "Event Listing Updated!", Toast.LENGTH_LONG).show();
@@ -303,7 +287,7 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
 
 	public void chooseDate(View v) {
 		DatePickerDialog mDatePicker;
-		if(v.getId() == R.id.edit_event_initialDate){
+		if(v.getId() == R.id.new_event_initialDate){
 			mDatePicker = new DatePickerDialog(this, this, iYear, iMonth, iDay);
 			initial = true;
 			mDatePicker.setTitle("Starting Date:");
@@ -317,7 +301,7 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
 
 	public void chooseTime(View v) {
 		TimePickerDialog mTimePicker;
-		if (v.getId() == R.id.edit_event_initialTime){
+		if (v.getId() == R.id.new_event_initialTime){
 			mTimePicker = new TimePickerDialog(this, this, iHour, iMinute, false);
 			mTimePicker.setTitle("Starting Time:");
 			initial = true;
@@ -375,7 +359,7 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
 				byte[] byteArray = stream.toByteArray();
 				imageAsString = android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT);
 
-				ImageView imageView = (ImageView) findViewById(R.id.edit_event_image);
+				ImageView imageView = (ImageView) findViewById(R.id.new_event_image);
 				imageView.setImageBitmap(image);
 
 			} catch (IOException e) {

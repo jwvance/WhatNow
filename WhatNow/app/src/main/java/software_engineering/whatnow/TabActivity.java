@@ -180,7 +180,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		tabLayout.setupWithViewPager(viewPager);
 
 		Firebase.setAndroidContext(context);
-		Firebase firebase = new Firebase(Constants.DATABASE_URL);
+		final Firebase firebase = new Firebase(Constants.DATABASE_URL);
 		firebase.addChildEventListener(new ChildEventListener() {
 			@Override
 			public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -222,18 +222,11 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			@Override
 			public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 				//refresh cards
-				Event event = dataSnapshot.getValue(Event.class);
-				((GlobalEvents) getApplication()).updateEvent(dataSnapshot.getKey(), event);
-
-
 				for(int i = 0; i < eventsEvents.size(); i++){
 					for(int j = 0; j < eventsEvents.get(i).size(); j++){
-						if(eventsEvents.get(i).get(j).getKey().equals(dataSnapshot.getKey())){
-							eventsEvents.get(i).remove(j);
-						}
+						eventsEvents.get(i).remove(j);
 					}
 				}
-
 				setupViewPager(viewPager);
 
 			}
@@ -241,7 +234,6 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			@Override
 			public void onChildRemoved(DataSnapshot dataSnapshot) {
 				((GlobalEvents) getApplication()).deleteEvent(dataSnapshot.getKey());
-
 
 				for(int i = 0; i < eventsEvents.size(); i++){
 					for(int j = 0; j < eventsEvents.get(i).size(); j++){
