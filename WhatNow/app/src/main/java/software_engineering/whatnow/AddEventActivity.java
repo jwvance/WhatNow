@@ -61,7 +61,10 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.firebase.client.utilities.Base64;
 
 import java.io.ByteArrayOutputStream;
@@ -108,6 +111,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 	private String imagePath;
 	private Bitmap image;
 	private String imageAsString;
+	private String[] galleryAsString;
 
 	private Spinner spinner;
 	ArrayAdapter<CharSequence> adapter;
@@ -149,6 +153,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		finalTime.setText(Event.getTimeString(fHour, fMinute));
 
 		category = null;
+		galleryAsString = new String[0];
 
 		//initialize spinner
 		spinner = (Spinner)findViewById(R.id.spinner);
@@ -181,6 +186,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 			}
 		});
 	}
+
 
 	public static ArrayList<Event> loadEvents(Context context) {
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -330,7 +336,8 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 			return;
 		}
 
-		event = new Event(new Random().nextInt(1000), iHour, iMinute, fHour, fMinute,
+		int eventId = new Random().nextInt(1000);
+		event = new Event(eventId, iHour, iMinute, fHour, fMinute,
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), name,
 				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category),
 				iCalendar.getTimeInMillis(), imageAsString, "", false, 0);
@@ -343,7 +350,24 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 
 		//save to firebase
 		Firebase.setAndroidContext(this);
-		new Firebase(Constants.DATABASE_URL).push().setValue(event);
+		Firebase mRef = new Firebase(Constants.DATABASE_URL);
+//		Firebase eventRef = mRef.child("event");
+//		eventRef.child(Integer.toString(eventId)).setValue(event);
+		mRef.push().setValue(event);
+
+
+		mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				String val = (String) dataSnapshot.getKey();
+				Log.wtf("val", val);
+			}
+
+			@Override
+			public void onCancelled(FirebaseError firebaseError) {
+
+			}
+		});
 
 		//return to previous activity
 		finish();

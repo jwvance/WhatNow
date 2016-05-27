@@ -14,9 +14,6 @@ import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
-/**
- * Created by Vanessa on 5/24/2016.
- */
 public class GalleryActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,6 +25,8 @@ public class GalleryActivity extends AppCompatActivity {
         Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         Log.wtf("bmp from gallery", bmp.toString());
 
+        fromIntent.removeExtra("image");
+        Log.wtf("intent", "removed");
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         imageView.setImageBitmap(bmp);
 
@@ -41,8 +40,5 @@ public class GalleryActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
-
-
     }
 }

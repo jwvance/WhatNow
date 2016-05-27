@@ -102,6 +102,11 @@ public class Event implements Comparable {
     //Location stuff
     private LatLng myLoc;
 
+    //Image
+    @SerializedName("galleryString")
+    @Expose
+    private String[] galleryString;
+
 
     public Event(){
         //empty constructor
@@ -132,6 +137,7 @@ public class Event implements Comparable {
             npe.printStackTrace();
         }
         this.imageAsString = imageAsString;
+        this.galleryString = galleryString;
 
 
         Calendar calendar = Calendar.getInstance();
@@ -301,6 +307,7 @@ public class Event implements Comparable {
     public long getTimestamp() {
         return timestamp;
     }
+
 
     @Override
     public String toString() {

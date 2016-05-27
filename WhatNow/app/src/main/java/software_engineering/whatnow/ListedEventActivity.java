@@ -15,7 +15,6 @@ import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,7 +22,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -35,9 +33,6 @@ import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
@@ -80,12 +75,15 @@ public class ListedEventActivity extends AppCompatActivity {
 	private String imagePath;
 	private Bitmap imageG;
 	private String imgArr[];
-	private String imageAsString;
+	private String galleryString;
 	private boolean onGalleryclick;
 	public	ArrayList<Bitmap> galArray;
 	private	ArrayList<String> strArray;
+	private LinearLayout imageGallery;
 
 	private byte[] byteArray;
+
+	private byte[] imageAsBytes;
 
 	ImageView lastClicked = null;
 	boolean isImageFit;
@@ -113,6 +111,8 @@ public class ListedEventActivity extends AppCompatActivity {
 		distance = (TextView) findViewById(R.id.listed_event_distance);
 		image = (ImageView) findViewById(R.id.listed_event_image);
 
+		imageGallery = (LinearLayout)findViewById(R.id.my_gallery);
+
 		events = AddEventActivity.loadEvents(getApplicationContext());
 		event = null;
 		for (int i = 0; i < events.size(); i++) {
@@ -136,9 +136,28 @@ public class ListedEventActivity extends AppCompatActivity {
 			address.setTextColor(Color.parseColor("#33a0ff"));
 			distance.setText(event.getDistance() + " away");
 
-			byte[] imageAsBytes = Base64.decode(event.getImageAsString(), Base64.DEFAULT);
+			imageAsBytes = Base64.decode(event.getImageAsString(), Base64.DEFAULT);
 			Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+
+//			byte[] galleryAsBytes = Base64.decode(event.getGalleryString(), Base64.DEFAULT);
+//			Bitmap bitmapG = BitmapFactory.decodeByteArray(galleryAsBytes, 0, galleryAsBytes.length);
+//			imageGallery.addView(getImages(bitmapG));
+
+
 			image.setImageBitmap(bitmap);
+
+			image.setOnClickListener(new View.OnClickListener(){
+				@Override
+				public void onClick(View v)
+				{
+					Log.wtf("IMAGE click ", "on picture");
+					Intent intent = new Intent(ListedEventActivity.this, GalleryActivity.class);
+					intent.putExtra("image", imageAsBytes);
+					startActivity(intent);
+				}
+			});
+
+			Log.wtf("event id", eventID+"");
 
 		}else{
 			//error
@@ -272,21 +291,26 @@ public class ListedEventActivity extends AppCompatActivity {
 				imageG.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 
 				byteArray = stream.toByteArray();
-				imageAsString = android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT);
+				galleryString = android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT);
 
-				strArray.add(imageAsString);
-
-//				Log.wtf("IMAGE String Array ", strArray.toString());
+				strArray.add(galleryString);
 
 				//add images to gallery
 //				ImageView imageView = (ImageView) findViewById(R.id.image_display_gallery);
 				galArray.add(imageG);
 				Log.wtf("IMAGE Array ", galArray.toString());
 
-				LinearLayout imageGallery = (LinearLayout)findViewById(R.id.my_gallery);
 				for(Bitmap image: galArray){
 					imageGallery.addView(getImages(image));
 				}
+//
+//				event.setGalleryString(galleryString);
+//				Log.wtf("listed event", "addimage");
+//
+//				//save to firebase
+//				Firebase.setAndroidContext(this);
+//				new Firebase(Constants.DATABASE_URL).push().setValue(event);
+
 				//clear array
 				galArray.clear();
 				Log.wtf("IMAGE Array ", "clear");
@@ -301,10 +325,7 @@ public class ListedEventActivity extends AppCompatActivity {
 
 	private View getImages(Bitmap image) {
 		final ImageView imageView = new ImageView(getApplicationContext());
-//		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)imageView.getLayoutParams();
-//		params.addRule(RelativeLayout.BELOW, R.id.choose_gallery);
-//		imageView.setLayoutParams(params);
-//
+
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		lp.setMargins(0,0,0,0);
 		imageView.setLayoutParams(lp);
@@ -319,25 +340,10 @@ public class ListedEventActivity extends AppCompatActivity {
 				Intent intent = new Intent(ListedEventActivity.this, GalleryActivity.class);
 				intent.putExtra("image", byteArray);
 				startActivity(intent);
-
-				//go to gallery activity
-//				if(isImageFit) {
-//					isImageFit=false;
-//					LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-//					imageView.setLayoutParams(lp);
-//					imageView.setAdjustViewBounds(true);
-//				}else{
-//					isImageFit=true;
-//					LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-//					imageView.setLayoutParams(lp);
-//					imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-//				}
 			}
 		});
-
 		return imageView;
 	}
-
 
 	public String getRealPathFromURI(Context context, Uri contentUri) {
 		Cursor cursor = null;
