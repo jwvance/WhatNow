@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import java.util.ArrayList;
 
 public class GalleryActivity extends AppCompatActivity {
+    //Should probably be called FullScreenActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,7 +24,7 @@ public class GalleryActivity extends AppCompatActivity {
         Intent fromIntent = getIntent();
         byte[] byteArray = fromIntent.getByteArrayExtra("image");
         Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-        Log.wtf("bmp from gallery", bmp.toString());
+        Log.wtf("bmp from GalleryActivity", bmp.toString());
 
         fromIntent.removeExtra("image");
         Log.wtf("intent", "removed");

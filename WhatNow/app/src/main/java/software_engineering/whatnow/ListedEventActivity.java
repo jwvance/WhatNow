@@ -15,6 +15,7 @@ import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,6 +23,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -42,12 +44,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Map;
 
 import software_engineering.whatnow.firebase_stuff.Constants;
 
@@ -82,17 +89,22 @@ public class ListedEventActivity extends AppCompatActivity {
 	private LinearLayout imageGallery;
 
 	private byte[] byteArray;
-
 	private byte[] imageAsBytes;
+	private byte[] galleryAsBytes;
+	private String imageVal;
 
 	ImageView lastClicked = null;
 	boolean isImageFit;
+	private Firebase mRef;
 
-	HorizontalScrollView hsv;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		Firebase.setAndroidContext(this);
+		mRef = new Firebase(Constants.DATABASE_URL);
+
 		setContentView(R.layout.activity_listed_event);
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarEvent);
@@ -194,6 +206,34 @@ public class ListedEventActivity extends AppCompatActivity {
 		//hide scroll bar
 		HorizontalScrollView horizontalScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
 		horizontalScrollView.setHorizontalScrollBarEnabled(false);
+
+		//check and load gallery images
+		Firebase eventRef = mRef.child("gallery");
+		Log.wtf("image firebase", eventRef.toString());
+		eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				for(DataSnapshot child: dataSnapshot.getChildren()) {
+					//key should be eventID, val is image String
+ 					for(DataSnapshot c: child.getChildren()){
+
+						imageVal = c.getValue().toString();
+						Log.wtf("Firebase", "Loading images");
+//						Log.wtf("image val", imageVal);
+//
+						galleryAsBytes = Base64.decode(imageVal, Base64.DEFAULT);
+						Bitmap bitmapG = BitmapFactory.decodeByteArray(galleryAsBytes, 0, galleryAsBytes.length);
+						imageGallery.addView(getImages(bitmapG, galleryAsBytes));
+					}
+				}
+			}
+
+			@Override
+			public void onCancelled(FirebaseError firebaseError) {
+				//
+			}
+		});
+		Log.wtf("image val", imageVal);
 	}
 
 
@@ -301,15 +341,19 @@ public class ListedEventActivity extends AppCompatActivity {
 				Log.wtf("IMAGE Array ", galArray.toString());
 
 				for(Bitmap image: galArray){
-					imageGallery.addView(getImages(image));
+					imageGallery.addView(getImages(image, byteArray));
 				}
+//				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//				SharedPreferences.Editor editor = prefs.edit();
+
 //
 //				event.setGalleryString(galleryString);
 //				Log.wtf("listed event", "addimage");
-//
-//				//save to firebase
-//				Firebase.setAndroidContext(this);
-//				new Firebase(Constants.DATABASE_URL).push().setValue(event);
+
+//				//save to firebas
+				Firebase eventRef = mRef.child("gallery");
+				eventRef.child(Integer.toString(eventID)).setValue(strArray);
+
 
 				//clear array
 				galArray.clear();
@@ -323,7 +367,8 @@ public class ListedEventActivity extends AppCompatActivity {
 		}
 	}
 
-	private View getImages(Bitmap image) {
+
+	private View getImages(Bitmap image, final byte[] arr) {
 		final ImageView imageView = new ImageView(getApplicationContext());
 
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -338,7 +383,7 @@ public class ListedEventActivity extends AppCompatActivity {
 			{
 				Log.wtf("IMAGE click ", "on picture");
 				Intent intent = new Intent(ListedEventActivity.this, GalleryActivity.class);
-				intent.putExtra("image", byteArray);
+				intent.putExtra("image", arr);
 				startActivity(intent);
 			}
 		});
