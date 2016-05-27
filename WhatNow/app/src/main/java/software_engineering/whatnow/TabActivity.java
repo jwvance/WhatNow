@@ -34,18 +34,23 @@ package software_engineering.whatnow;
  * Created by Steve on 4/20/16.
  */
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationListener;
 
 import android.content.DialogInterface;
 
 
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -152,6 +157,20 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		sortingCriteria = preferences.getInt("itemSelected", 1);
+
+		Location mLastLocation;
+		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+			return;
+		}
+
+		mLastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+		if (mLastLocation != null){
+			LocationToolBox.storedLatitude = mLastLocation.getLatitude();
+			LocationToolBox.storedLongitude = mLastLocation.getLongitude();
+		}
+
 
 		if(locationData.getLocation() != null){
 			LocationToolBox.storedLatitude= locationData.getLocation().getLatitude();
