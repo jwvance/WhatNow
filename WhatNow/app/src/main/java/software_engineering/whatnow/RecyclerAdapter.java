@@ -84,6 +84,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 		return eventDataSource.size();
 	}
 
+	public void updateRecycler(){
+
+	}
+
+
 	public static class ViewHolder extends RecyclerView.ViewHolder{
 		protected TextView cardEventName;
 		protected TextView cardDescription;
@@ -145,7 +150,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 					else{
 						img.setImageResource(R.drawable.ic_bookmark_black_24dp);
 						editor.putBoolean("bookmarked" + id, true);
-						snackbar = Snackbar.make(v, "Event saved for later, find it in your profile", Snackbar.LENGTH_LONG);
+						snackbar = Snackbar.make(v, "Event saved for later, find it in the menu", Snackbar.LENGTH_LONG);
 						snackbar.show();
 					}
 					editor.apply();

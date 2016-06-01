@@ -51,9 +51,13 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,6 +74,7 @@ public class ListedEventActivity extends AppCompatActivity {
 	private TextView address;
 	private TextView distance;
 	private ImageView image;
+	private TextView title;
 	private ArrayList<Event> events;
 	private int eventID;
 	private Event event;
@@ -115,11 +120,11 @@ public class ListedEventActivity extends AppCompatActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarEvent);
 		setSupportActionBar(toolbar);
 
-		//	this.setTitle(getIntent().getStringExtra("Name"));
 
+		title = (TextView) findViewById(R.id.listed_event_title);
 		eventID = getIntent().getIntExtra("Event_ID", -1);
 		description = (TextView) findViewById(R.id.listed_event_description);
-		category = (TextView) findViewById(R.id.listed_event_category);
+		//category = (TextView) findViewById(R.id.listed_event_category);
 		host = (TextView) findViewById(R.id.listed_event_host);
 		date = (TextView) findViewById(R.id.listed_event_date);
 		times = (TextView) findViewById(R.id.listed_event_times);
@@ -127,24 +132,25 @@ public class ListedEventActivity extends AppCompatActivity {
 		address = (TextView) findViewById(R.id.listed_event_address);
 		distance = (TextView) findViewById(R.id.listed_event_distance);
 		image = (ImageView) findViewById(R.id.listed_event_image);
-
 		imageGallery = (LinearLayout)findViewById(R.id.my_gallery);
 
-		events = AddEventActivity.loadEvents(getApplicationContext());
 		event = null;
-		for (int i = 0; i < events.size(); i++) {
-			if(events.get(i).getId() == eventID) {
-				event = events.get(i);
-				events.remove(i);	//TO FILL THE LIST LATER!
+
+		events = ((GlobalEvents) this.getApplication()).getEventList();
+
+		for (Event currEvent : events) {
+			if(currEvent.getId() == eventID) {
+				event = currEvent;
 				break;
 			}
 		}
 
 		if(event != null) {
-			this.setTitle(event.getName());
+			this.setTitle("");
+			title.setText(event.getName());
 			description.setText(event.getDescription());
-			String categoryS = event.getCategory().getName().toLowerCase();
-			category.setText(categoryS.substring(0, 1).toUpperCase() + categoryS.substring(1));
+			//String categoryS = event.getCategory().getName().toLowerCase();
+			//category.setText(categoryS.substring(0, 1).toUpperCase() + categoryS.substring(1));
 			host.setText(event.getHost().getName());
 			host.setTextColor(Color.parseColor("#33a0ff"));
 			date.setText(event.getDateString());	//ADD multi date
@@ -254,12 +260,10 @@ public class ListedEventActivity extends AppCompatActivity {
 	}
 
 	public void deleteDialogue(final View view){
-
 		//dialogue "are you sure"
-
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(view.getContext());
 		alertDialogBuilder
-				.setMessage("Are you sure you want to delete this event?")
+				.setMessage("Are you sure you want to delete this event? This will be permanent.")
 				.setCancelable(false)
 				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 					@Override
@@ -283,26 +287,22 @@ public class ListedEventActivity extends AppCompatActivity {
 	public void deleteEvent(View view) {
 		//call to firebase to delete
 		Firebase.setAndroidContext(this);
-		firebaseEvents = new Firebase(Constants.DATABASE_URL);
-		firebaseEvents.child(event.getKey()).removeValue();
+		Firebase firebase = new Firebase(Constants.DATABASE_URL);
+		firebase.child(event.getKey()).removeValue();
 
 		//status message... not working
-		Snackbar snackbar;
-		snackbar = Snackbar.make(view, "Event deleted", Snackbar.LENGTH_LONG);
-		snackbar.show();
+		Toast.makeText(this, "Event Listing Deleted.", Toast.LENGTH_LONG).show();
 
 		//exit to previous activity
 		finish();
 	}
 
-
 	public void editEvent(View view){
-
-		//call to firebase to delete
-
-		//call to preferences to delete
-
-		//call to
+		//start edit event activity
+		event.getKey();
+		Intent intent = new Intent(this, EditEventActivity.class);
+		intent.putExtra("KEY", event.getKey());
+		startActivity(intent);
 
 	}
 

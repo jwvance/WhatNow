@@ -318,9 +318,7 @@ public class Event implements Comparable {
     }
 
     public String getFriendlyDate(){
-        String friendlyString;
-
-        //get date and parse
+          //get date and parse
         String currDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         String[] dateSplits = currDate.split("-");
         String currYear = dateSplits[0];

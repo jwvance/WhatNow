@@ -45,7 +45,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
 		this.setTitle("My Profile");
 
 		//testing
-		events = AddEventActivity.loadEvents(this);
+		events = ((GlobalEvents) getApplication()).getEventList();
 
 		recyclerView = (RecyclerView) findViewById(R.id.profile_recycler_view);
 		pastEventsText = (TextView) findViewById(R.id.profile_past_events);
