@@ -376,17 +376,20 @@ public class ListedEventActivity extends AppCompatActivity {
 					}
 				});
 
+				Log.wtf("eventID 2", eventID+"");
+
+				eventRef.child(Integer.toString(eventID)).setValue(strArray);
+
+
+
 				//add images to gallery
 				galArray.add(imageG);
 //				Log.wtf("IMAGE Array ", galArray.toString());
 				for(Bitmap image: galArray){
 					imageGallery.addView(getImages(image, byteArray));
 				}
-//				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//				SharedPreferences.Editor editor = prefs.edit();
-//
-//				event.setGalleryString(galleryString);
-//				Log.wtf("listed event", "addimage");
+
+				Log.wtf("eventID 3", eventID+"");
 
 				//clear array
 				galArray.clear();
