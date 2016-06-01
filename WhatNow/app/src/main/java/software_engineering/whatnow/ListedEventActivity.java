@@ -364,7 +364,10 @@ public class ListedEventActivity extends AppCompatActivity {
 									Log.wtf("loaded images", String.valueOf(loadImages.size()));
 									//overwrite values if images exist
 									eventRef.child(Integer.toString(eventID)).setValue(loadImages);
+									loadImages.clear();
+								break;
 							}
+							break;
 						}
 					}
 					@Override
