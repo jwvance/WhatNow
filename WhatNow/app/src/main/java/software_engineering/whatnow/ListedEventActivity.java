@@ -218,7 +218,6 @@ public class ListedEventActivity extends AppCompatActivity {
 				for (DataSnapshot child : dataSnapshot.getChildren()) {
 					//key should be the eventID, val is image String
 					keyval = child.getKey();
-//					Log.wtf("KEY", keyval);
 					if (Integer.parseInt(keyval) == eventID) {
 						Log.wtf("KEY", keyval);
 //						Log.wtf("key is", "same");
@@ -332,48 +331,42 @@ public class ListedEventActivity extends AppCompatActivity {
 
 				imagePath = getRealPathFromURI(this, uri);
 				imageG = scaleImage(this, uri);
-//				Log.wtf("IMAGE", imagePath);
 
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
 				imageG.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 
 				byteArray = stream.toByteArray();
 				galleryString = android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT);
-//				Log.wtf("STR Array ", strArray.toString());
+
+				strArray.add(galleryString);
 
 				// save to firebase
 				final Firebase eventRef = mRef.child("gallery");
+//				eventRef.child(Integer.toString(eventID)).setValue(strArray);
+
 				//check if there are images already in the database
 				//append else just add
 				eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
 					@Override
 					public void onDataChange(DataSnapshot dataSnapshot) {
 						for (DataSnapshot child : dataSnapshot.getChildren()) {
-
+							Log.wtf("eventID", eventID+"");
 							if (Integer.parseInt(child.getKey()) == eventID) {
 								if (child.exists()) {
 									Log.wtf("child", "EXISTS");
 									for (DataSnapshot c : child.getChildren()) {
-										strArray.add(c.getValue().toString());
-
+										//load images from database into array
+										loadImages.add(c.getValue().toString());
 									}
-
-									strArray.add(galleryString);
-									Log.wtf("loaded images", String.valueOf(strArray.size()));
-									//overwrite values
-									eventRef.child(Integer.toString(eventID)).setValue(strArray);
-								} else {
-									//if no images exist add them to database
-									Log.wtf("child", "DNE");
-									strArray.add(galleryString);
-									eventRef.child(Integer.toString(eventID)).setValue(strArray);
 								}
-							}else{
-								// don't download images
+									//add selected image into array
+									loadImages.add(galleryString);
+									Log.wtf("loaded images", String.valueOf(loadImages.size()));
+									//overwrite values if images exist
+									eventRef.child(Integer.toString(eventID)).setValue(loadImages);
 							}
 						}
 					}
-
 					@Override
 					public void onCancelled(FirebaseError firebaseError) {
 
