@@ -261,7 +261,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		event = new Event(new Random().nextInt(1000), iHour, iMinute, fHour, fMinute,
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), name,
 				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category),
-				iCalendar.getTimeInMillis(), imageAsString, "", false, 0);
+				iCalendar.getTimeInMillis(),fCalendar.getTimeInMillis(), imageAsString, "", false, 0);
 
 		//save to firebase
 		Firebase.setAndroidContext(this);

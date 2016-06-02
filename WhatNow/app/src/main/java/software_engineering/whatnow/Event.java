@@ -92,6 +92,7 @@ public class Event implements Comparable {
     LocationToolBox locationIs;
     //
 
+
     private int month;
     private int year;
     private int day;
@@ -108,7 +109,7 @@ public class Event implements Comparable {
     }
 
     public Event(int id, int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
-                 Host host, String name, String description, Category category, long dateStart, String imageAsString, String firebaseKey, boolean fromFirebase, long timeStamp) {
+                 Host host, String name, String description, Category category, long dateStart,long dateEnd, String imageAsString, String firebaseKey, boolean fromFirebase, long timeStamp) {
         this.id = id;
         this.hourStart = hourStart;
         this.minuteStart = minuteStart;
@@ -120,6 +121,7 @@ public class Event implements Comparable {
         this.description = description;
         this.category = category;
         this.dateStart = dateStart;
+        this.dateEnd=dateEnd;
         this.firebaseKey = firebaseKey;
         if (fromFirebase){
             this.timestamp=timeStamp;
@@ -430,6 +432,11 @@ public class Event implements Comparable {
         }
 
         return p1;
+    }
+
+
+    public long getDateEnd() {
+        return dateEnd;
     }
 
     //returns -1 if this is before the other event, 0 if they are at the same time

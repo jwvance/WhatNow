@@ -339,17 +339,20 @@ public class TabActivity extends AppCompatActivity implements GeoQueryEventListe
 							Integer.valueOf(e.get("minuteStart").toString()), Integer.valueOf(e.get("hourEnd").toString()),
 							Integer.valueOf(e.get("minuteEnd").toString()), e.get("location").toString(), host,
 							(String) e.get("name"), (String) e.get("description"), category,
-							Long.parseLong(e.get("dateStart").toString()), (String) e.get("imageAsString"), dataSnapshot.getKey(), true, timeStamp);
+							Long.parseLong(e.get("dateStart").toString()),Long.parseLong(e.get("dateEnd").toString()), (String) e.get("imageAsString"), dataSnapshot.getKey(), true, timeStamp);
 
 					event.setMyLoc(context);
 					eventsEvents.get(categoryN).add(event);    //specific category
 					eventsEvents.get(0).add(event);
 
-					((GlobalEvents) getApplication()).appendEvent(event);
-					Log.wtf("LOGGED?", event.getKey());
+					if (event.getDateEnd()>System.currentTimeMillis()) {
+						((GlobalEvents) getApplication()).appendEvent(event);
+						Log.wtf("LOGGED?", event.getKey());
 
-					setupViewPager(viewPager);
 
+						setupViewPager(viewPager);
+
+					}
 
 
 					}catch(Exception e){
