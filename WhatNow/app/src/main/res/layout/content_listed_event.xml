@@ -15,8 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         tools:context=".AddEventActivity">
 
@@ -29,7 +27,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:id="@+id/linearLayout">
+            android:id="@+id/linearLayout"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -255,37 +255,45 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="75dp"
                 android:orientation="horizontal"
                 android:layout_marginTop="5dp"
                 android:layout_gravity="center_horizontal">
 
-                <ImageView
-                    android:id="@+id/imageView16"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_people_black_24dp"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"/>
-
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/listed_event_participants"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Participants"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/imageView16"
-                    android:layout_toEndOf="@+id/imageView16"
-                    android:layout_marginLeft="10dp"/>
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="who else is going..."
+                    android:textStyle="italic"
+                    android:id="@+id/textView8"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:paddingBottom="5dp" />
+
             </RelativeLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/linearLayout"
+            android:layout_centerHorizontal="true"
+            android:foregroundGravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:id="@+id/relativeLayout">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:id="@+id/profile_past_events_layout">
+                android:id="@+id/profile_past_events_layout"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -301,57 +309,49 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/listed_event_recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
+                    android:layout_height="match_parent"
                     android:scrollbars="horizontal"
                     android:layout_below="@+id/listed_event_past_events"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"/>
+                    android:transitionGroup="false" />
 
             </RelativeLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="#e0e0e0"/>
 
-        </LinearLayout>
+        </RelativeLayout>
 
-        <RelativeLayout
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/linearLayout"
-            android:layout_centerHorizontal="true"
-            android:foregroundGravity="center_horizontal"
-            android:gravity="center_horizontal">
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_below="@+id/relativeLayout"
+            android:layout_alignLeft="@+id/relativeLayout"
+            android:layout_alignStart="@+id/relativeLayout">
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/editEvent"
-                android:background="@drawable/ic_create_black_24dp"
-                android:adjustViewBounds="true"
-                android:scaleX=".25"
-                android:scaleY=".25"
-                android:onClick="editEvent"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true" />
-
-            <Button
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:id="@+id/deleteEvent"
                 android:background="@drawable/ic_delete_black_24dp"
                 android:adjustViewBounds="true"
-                android:scaleX=".25"
-                android:scaleY=".25"
                 android:onClick="deleteDialogue"
-                android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/editEvent"
-                android:layout_toEndOf="@+id/editEvent" />
+                android:layout_alignTop="@+id/listed_event_recycler_view"
+                android:layout_centerHorizontal="true"
+                android:layout_marginRight="20dp" />
 
+            <Button
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/editEvent"
+                android:background="@drawable/ic_create_black_24dp"
+                android:adjustViewBounds="true"
+                android:onClick="editEvent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignLeft="@+id/listed_event_past_events"
+                android:layout_alignStart="@+id/listed_event_past_events"
+                android:layout_marginLeft="20dp" />
+        </LinearLayout>
 
-        </RelativeLayout>
         <!--    </ScrollView>   -->
 
     </RelativeLayout>
