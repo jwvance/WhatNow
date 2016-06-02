@@ -302,6 +302,14 @@ public class Event implements Comparable {
         return timestamp;
     }
 
+    public LatLng getMyLoc() {
+        return myLoc;
+    }
+
+    public void setMyLoc(LatLng myLoc) {
+        this.myLoc = myLoc;
+    }
+
     @Override
     public String toString() {
         return id + ":::***:::***:::" + hourStart + ":::***:::***:::" + minuteStart + ":::***:::***:::" +

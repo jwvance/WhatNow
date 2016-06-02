@@ -77,6 +77,11 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -93,7 +98,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TabActivity extends AppCompatActivity implements DialogInterface.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
+public class TabActivity extends AppCompatActivity implements GeoQueryEventListener, DialogInterface.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
 	//Test for location
 	public static Context con;
@@ -103,10 +108,19 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	private ViewPager viewPager;
 	private RecyclerView recyclerView;
 	private Context context;
+	private float maximumDistance = -1.0f;
+	private int cont =0;
+	private int cont1 =0;
 
 	//testing distance
 	private LocationToolBox locTool;
 	private LocationListener locListener;
+
+	private ArrayList<String> closeEventsKeys = new ArrayList<String>();
+
+	private GeoLocation myPosition = null;
+	GeoQuery geoQuery = null;
+
 	//private LocationData locationData = LocationData.getLocationData();
 	//More testing
 	public static String LOG_TAG = "MyMapApplication";
@@ -178,6 +192,8 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			LocationToolBox.storedLongitude =  locationData.getLocation().getLongitude();
 		}
 		//-------------------------------------------------
+
+		this.myPosition = new GeoLocation(LocationToolBox.storedLatitude, LocationToolBox.storedLongitude);
 		categories = Category.getCategories();
 
 		eventsEvents = new ArrayList<ArrayList<Event>>();
@@ -199,9 +215,17 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		tabLayout = (TabLayout) findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(viewPager);
 
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = preferences.edit();
+
+		maximumDistance = preferences.getFloat("maximumDistance", 50);
+
 		Firebase.setAndroidContext(context);
-		Firebase firebase = new Firebase(Constants.DATABASE_URL);
-		firebase.addChildEventListener(new ChildEventListener() {
+		GeoFire geoFire = new GeoFire(new Firebase(Constants.GEOFIRE_URL));
+		this.geoQuery = geoFire.queryAtLocation(myPosition, maximumDistance);
+
+		this.geoQuery.addGeoQueryEventListener(this);
+		/*firebase.addChildEventListener(new ChildEventListener() {
 			@Override
 			public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 				try{
@@ -283,7 +307,134 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			public void onCancelled(FirebaseError firebaseError) {
 
 			}
+		});*/
+	}
+
+	@Override
+	public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+	}
+
+	@Override
+	public void onKeyEntered(String key, GeoLocation location) {
+		//Firebase firebase = new Firebase(Constants.DATABASE_URL);
+
+
+		Query query = (new Firebase(Constants.DATABASE_URL)).orderByKey().equalTo(key);
+
+		query.addChildEventListener(new ChildEventListener() {
+			@Override
+			public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+				try {
+					HashMap e = dataSnapshot.getValue(HashMap.class);
+
+					Host host = new Host((String) ((HashMap) e.get("host")).get("name"));
+					Category category = new Category(((HashMap) e.get("category")).get("name").toString());
+
+					int categoryN = categories.indexOf(category.getName());
+
+					long timeStamp = Long.parseLong(e.get("timestamp").toString());
+
+					Event event = new Event(Integer.valueOf(e.get("id").toString()), Integer.valueOf(e.get("hourStart").toString()),
+							Integer.valueOf(e.get("minuteStart").toString()), Integer.valueOf(e.get("hourEnd").toString()),
+							Integer.valueOf(e.get("minuteEnd").toString()), e.get("location").toString(), host,
+							(String) e.get("name"), (String) e.get("description"), category,
+							Long.parseLong(e.get("dateStart").toString()), (String) e.get("imageAsString"), dataSnapshot.getKey(), true, timeStamp);
+
+					event.setMyLoc(context);
+					eventsEvents.get(categoryN).add(event);    //specific category
+					eventsEvents.get(0).add(event);
+
+					((GlobalEvents) getApplication()).appendEvent(event);
+					Log.wtf("LOGGED?", event.getKey());
+
+					setupViewPager(viewPager);
+
+
+
+					}catch(Exception e){
+						Log.wtf("FIREBASE error", e.getMessage());
+					}
+					if (eventsEvents.get(0).size() > 0 && eventsEvents.get(0).get(0) == null) {
+						eventsEvents.clear();
+						Log.wtf("TabActivity", "Clearing events!");
+					}
+
+			}
+
+			@Override
+			public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                //refresh cards
+				Event event = dataSnapshot.getValue(Event.class);
+				((GlobalEvents) getApplication()).updateEvent(dataSnapshot.getKey(), event);
+
+
+				for(int i = 0; i < eventsEvents.size(); i++){
+					for(int j = 0; j < eventsEvents.get(i).size(); j++){
+						if(eventsEvents.get(i).get(j).getKey().equals(dataSnapshot.getKey())){
+							eventsEvents.get(i).remove(j);
+						}
+					}
+				}
+
+				GeoFire geoFire = new GeoFire(new Firebase(Constants.GEOFIRE_URL));
+
+				geoFire.setLocation(dataSnapshot.getKey(), new GeoLocation(event.getMyLoc().latitude, event.getMyLoc().longitude));
+
+				setupViewPager(viewPager);
+			}
+
+			@Override
+			public void onChildRemoved(DataSnapshot dataSnapshot) {
+				((GlobalEvents) getApplication()).deleteEvent(dataSnapshot.getKey());
+
+
+				for(int i = 0; i < eventsEvents.size(); i++){
+					for(int j = 0; j < eventsEvents.get(i).size(); j++){
+						if(eventsEvents.get(i).get(j).getKey().equals(dataSnapshot.getKey())){
+							eventsEvents.get(i).remove(j);
+						}
+					}
+				}
+
+				GeoFire geoFire = new GeoFire(new Firebase(Constants.GEOFIRE_URL));
+
+				geoFire.removeLocation(dataSnapshot.getKey());
+
+				setupViewPager(viewPager);
+			}
+
+			@Override
+			public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+			}
+
+			@Override
+			public void onCancelled(FirebaseError firebaseError) {
+
+			}
 		});
+
+	}
+
+	@Override
+	public void onKeyExited(String key) {
+
+	}
+
+	@Override
+	public void onKeyMoved(String key, GeoLocation location) {
+
+	}
+
+	@Override
+	public void onGeoQueryReady() {
+
+	}
+
+	@Override
+	public void onGeoQueryError(FirebaseError error) {
+
 	}
 
 	@Override
@@ -325,6 +476,8 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		int id = item.getItemId();
 
 		if (id == R.id.action_settings) {
+			Intent intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
 			return true;
 
 		}else if(id == R.id.action_addEvent){
@@ -568,10 +721,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		}
 	}
 
-	@Override
-	public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-	}
 
 	class ViewPagerAdapter extends FragmentPagerAdapter {
 		private final List<Fragment> mFragmentList = new ArrayList<>();
