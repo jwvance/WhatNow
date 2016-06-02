@@ -203,13 +203,19 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 					long timeStamp = Long.parseLong(e.get("timestamp").toString());
 
-					Event event = new Event(Integer.valueOf(e.get("id").toString()), Integer.valueOf(e.get("hourStart").toString()),
+					Event event = new Event(Integer.valueOf(e.get("id").toString()), Integer.parseInt(e.get("numberOfGuests").toString()), Integer.valueOf(e.get("hourStart").toString()),
 							Integer.valueOf(e.get("minuteStart").toString()), Integer.valueOf(e.get("hourEnd").toString()),
 							Integer.valueOf(e.get("minuteEnd").toString()), e.get("location").toString(), host,
 							(String) e.get("name"), (String) e.get("description"), category,
 							Long.parseLong(e.get("dateStart").toString()), (String) e.get("imageAsString"), dataSnapshot.getKey(), true, timeStamp);
 
 					event.setMyLoc(context);
+					int n = Integer.parseInt(e.get("numberOfGuests").toString());
+					if(n > 0)
+						Log.wtf("PARTICIPANTS TAB ACTIVITY #", "" + n);
+					event.setNumberOfGuests(n);
+					Log.wtf("KEYS TABACTIVITY", event.getKey());
+
 					eventsEvents.get(categoryN).add(event);	//specific category
 					eventsEvents.get(0).add(event);
 
@@ -274,6 +280,10 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// PROBABLY WORK IN HERE TO ADD ICONS IN THE TOP BAR (SEARCH, PROFILE, ORDER, ETC)
 		getMenuInflater().inflate(R.menu.menu_main, menu);
+		if(mSharedPref.getBoolean("is_host", false))
+			findViewById(R.id.action_host).setVisibility(View.GONE);
+		if(mSharedPref.getBoolean("is_user", false))
+			findViewById(R.id.action_user).setVisibility(View.GONE);
 		return true;
 	}
 
@@ -308,6 +318,17 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			return true;
 		}else if(id == R.id.action_bookmarks){
 			startActivity(new Intent(this, BookmarkActivity.class));
+			return true;
+		}else if(id == R.id.action_host){
+			Intent intent = new Intent(this, HostQActivity.class);
+			intent.putExtra("from_login", false);
+			startActivity(intent);
+			return true;
+		}else if(id == R.id.action_user){
+			Intent intent = new Intent(this, UserQActivity.class);
+			intent.putExtra("from_login", false);
+			startActivity(intent);
+			return true;
 		}
 
 		return super.onOptionsItemSelected(item);

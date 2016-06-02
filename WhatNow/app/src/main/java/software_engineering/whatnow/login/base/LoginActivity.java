@@ -1,5 +1,6 @@
 package software_engineering.whatnow.login.base;
 
+import software_engineering.whatnow.HostQActivity;
 import software_engineering.whatnow.R;
 
 import android.app.ProgressDialog;
@@ -48,6 +49,7 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
 import software_engineering.whatnow.TabActivity;
+import software_engineering.whatnow.UserQActivity;
 import software_engineering.whatnow.firebase_stuff.Constants;
 import software_engineering.whatnow.login.BaseActivity;
 import software_engineering.whatnow.utils.*;
@@ -121,26 +123,36 @@ public class LoginActivity extends BaseActivity{
 	private void hostDialogue(){
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 		alertDialogBuilder
-				.setMessage("Are you a host with a business?")
+				.setMessage("Are you a Host or a User?")
 				.setCancelable(false)
-				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+				.setPositiveButton("Host", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						dialog.cancel();
-
-						//start HostQActivity
+						Intent intent = new Intent(getApplicationContext(), HostQActivity.class);
+                        intent.putExtra("from_login", true);
+                        startActivity(intent);
+                        dialog.cancel();
+                        finish();
 					}
 				})
 
-				.setNegativeButton("No", new DialogInterface.OnClickListener() {
+				.setNegativeButton("User", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						dialog.cancel();
+                        Intent intent = new Intent(getApplicationContext(), UserQActivity.class);
+                        intent.putExtra("from_login", true);
+                        startActivity(intent);
+                        dialog.cancel();
+                        finish();
+
+                    /*    dialog.cancel();
 						//start TabActivity
 						Intent intent = new Intent(LoginActivity.this, TabActivity.class);
 						intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 						startActivity(intent);
-						finish();
+                        mSharedPrefEditor.putBoolean("logged_in", true);
+                        mSharedPrefEditor.commit();
+						finish();*/
 					}
 				});
 
@@ -456,9 +468,7 @@ public class LoginActivity extends BaseActivity{
 			Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
 			startActivityForResult(signInIntent, RC_GOOGLE_LOGIN);
 			mAuthProgressDialog.show();
-        	Log.wtf("LOGIN", "about to save in the preferences");
-        	mSharedPrefEditor.putBoolean("logged_in", true);
-        	mSharedPrefEditor.commit();
+        	Log.wtf("LOGIN", "loggedin");
 		}catch(Exception e){
 			Log.wtf("LOGIN PROBLEM", e.getMessage());
 			e.printStackTrace();

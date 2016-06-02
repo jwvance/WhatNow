@@ -1,7 +1,15 @@
 package software_engineering.whatnow.utils;
 
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -9,9 +17,13 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ServerValue;
 import com.firebase.client.ValueEventListener;
 
+import software_engineering.whatnow.R;
 import software_engineering.whatnow.firebase_stuff.Constants;
 import software_engineering.whatnow.model.User;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +37,7 @@ public class Utils {
      */
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private Context mContext = null;
+
 
 
     /**
@@ -143,4 +156,6 @@ public class Utils {
             });
         }
     }
+
+
 }

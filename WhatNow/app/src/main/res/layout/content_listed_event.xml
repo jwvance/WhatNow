@@ -234,7 +234,8 @@
                     android:layout_toRightOf="@+id/imageView"
                     android:layout_toEndOf="@+id/imageView"
                     android:layout_marginLeft="10dp"
-                    android:onClick="searchMap"/>
+                    android:onClick="searchMap"
+                    />
 
             </RelativeLayout>
 
@@ -341,7 +342,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:baselineAligned="false"
-            android:gravity="right">
+            android:gravity="right"
+            android:id="@+id/listed_edit_delete_layout">
 
             <ImageButton
                 android:layout_width="50dp"

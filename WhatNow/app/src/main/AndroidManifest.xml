@@ -124,6 +124,11 @@
             android:label="@string/title_activity_host_q"
             android:theme="@style/WhatNowTheme">
         </activity>
+        <activity
+            android:name=".UserQActivity"
+            android:label="@string/title_activity_user_q"
+            android:theme="@style/WhatNowTheme">
+        </activity>
     </application>
 
 </manifest>

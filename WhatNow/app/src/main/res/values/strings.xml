@@ -169,5 +169,6 @@
     <string name="title_activity_search_res">Search</string>
     <string name="title_activity_host_profile">HostProfileActivity</string>
     <string name="title_activity_host_q">HostQActivity</string>
+    <string name="title_activity_user_q">UserQActivity</string>
 
 </resources>

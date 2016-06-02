@@ -63,20 +63,22 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/profile_address"
+                    android:id="@+id/host_address"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Address"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@+id/imageView9"
                     android:layout_toEndOf="@+id/imageView9"
-                    android:layout_marginLeft="10dp"/>
+                    android:layout_marginLeft="10dp"
+                    android:onClick="searchMapHost"/>
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_gravity="center_horizontal">
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/host_website_layout">
 
                 <ImageView
                     android:id="@+id/imageView15"
@@ -97,14 +99,102 @@
                     android:layout_toRightOf="@+id/imageView15"
                     android:layout_toEndOf="@+id/imageView15"
                     android:layout_marginLeft="10dp"
-                    android:onClick="viewHost"/>
+                    android:onClick="openLink"/>
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_gravity="center_horizontal">
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/host_tripadvisor_layout">
+
+                <ImageView
+                    android:id="@+id/imageView23"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/tripdavisor"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/host_tripadvisor"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Tripadvisor"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView23"
+                    android:layout_toEndOf="@+id/imageView23"
+                    android:layout_marginLeft="10dp"
+                    android:onClick="openLink"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/host_facebook_layout">
+
+                <ImageView
+                    android:id="@+id/imageView24"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/facebook_logo"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/host_facebook"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Facebook"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView24"
+                    android:layout_toEndOf="@+id/imageView24"
+                    android:layout_marginLeft="10dp"
+                    android:onClick="openLink"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/host_yelp_layout">
+
+                <ImageView
+                    android:id="@+id/imageView25"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/yelp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/host_yelp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Yelp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView25"
+                    android:layout_toEndOf="@+id/imageView25"
+                    android:layout_marginLeft="10dp"
+                    android:onClick="openLink"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/imageView17"
@@ -125,7 +215,7 @@
                     android:layout_toRightOf="@+id/imageView17"
                     android:layout_toEndOf="@+id/imageView17"
                     android:layout_marginLeft="10dp"
-                    android:onClick="viewHost"/>
+                    />
             </RelativeLayout>
 
             <RelativeLayout
@@ -153,12 +243,14 @@
                     android:layout_toRightOf="@+id/imageView18"
                     android:layout_toEndOf="@+id/imageView18"
                     android:layout_marginLeft="10dp"
-                    android:onClick="viewHost"/>
+                    android:onClick="call"
+                    android:autoLink="phone"/>
             </RelativeLayout>
 
             <com.google.android.gms.maps.MapView android:id="@+id/mapview"
                                                  android:layout_width="match_parent"
-                                                 android:layout_height="150dp" />
+                                                 android:layout_height="150dp"
+                                                 android:visibility="gone"/>
 
             <View
                 android:layout_width="match_parent"

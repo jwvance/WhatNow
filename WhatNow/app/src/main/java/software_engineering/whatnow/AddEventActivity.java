@@ -76,12 +76,18 @@ import java.util.Random;
 import java.util.StringTokenizer;
 
 import software_engineering.whatnow.firebase_stuff.Constants;
+import software_engineering.whatnow.utils.Utils;
 
 public class AddEventActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener /*DialogInterface.OnClickListener*/{
 
 	private static final int RESULT_LOAD_IMG = 1;
 	private EditText[] tv = new EditText[4];
-	//private DatePicker dp;
+	private EditText eventName;
+	private EditText description;
+	private EditText location;
+	private EditText hostName;
+	private EditText phone;
+	//private DatePick;er dp;
 	//private TimePicker tp;
 	private Event event;
 	private ArrayList<Event> events;
@@ -194,10 +200,10 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		for (int i = 0; i < size; i++) {
 			st = new StringTokenizer(preferences.getString("EventArray_" + i, null), ":::***:::***:::");
 			try{
-				output.add(new Event(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
+				output.add(new Event(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
 						Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), st.nextToken(),
 						new Host(st.nextToken(), st.nextToken()), st.nextToken(), st.nextToken(), new Category(st.nextToken()),
-						Long.parseLong(st.nextToken()), st.nextToken(), st.nextToken(), false, 0));
+						Long.parseLong(st.nextToken()), st.nextToken(), st.nextToken(), false, 0/*, Integer.parseInt(st.nextToken())*/));
 			}catch(Exception e){
 				Log.wtf("LOAD", "Problem loading events: " + e.getMessage());
 			}
@@ -270,16 +276,23 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 	}
 
 	private void initialize(){
-		tv[0]= (EditText) findViewById(R.id.new_event_name);
-		tv[1]= (EditText) findViewById(R.id.new_event_description);
-		tv[2]= (EditText) findViewById(R.id.new_event_location);
-		tv[3]= (EditText) findViewById(R.id.new_event_host);
+		eventName = (EditText) findViewById(R.id.new_event_name);
+		description = (EditText) findViewById(R.id.new_event_description);
+		location = (EditText) findViewById(R.id.new_event_location);
+		hostName = (EditText) findViewById(R.id.new_event_host);
+		phone = (EditText) findViewById(R.id.new_event_phone);
 		//tv[4]= (EditText) findViewById(R.id.editText5);
 		//dp = (DatePicker) findViewById(R.id.datePicker);
 		//tp = (TimePicker) findViewById(R.id.timePicker);
 		//addEvent = (Button) findViewById(R.id.button);
+
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		location.setText(preferences.getString("host_address", ""));
+		hostName.setText(preferences.getString("host_name", ""));
+		phone.setText(preferences.getString("host_phone", ""));
+
 		final AddEventActivity addEventActivity = this;
-		tv[0].addTextChangedListener(new TextWatcher() {
+		eventName.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -319,27 +332,31 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 			return;
 		}
 
+	/*	if(iCalendar.after(fCalendar)){
+			Toast.makeText(AddEventActivity.this, "Start date must be before end date!", Toast.LENGTH_SHORT).show();
+			return;
+		}*/
 		Calendar iCalendar = Calendar.getInstance();
 		iCalendar.set(iYear, iMonth, iDay, iHour, iMinute);
-		Calendar fCalendar = iCalendar;
+		iCalendar.set(Calendar.SECOND, 0);
+		iCalendar.set(Calendar.MILLISECOND, 0);
+		Calendar fCalendar = Calendar.getInstance();
 		fCalendar.set(fYear, fMonth, fDay, fHour, fMinute);
+		fCalendar.set(Calendar.SECOND, 0);
+		fCalendar.set(Calendar.MILLISECOND, 0);
 
 		if(!iCalendar.before(fCalendar)){
 			Toast.makeText(AddEventActivity.this, "Start date/time must be before end time!", Toast.LENGTH_SHORT).show();
 			return;
 		}
-	/*	if(iCalendar.after(fCalendar)){
-			Toast.makeText(AddEventActivity.this, "Start date must be before end date!", Toast.LENGTH_SHORT).show();
-			return;
-		}*/
 
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		Host host = new Host(tv[3].getText().toString());
+		Host host = new Host(hostName.getText().toString());
 
 		String email = preferences.getString(Constants.KEY_GOOGLE_EMAIL, null);
 		if(email == null) {
 			email = preferences.getString(Constants.KEY_ENCODED_EMAIL, null);
-			email.replace(",", ".");
+			email = Utils.decodeEmail(email);
 		}
 		if(email != null) {
 			host.setBusinessEmail(email);
@@ -347,10 +364,10 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		}else
 			Log.wtf("HOST ADD EVENT", "email is NULL!!");
 
-		event = new Event(new Random().nextInt(1000), iHour, iMinute, fHour, fMinute,
-				tv[2].getText().toString(), host, name,
-				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category),
-				iCalendar.getTimeInMillis(), imageAsString, "", false, 0);
+		event = new Event(new Random().nextInt(1000), 0, iHour, iMinute, fHour, fMinute,
+				location.getText().toString(), host, name,
+				description.getText().toString(), new Category(/*tv[4].getText().toString()*/category),
+				iCalendar.getTimeInMillis(), imageAsString, "", false, 0/*, 0*/);
 
 		//add to arraylist
 		//events.add(event);
@@ -366,11 +383,11 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		finish();
 	}
 
-	private void reinitializeUI() {
+	/*private void reinitializeUI() {
 		for (int i=0; i<5; i++){
 			tv[i].setText("");
 		}
-	}
+	}*/
 
 	@Override
 	public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {

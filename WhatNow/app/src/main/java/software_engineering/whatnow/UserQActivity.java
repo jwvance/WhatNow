@@ -1,7 +1,6 @@
 package software_engineering.whatnow;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -9,12 +8,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
@@ -23,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
@@ -40,14 +38,19 @@ import software_engineering.whatnow.firebase_stuff.Constants;
 import software_engineering.whatnow.utils.Utils;
 
 
-public class HostQActivity extends AppCompatActivity implements View.OnClickListener, ValueEventListener {
-	private EditText hostNameET;
-	private EditText addressET;
-	private EditText phoneET;
-	private EditText websiteET;
-	private EditText tripadvisorET;
+public class UserQActivity extends AppCompatActivity implements View.OnClickListener, ValueEventListener {
+	private EditText nameET;
+	private TextView nameTV;
+	private EditText emailET;
+	private TextView emailTV;
+	private EditText cityET;
+	private EditText nationalityET;
+	private EditText universityET;
+	private EditText workET;
+	private EditText sexET;
+	private EditText ageET;
+	private EditText relationshipET;
 	private EditText facebookET;
-	private EditText yelpET;
 	private ImageView mainPicture;
 	private SharedPreferences preferences;
 	private SharedPreferences.Editor editor;
@@ -56,115 +59,148 @@ public class HostQActivity extends AppCompatActivity implements View.OnClickList
 	private String imageAsString;
 	private Bitmap image;
 	private Map<String, Object> mapUser;
-	private Firebase firebaseHost;
+	private Firebase firebaseUser;
 	private String encodedEmail;
-	private String hostAccountEmail;
-	private String hostAccountName;
+	private String userAccountEmail;
+	private String userAccountName;
 	private boolean fromLogIn;
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_host_q);
-		Toolbar toolbar = (Toolbar) findViewById(R.id.host_q_toolbar);
+		setContentView(R.layout.activity_user_q);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.user_q_toolbar);
 		setSupportActionBar(toolbar);
 
 		fromLogIn = getIntent().getBooleanExtra("from_login", true);
 
-		this.setTitle("Set Host Info...");
+		this.setTitle("Set User Info...");
 
-		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_host_q);
+		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_user_q);
 		fab.setOnClickListener(this);
 
 		preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		editor = preferences.edit();
 
-		hostNameET = (EditText) findViewById(R.id.host_q_name);
-		hostNameET.setText(preferences.getString("host_name", ""));
-		addressET = (EditText) findViewById(R.id.host_q_address);
-		addressET.setText(preferences.getString("host_address", ""));
-		phoneET = (EditText) findViewById(R.id.host_q_phone);
-		phoneET.setText(preferences.getString("host_phone", ""));
-		websiteET = (EditText) findViewById(R.id.host_q_website);
-		websiteET.setText(preferences.getString("host_website", ""));
-		tripadvisorET = (EditText) findViewById(R.id.host_q_tripadvisor);
-		tripadvisorET.setText(preferences.getString("host_tripadvisor", ""));
-		facebookET = (EditText) findViewById(R.id.host_q_facebook);
-		facebookET.setText(preferences.getString("host_facebook", ""));
-		yelpET = (EditText) findViewById(R.id.host_q_yelp);
-		yelpET.setText(preferences.getString("host_yelp", ""));
+		nameET = (EditText) findViewById(R.id.user_q_name);
+		nameTV = (TextView) findViewById(R.id.user_q_name_saved);
+		emailET = (EditText) findViewById(R.id.user_q_email);
+		emailTV = (TextView) findViewById(R.id.user_q_email_saved);
+		cityET = (EditText) findViewById(R.id.user_q_city);
+		nationalityET = (EditText) findViewById(R.id.user_q_nationality);
+		universityET = (EditText) findViewById(R.id.user_q_university);
+		workET = (EditText) findViewById(R.id.user_q_work);
+		sexET = (EditText) findViewById(R.id.user_q_sex);
+		ageET = (EditText) findViewById(R.id.user_q_age);
+		relationshipET = (EditText) findViewById(R.id.user_q_relationship);
+		facebookET = (EditText) findViewById(R.id.user_q_facebook);
 
-		mainPicture = (ImageView) findViewById(R.id.host_q_image);
-		imageAsString = preferences.getString("host_picture", "");
+		nameET.setText(preferences.getString("user_name",""));
+		// FIX (maybe with boolean in preferences if logged in properly)
+		if(fromLogIn){
+			emailTV.setVisibility(View.GONE);
+			emailET.setVisibility(View.VISIBLE);
+		}else{
+			emailTV.setVisibility(View.VISIBLE);
+			emailET.setVisibility(View.GONE);
+			emailTV.setText(preferences.getString("user_email",""));
+		}
+		cityET.setText(preferences.getString("user_city",""));
+		nationalityET.setText(preferences.getString("user_nationality",""));
+		universityET.setText(preferences.getString("user_university",""));
+		workET.setText(preferences.getString("user_work",""));
+		sexET.setText(preferences.getString("user_sex",""));
+		ageET.setText(preferences.getString("user_age",""));
+		relationshipET.setText(preferences.getString("user_relationship",""));
+		facebookET.setText(preferences.getString("user_facebook",""));
+
+		mainPicture = (ImageView) findViewById(R.id.user_q_image);
+		imageAsString = preferences.getString("user_picture", "");
 		if(!imageAsString.equals("")) {
 			try {
 				byte[] imageAsBytes = Base64.decode(imageAsString, Base64.DEFAULT);
 				Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
 				mainPicture.setImageBitmap(bitmap);
 			}catch(Exception e){
-				Log.wtf("HOST Q ACTIVITY", "picture problem");
+				Log.wtf("USER Q ACTIVITY", "picture problem");
 			}
 		}
 
 		encodedEmail = preferences.getString(Constants.KEY_ENCODED_EMAIL, "");
-		firebaseHost = new Firebase(Constants.HOSTS_URL + encodedEmail);
-		Firebase firebaseUser = new Firebase(Constants.FIREBASE_URL + "users/" + encodedEmail);
-		firebaseUser.addListenerForSingleValueEvent(this);
+		firebaseUser = new Firebase(Constants.USERS_URL + encodedEmail);
+		Firebase firebaseLogIn = new Firebase(Constants.FIREBASE_URL + "users/" + encodedEmail);
+		firebaseLogIn.addListenerForSingleValueEvent(this);
 	}
 
 	private boolean saveInfo() {
-		if(hostNameET.getText().toString().equals("")){
-			Toast.makeText(HostQActivity.this, "Set Host Name first...", Toast.LENGTH_SHORT).show();
+		if(nameET.getText().toString().equals("")){
+			Toast.makeText(UserQActivity.this, "Set Name first...", Toast.LENGTH_SHORT).show();
 			return false;
 		}
-		if(addressET.getText().toString().equals("")){
-			Toast.makeText(HostQActivity.this, "Set Address first...", Toast.LENGTH_SHORT).show();
+		if(cityET.getText().toString().equals("")){
+			Toast.makeText(UserQActivity.this, "Set City first...", Toast.LENGTH_SHORT).show();
 			return false;
 		}
-		if(phoneET.getText().toString().equals("")){
-			Toast.makeText(HostQActivity.this, "Set Phone first...", Toast.LENGTH_SHORT).show();
+		if(nationalityET.getText().toString().equals("")){
+			Toast.makeText(UserQActivity.this, "Set Nationality first...", Toast.LENGTH_SHORT).show();
+			return false;
+		}
+		if(ageET.getText().toString().equals("")){
+			Toast.makeText(UserQActivity.this, "Set Age first...", Toast.LENGTH_SHORT).show();
+			return false;
+		}
+		if(sexET.getText().toString().equals("")){
+			Toast.makeText(UserQActivity.this, "Set Sex first...", Toast.LENGTH_SHORT).show();
 			return false;
 		}
 		if(imageAsString == null || imageAsString.equals("")){
-			Toast.makeText(HostQActivity.this, "Set a picture first...", Toast.LENGTH_SHORT).show();
+			Toast.makeText(UserQActivity.this, "Set a picture first...", Toast.LENGTH_SHORT).show();
 			return false;
 		}
 
-		Snackbar.make(findViewById(R.id.fab_host_q), "Saving Info...", Snackbar.LENGTH_LONG)
+		Snackbar.make(findViewById(R.id.fab_user_q), "Saving Info...", Snackbar.LENGTH_LONG)
 				.setAction("Action", null).show();
 
-		Map<String, String> hostInfoMap = new HashMap<String, String>();
-		hostInfoMap.put("host_account_email", hostAccountEmail);
-		hostInfoMap.put("host_account_name", hostAccountName);
-		hostInfoMap.put("host_name", hostNameET.getText().toString());
-		hostInfoMap.put("host_address", addressET.getText().toString());
-		hostInfoMap.put("host_phone", phoneET.getText().toString());
-		hostInfoMap.put("host_picture", imageAsString);
+		Map<String, String> userInfoMap = new HashMap<String, String>();
+		userInfoMap.put("user_account_name", userAccountName);
+		userInfoMap.put("user_account_email", userAccountEmail);
+		userInfoMap.put("user_name", nameET.getText().toString());
+		userInfoMap.put("user_email", emailET.getText().toString());
+		userInfoMap.put("user_city", cityET.getText().toString());
+		userInfoMap.put("user_nationality", nationalityET.getText().toString());
+		userInfoMap.put("user_sex", sexET.getText().toString());
+		userInfoMap.put("user_age", ageET.getText().toString());
+		userInfoMap.put("user_picture", imageAsString);
 
-		editor.putString("host_name", hostNameET.getText().toString());
-		editor.putString("host_address", addressET.getText().toString());
-		editor.putString("host_phone", phoneET.getText().toString());
-		editor.putString("host_picture", imageAsString);
+		editor.putString("user_account_name", userAccountName);
+		editor.putString("user_account_email", userAccountEmail);
+		editor.putString("user_name", nameET.getText().toString());
+		editor.putString("user_email", emailET.getText().toString());
+		editor.putString("user_city", cityET.getText().toString());
+		editor.putString("user_nationality", nationalityET.getText().toString());
+		editor.putString("user_sex", sexET.getText().toString());
+		editor.putString("user_age", ageET.getText().toString());
+		editor.putString("user_picture", imageAsString);
 
-		if(!websiteET.getText().toString().equals("")) {
-			editor.putString("host_website", websiteET.getText().toString());
-			hostInfoMap.put("host_website", websiteET.getText().toString());
+		if(!universityET.getText().toString().equals("")) {
+			editor.putString("user_university", universityET.getText().toString());
+			userInfoMap.put("user_university", universityET.getText().toString());
 		}
-		if(!tripadvisorET.getText().toString().equals("")) {
-			editor.putString("host_tripadvisor", tripadvisorET.getText().toString());
-			hostInfoMap.put("host_tripadvisor", tripadvisorET.getText().toString());
+		if(!workET.getText().toString().equals("")) {
+			editor.putString("user_work", workET.getText().toString());
+			userInfoMap.put("user_work", workET.getText().toString());
+		}
+		if(!relationshipET.getText().toString().equals("")) {
+			editor.putString("user_relationship", relationshipET.getText().toString());
+			userInfoMap.put("user_relationship", relationshipET.getText().toString());
 		}
 		if(!facebookET.getText().toString().equals("")) {
-			editor.putString("host_facebook", facebookET.getText().toString());
-			hostInfoMap.put("host_facebook", facebookET.getText().toString());
-		}
-		if(!yelpET.getText().toString().equals("")) {
-			editor.putString("host_yelp", yelpET.getText().toString());
-			hostInfoMap.put("host_yelp", yelpET.getText().toString());
+			editor.putString("user_facebook", facebookET.getText().toString());
+			userInfoMap.put("user_facebook", facebookET.getText().toString());
 		}
 
-		firebaseHost.setValue(hostInfoMap);
+		firebaseUser.setValue(userInfoMap);
 		editor.commit();
 
 		return true;
@@ -173,10 +209,10 @@ public class HostQActivity extends AppCompatActivity implements View.OnClickList
 	@Override
 	public void onDataChange(DataSnapshot dataSnapshot) {
 		mapUser = dataSnapshot.getValue(HashMap.class);
-		Log.wtf("HOST Q ACTIVITY", mapUser.get("name").toString());
-		hostAccountEmail = mapUser.get("email").toString();
-		hostAccountEmail = Utils.decodeEmail(hostAccountEmail);
-		hostAccountName = mapUser.get("name").toString();
+		Log.wtf("USER Q ACTIVITY", mapUser.get("name").toString());
+		userAccountEmail = mapUser.get("email").toString();
+		userAccountEmail = Utils.decodeEmail(userAccountEmail);
+		userAccountName = mapUser.get("name").toString();
 	}
 
 	@Override
@@ -289,48 +325,15 @@ public class HostQActivity extends AppCompatActivity implements View.OnClickList
 	public void onClick(View view) {
 		if(saveInfo()){
 			if(fromLogIn) {
-				askUser();
-				//startActivity(new Intent(getApplicationContext(), TabActivity.class));
+				startActivity(new Intent(getApplicationContext(), TabActivity.class));
 				editor.putBoolean("logged_in", true);
-				editor.putBoolean("is_host", true);
+				editor.putBoolean("is_host", false);
+				editor.putBoolean("is_user", true);
 				editor.commit();
 			}
 
 			finish();
 		}
-	}
-
-	private void askUser(){
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-		alertDialogBuilder
-				.setMessage("Do you want also to register a User account?")
-				.setCancelable(false)
-				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Intent intent = new Intent(getApplicationContext(), UserQActivity.class);
-						intent.putExtra("from_login", true);
-						startActivity(intent);
-						dialog.cancel();
-						finish();
-					}
-				})
-
-				.setNegativeButton("No", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Intent intent = new Intent(getApplicationContext(), TabActivity.class);
-						startActivity(intent);
-						editor.putBoolean("is_user", false);
-						editor.commit();
-						dialog.cancel();
-						finish();
-					}
-				});
-
-		//show dialogue
-		AlertDialog alertDialog = alertDialogBuilder.create();
-		alertDialog.show();
 	}
 
 }
