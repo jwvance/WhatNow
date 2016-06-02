@@ -222,20 +222,25 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			@Override
 			public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 				//refresh cards
-				Event event = dataSnapshot.getValue(Event.class);
-				((GlobalEvents) getApplication()).updateEvent(dataSnapshot.getKey(), event);
+				try {
+					Event event = dataSnapshot.getValue(Event.class);
+					((GlobalEvents) getApplication()).updateEvent(dataSnapshot.getKey(), event);
 
 
-				for(int i = 0; i < eventsEvents.size(); i++){
-					for(int j = 0; j < eventsEvents.get(i).size(); j++){
-						if(eventsEvents.get(i).get(j).getKey().equals(dataSnapshot.getKey())){
-							eventsEvents.get(i).remove(j);
+					for (int i = 0; i < eventsEvents.size(); i++) {
+						for (int j = 0; j < eventsEvents.get(i).size(); j++) {
+							if (eventsEvents.get(i).get(j).getKey().equals(dataSnapshot.getKey())) {
+								eventsEvents.get(i).remove(j);
+							}
 						}
 					}
+
+					setupViewPager(viewPager);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					Toast.makeText(TabActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
 				}
-
-				setupViewPager(viewPager);
-
 			}
 
 			@Override
