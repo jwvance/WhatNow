@@ -35,13 +35,12 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -70,7 +69,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
-import java.util.StringTokenizer;
 
 import software_engineering.whatnow.firebase_stuff.Constants;
 
@@ -126,6 +124,14 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		AddEventActivity.conEvent = this;
 		initialize();
 
+		findViewById(R.id.fab_new_event).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				addEvent(findViewById(android.R.id.content));
+			}
+		});
+
+
 		Calendar mcurrentDate = Calendar.getInstance();
 
 		ArrayList<Event> events = ((GlobalEvents) this.getApplication()).getEventList();
@@ -133,12 +139,12 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		Log.wtf("event list size", Integer.toString(events.size()));
 
 
-		initialDate = (Button) findViewById(R.id.edit_event_initialDate);
+		initialDate = (Button) findViewById(R.id.new_event_initialDate);
 		iYear = mcurrentDate.get(Calendar.YEAR);
 		iMonth = 1 + mcurrentDate.get(Calendar.MONTH);
 		iDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
 		initialDate.setText(Event.getDateString(iYear,iMonth,iDay));
-		initialTime = (Button) findViewById(R.id.edit_event_initialTime);
+		initialTime = (Button) findViewById(R.id.new_event_initialTime);
 		iHour = mcurrentDate.get(Calendar.HOUR_OF_DAY);
 		iMinute = 0;
 		initialTime.setText(Event.getTimeString(iHour, iMinute));
@@ -398,7 +404,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 
 	public void chooseDate(View v) {
 		DatePickerDialog mDatePicker;
-		if(v.getId() == R.id.edit_event_initialDate){
+		if(v.getId() == R.id.new_event_initialDate){
 			mDatePicker = new DatePickerDialog(this, this, iYear, iMonth, iDay);
 			initial = true;
 			mDatePicker.setTitle("Starting Date:");
@@ -412,7 +418,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 
 	public void chooseTime(View v) {
 		TimePickerDialog mTimePicker;
-		if (v.getId() == R.id.edit_event_initialTime){
+		if (v.getId() == R.id.new_event_initialTime){
 			mTimePicker = new TimePickerDialog(this, this, iHour, iMinute, false);
 			mTimePicker.setTitle("Starting Time:");
 			initial = true;

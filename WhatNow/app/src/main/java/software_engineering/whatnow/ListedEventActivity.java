@@ -117,7 +117,7 @@ public class ListedEventActivity extends AppCompatActivity {
 		host = (TextView) findViewById(R.id.listed_event_host);
 		date = (TextView) findViewById(R.id.listed_event_date);
 		times = (TextView) findViewById(R.id.listed_event_times);
-		participants = (TextView) findViewById(R.id.listed_event_participants);
+		//participants = (TextView) findViewById(R.id.listed_event_participants);
 		address = (TextView) findViewById(R.id.listed_event_address);
 		distance = (TextView) findViewById(R.id.listed_event_distance);
 		image = (ImageView) findViewById(R.id.listed_event_image);
@@ -186,7 +186,7 @@ public class ListedEventActivity extends AppCompatActivity {
 		}
 		recyclerAdapter = new RecyclerAdapter(events);
 		recyclerView.setHasFixedSize(true);
-		recyclerView.setLayoutManager(new LinearLayoutManager(this));
+		recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false));
 		recyclerView.setAdapter(recyclerAdapter);
 
 		galArray = new ArrayList<Bitmap>(5);

@@ -232,7 +232,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Start"
-                            android:id="@+id/edit_event_initialDate"
+                            android:id="@+id/new_event_initialDate"
                             android:onClick="chooseDate"
                             android:layout_alignParentTop="true"
                             android:layout_toRightOf="@+id/textView6"
@@ -246,8 +246,8 @@
                             android:id="@+id/textView6"
                             android:layout_marginLeft="15dp"
                             android:layout_marginStart="15dp"
-                            android:layout_alignBaseline="@+id/edit_event_initialDate"
-                            android:layout_alignBottom="@+id/edit_event_initialDate"
+                            android:layout_alignBaseline="@+id/new_event_initialDate"
+                            android:layout_alignBottom="@+id/new_event_initialDate"
                             android:layout_toRightOf="@+id/imageView5"
                             android:layout_toEndOf="@+id/imageView5"
                             android:layout_centerVertical="true" />
@@ -259,8 +259,8 @@
                             android:text="End"
                             android:id="@+id/textView7"
                             android:layout_alignTop="@+id/textView6"
-                            android:layout_toRightOf="@+id/edit_event_initialDate"
-                            android:layout_toEndOf="@+id/edit_event_initialDate"
+                            android:layout_toRightOf="@+id/new_event_initialDate"
+                            android:layout_toEndOf="@+id/new_event_initialDate"
                             android:layout_marginLeft="15dp"
                             android:layout_marginStart="15dp"
                             android:layout_centerVertical="true" />
@@ -323,7 +323,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Start"
-                            android:id="@+id/edit_event_initialTime"
+                            android:id="@+id/new_event_initialTime"
                             android:onClick="chooseTime"
                             android:layout_alignParentTop="true"
                             android:layout_toRightOf="@+id/starter"
@@ -336,8 +336,8 @@
                             android:text="End"
                             android:id="@+id/textView2"
                             android:layout_centerVertical="true"
-                            android:layout_toRightOf="@+id/edit_event_initialTime"
-                            android:layout_toEndOf="@+id/edit_event_initialTime"
+                            android:layout_toRightOf="@+id/new_event_initialTime"
+                            android:layout_toEndOf="@+id/new_event_initialTime"
                             android:layout_marginLeft="15dp" />
 
                         <Button

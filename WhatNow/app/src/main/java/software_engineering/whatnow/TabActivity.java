@@ -34,18 +34,23 @@ package software_engineering.whatnow;
  * Created by Steve on 4/20/16.
  */
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationListener;
 
 import android.content.DialogInterface;
 
 
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -153,6 +158,20 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		sortingCriteria = preferences.getInt("itemSelected", 1);
 
+		Location mLastLocation;
+		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+			return;
+		}
+
+		mLastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+		if (mLastLocation != null){
+			LocationToolBox.storedLatitude = mLastLocation.getLatitude();
+			LocationToolBox.storedLongitude = mLastLocation.getLongitude();
+		}
+
+
 		if(locationData.getLocation() != null){
 			LocationToolBox.storedLatitude= locationData.getLocation().getLatitude();
 			LocationToolBox.storedLongitude =  locationData.getLocation().getLongitude();
@@ -180,7 +199,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		tabLayout.setupWithViewPager(viewPager);
 
 		Firebase.setAndroidContext(context);
-		Firebase firebase = new Firebase(Constants.DATABASE_URL);
+		final Firebase firebase = new Firebase(Constants.DATABASE_URL);
 		firebase.addChildEventListener(new ChildEventListener() {
 			@Override
 			public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -223,10 +242,6 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 				//refresh cards
 				try {
-					Event event = dataSnapshot.getValue(Event.class);
-					((GlobalEvents) getApplication()).updateEvent(dataSnapshot.getKey(), event);
-
-
 					for (int i = 0; i < eventsEvents.size(); i++) {
 						for (int j = 0; j < eventsEvents.get(i).size(); j++) {
 							if (eventsEvents.get(i).get(j).getKey().equals(dataSnapshot.getKey())) {
@@ -237,6 +252,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 					setupViewPager(viewPager);
 
+
 				} catch (Exception e) {
 					e.printStackTrace();
 					Toast.makeText(TabActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
@@ -246,7 +262,6 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			@Override
 			public void onChildRemoved(DataSnapshot dataSnapshot) {
 				((GlobalEvents) getApplication()).deleteEvent(dataSnapshot.getKey());
-
 
 				for(int i = 0; i < eventsEvents.size(); i++){
 					for(int j = 0; j < eventsEvents.get(i).size(); j++){
