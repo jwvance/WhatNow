@@ -214,7 +214,6 @@ public class ListedEventActivity extends AppCompatActivity {
 							imageGallery.addView(getImages(bitmapG, galleryAsBytes));
 						}
 					} else {
-						Log.wtf("loading: key are", "not same");
 						//else don't download anything from firebase
 					}
 				}
@@ -337,7 +336,7 @@ public class ListedEventActivity extends AppCompatActivity {
 								loadImages.clear();
 							}
 							else {
-								Log.wtf("adding: key are", "not same");
+								//add to no other event
 							}
 						}
 					}
