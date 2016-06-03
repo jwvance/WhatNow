@@ -60,7 +60,9 @@
             android:name=".GalleryActivity"
             android:configChanges="orientation"
             android:label="Gallery"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            >
         </activity>
         <activity
             android:name=".AddEventActivity"

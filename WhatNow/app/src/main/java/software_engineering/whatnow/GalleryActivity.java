@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -19,15 +21,17 @@ public class GalleryActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.fullscreen_image);
 
         Intent fromIntent = getIntent();
         byte[] byteArray = fromIntent.getByteArrayExtra("image");
         Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-        Log.wtf("bmp from GalleryActivity", bmp.toString());
 
         fromIntent.removeExtra("image");
-        Log.wtf("intent", "removed");
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         imageView.setImageBitmap(bmp);
 

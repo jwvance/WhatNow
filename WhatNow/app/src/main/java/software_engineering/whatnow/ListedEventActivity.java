@@ -45,7 +45,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -59,8 +58,6 @@ import java.io.InputStream;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import software_engineering.whatnow.firebase_stuff.Constants;
 
@@ -85,12 +82,9 @@ public class ListedEventActivity extends AppCompatActivity {
 
 
 	private static final int RESULT_LOAD_IMG = 1;
-//	private Integer imagesGal[];
 	private String imagePath;
 	private Bitmap imageG;
-	private String imgArr[];
 	private String galleryString;
-	private boolean onGalleryclick;
 	public	ArrayList<Bitmap> galArray;
 	private	ArrayList<String> strArray;
 	private ArrayList<String> loadImages;
@@ -100,11 +94,7 @@ public class ListedEventActivity extends AppCompatActivity {
 	private byte[] imageAsBytes;
 	private byte[] galleryAsBytes;
 	private String imageVal;
-	private String keyval;
 
-
-	ImageView lastClicked = null;
-	boolean isImageFit;
 	private Firebase mRef;
 
 
@@ -120,7 +110,6 @@ public class ListedEventActivity extends AppCompatActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarEvent);
 		setSupportActionBar(toolbar);
 
-
 		title = (TextView) findViewById(R.id.listed_event_title);
 		eventID = getIntent().getIntExtra("Event_ID", -1);
 		description = (TextView) findViewById(R.id.listed_event_description);
@@ -135,9 +124,7 @@ public class ListedEventActivity extends AppCompatActivity {
 		imageGallery = (LinearLayout)findViewById(R.id.my_gallery);
 
 		event = null;
-
 		events = ((GlobalEvents) this.getApplication()).getEventList();
-
 		for (Event currEvent : events) {
 			if(currEvent.getId() == eventID) {
 				event = currEvent;
@@ -172,8 +159,6 @@ public class ListedEventActivity extends AppCompatActivity {
 					startActivity(intent);
 				}
 			});
-//			Log.wtf("event id", eventID+"");
-
 		}else{
 			//error
 		}
@@ -204,8 +189,8 @@ public class ListedEventActivity extends AppCompatActivity {
 		recyclerView.setLayoutManager(new LinearLayoutManager(this));
 		recyclerView.setAdapter(recyclerAdapter);
 
-		galArray = new ArrayList<Bitmap>(100);
-		strArray = new ArrayList<String>(100);
+		galArray = new ArrayList<Bitmap>(5);
+		strArray = new ArrayList<String>(5);
 		loadImages = new ArrayList<String>(5);
 
 		//hide scroll bar
@@ -214,34 +199,28 @@ public class ListedEventActivity extends AppCompatActivity {
 
 		//check and load gallery images
 		Firebase eventRef = mRef.child("gallery");
-//		Log.wtf("image firebase", eventRef.toString());
 
-		//from firebase get gallery:### == eventID
+		//from firebase get gallery:### == event key
 		eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(DataSnapshot dataSnapshot) {
 				for (DataSnapshot child : dataSnapshot.getChildren()) {
-					//key should be the eventID, val is image String
-					if (Integer.parseInt(child.getKey()) == eventID) {
-						Log.wtf("KEY", child.getKey());
-//						Log.wtf("key is", "same");
+					//key should be the event key, val is image String
+					if(child.getKey().equals(event.getKey())) {
 						for (DataSnapshot c : child.getChildren()) {
-							Log.wtf("loading", "images");
 							imageVal = c.getValue().toString();
-//							Log.wtf("IMAGE ARR", imageVal);
 							galleryAsBytes = Base64.decode(imageVal, Base64.DEFAULT);
 							Bitmap bitmapG = BitmapFactory.decodeByteArray(galleryAsBytes, 0, galleryAsBytes.length);
 							imageGallery.addView(getImages(bitmapG, galleryAsBytes));
 						}
 					} else {
+						Log.wtf("loading: key are", "not same");
 						//else don't download anything from firebase
-//						Log.wtf("key is", "NOT same");
 					}
 				}
 			}
 			@Override
 			public void onCancelled (FirebaseError firebaseError){
-				//
 				Toast.makeText(ListedEventActivity.this, firebaseError.toString(), Toast.LENGTH_SHORT).show();
 			}
 		});
@@ -306,7 +285,6 @@ public class ListedEventActivity extends AppCompatActivity {
 	}
 
 	public void chooseImageGal(View v){
-		onGalleryclick = false;
 		// Create intent to Open Image applications like Gallery, Google Photos
 		Intent galleryIntent = new Intent(Intent.ACTION_PICK,
 				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -336,21 +314,18 @@ public class ListedEventActivity extends AppCompatActivity {
 
 				byteArray = stream.toByteArray();
 				galleryString = android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT);
-
 				strArray.add(galleryString);
 
 				// save to firebase
 				final Firebase eventRef = mRef.child("gallery");
-//				eventRef.child(Integer.toString(eventID)).setValue(strArray);
 
-//check if there are images already in the database
+				//check if there are images already in the database
 				//append else just add
 				eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
 					@Override
 					public void onDataChange(DataSnapshot dataSnapshot) {
 						for (DataSnapshot child : dataSnapshot.getChildren()) {
-							Log.wtf("eventID", eventID+"");
-							if (Integer.parseInt(child.getKey()) == eventID) {
+							if(child.getKey().equals(event.getKey())) {
 								for (DataSnapshot c : child.getChildren()) {
 									//load images from database into array
 									loadImages.add(c.getValue().toString());
@@ -358,25 +333,26 @@ public class ListedEventActivity extends AppCompatActivity {
 								//add selected image into array
 								loadImages.add(galleryString);
 								//overwrite values if images exist into firebase
-								eventRef.child(Integer.toString(eventID)).setValue(loadImages);
+								eventRef.child(event.getKey()).setValue(loadImages);
 								loadImages.clear();
 							}
-
+							else {
+								Log.wtf("adding: key are", "not same");
+							}
 						}
 					}
 					@Override
 					public void onCancelled(FirebaseError firebaseError) {
-
+						Toast.makeText(ListedEventActivity.this, "Something went wrong: " + firebaseError.toString(), Toast.LENGTH_LONG).show();
 					}
 				});
 
 				//add image to firebase
-				eventRef.child(Integer.toString(eventID)).setValue(strArray);
+				eventRef.child(event.getKey()).setValue(strArray);
 				strArray.clear();
 
 				//add images to gallery
 				galArray.add(imageG);
-//				Log.wtf("IMAGE Array ", galArray.toString());
 				for(Bitmap image: galArray){
 					imageGallery.addView(getImages(image, byteArray));
 				}
@@ -391,7 +367,7 @@ public class ListedEventActivity extends AppCompatActivity {
 		}
 	}
 
-	//Add bitmap image to imageview, onclick call new activity
+	//Add bitmap image to imageview, onclick call new fullscreen activity
 	private View getImages(Bitmap image, final byte[] arr) {
 		final ImageView imageView = new ImageView(getApplicationContext());
 
@@ -406,7 +382,6 @@ public class ListedEventActivity extends AppCompatActivity {
 			public void onClick(View v)
 			{
 				//onclick pass byte array using intent for the new activity call
-				Log.wtf("IMAGE click ", "on picture");
 				Intent intent = new Intent(ListedEventActivity.this, GalleryActivity.class);
 				intent.putExtra("image", arr);
 				startActivity(intent);
@@ -466,11 +441,10 @@ public class ListedEventActivity extends AppCompatActivity {
 		String type = context.getContentResolver().getType(photoUri);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		//png is lossless, will not compress
-//		if (type.equals("image/png")) {
-//			srcBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-//		} else
 
+		if (type.equals("image/png")) {
+			srcBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+		} else
 		if (type.equals("image/jpg") || type.equals("image/jpeg")) {
 			srcBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 		}
