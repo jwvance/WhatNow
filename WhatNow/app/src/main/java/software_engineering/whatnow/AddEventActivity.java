@@ -320,12 +320,20 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 			return;
 		}
 
-		for (int i = 1; i < tv.length; i++) {
+		if ((description == null || description.getText().toString().equals("")) ||
+				(location == null || location.getText().toString().equals("")) ||
+				(hostName == null || hostName.getText().toString().equals("")) ||
+				(phone == null || phone.getText().toString().equals(""))) {
+			Toast.makeText(AddEventActivity.this, "Fill every field first!", Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		/*for (int i = 1; i < tv.length; i++) {
 			if(tv[i] == null || tv[i].getText().equals("")) {
 				Toast.makeText(AddEventActivity.this, "Fill every field first!", Toast.LENGTH_SHORT).show();
 				return;
 			}
-		}
+		}*/
 
 		if(imageAsString == null || imageAsString.equals("")){
 			Toast.makeText(AddEventActivity.this, "Select a picture first!", Toast.LENGTH_SHORT).show();

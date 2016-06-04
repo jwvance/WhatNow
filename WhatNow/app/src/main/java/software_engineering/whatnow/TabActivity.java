@@ -280,10 +280,14 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// PROBABLY WORK IN HERE TO ADD ICONS IN THE TOP BAR (SEARCH, PROFILE, ORDER, ETC)
 		getMenuInflater().inflate(R.menu.menu_main, menu);
-		if(mSharedPref.getBoolean("is_host", false))
-			findViewById(R.id.action_host).setVisibility(View.GONE);
-		if(mSharedPref.getBoolean("is_user", false))
-			findViewById(R.id.action_user).setVisibility(View.GONE);
+		try {
+			if (mSharedPref.getBoolean("is_host", false))
+				findViewById(R.id.action_host).setVisibility(View.GONE);
+			if (mSharedPref.getBoolean("is_user", false))
+				findViewById(R.id.action_user).setVisibility(View.GONE);
+		}catch(Exception e){
+			Log.wtf("MENU", e.getMessage());
+		}
 		return true;
 	}
 

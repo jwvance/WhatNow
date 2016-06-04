@@ -78,6 +78,7 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 	private SharedPreferences preferences;
 	private int partecipations;
 	private boolean canParticipate;
+	private boolean participatedAlready;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -110,14 +111,15 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 
 		if(event != null) {
 			canParticipate = true;
+			participatedAlready = false;
 			key = event.getKey();
 			preferences = PreferenceManager.getDefaultSharedPreferences(this);
 			userEmail = preferences.getString(Constants.KEY_GOOGLE_EMAIL, "");
 			Log.wtf("KEYS CREATING PARTICIPANTS", key);
+			firebaseEventParticipants = new Firebase(Constants.DATABASE_URL + "/" + key + "/participants");
 			Query query = (new Firebase(Constants.DATABASE_URL)).orderByKey().equalTo(key);
 			query.addChildEventListener(this);
-			/*firebaseEventParticipants = new Firebase(Constants.DATABASE_URL + "/" + key + "/participants");
-			firebaseEventParticipants.addChildEventListener(this);*/
+			/*firebaseEventParticipants.addChildEventListener(this);*/
 			partecipations = preferences.getInt("user_partecipations", 0);
 			firebaseEventUserParticipations = new Firebase(Constants.USERS_URL + Utils.encodeEmail(userEmail) + "/partecipations/");
 			firebaseEventUserParticipations.addListenerForSingleValueEvent(this);
@@ -284,11 +286,11 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 
 	@Override
 	public void onClick(View v) {
-		if(canParticipate) {
+		if(canParticipate && !participatedAlready) {
 			try {
 				event.increaseGuests();
 
-				Log.wtf("PARTECIPATIONS #", "" + partecipations);
+				Log.wtf("PARTECIPATIONS for " + userEmail + " #", "" + partecipations);
 				participationsMap.put("partecipation_" + (partecipations + 1), key);
 				firebaseEventUserParticipations.setValue(participationsMap);
 
@@ -309,6 +311,13 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 				editor.putInt("user_partecipations", partecipations);
 				editor.commit();
 				Log.wtf("PARTICIPATIONS", "saved in preferences");
+
+				participatedAlready = true;
+
+				Toast.makeText(ListedEventActivity.this, "Participation added!", Toast.LENGTH_SHORT).show();
+
+				//FIX THIS, need updated value
+				//participants.setText((Integer.parseInt(participants.getText().toString()) + 1) + "");
 			} catch (Exception e) {
 				Log.wtf("PARTICIPATION ON CLICK", e.getMessage());
 			}
@@ -321,9 +330,11 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 	@Override
 	public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 		try{
+			//FIX THIS -> there is no eventMap because just first one, query?
+
 			eventMap = dataSnapshot.getValue(HashMap.class);
 			participantsMap = (HashMap) eventMap.get("participants");
-			if(participantsMap.containsValue(Utils.encodeEmail(userEmail))){
+			if(participantsMap != null && participantsMap.containsValue(Utils.encodeEmail(userEmail))){
 				canParticipate = false;
 				return;
 			}
@@ -334,7 +345,7 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 			participantsMap = new HashMap<String, Object>();
 		Log.wtf("PARTICIPATIONS", "got participantsMap");
 		try{
-			participantsN = Integer.parseInt(participantsMap.get("number").toString());
+			participantsN = participantsMap.size();
 		}catch (Exception e){
 			Log.wtf("PARTICIPATIONS EVENT", e.getMessage() + "\tno number");
 		}

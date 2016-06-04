@@ -289,14 +289,14 @@ public class HostQActivity extends AppCompatActivity implements View.OnClickList
 	public void onClick(View view) {
 		if(saveInfo()){
 			if(fromLogIn) {
-				askUser();
-				//startActivity(new Intent(getApplicationContext(), TabActivity.class));
 				editor.putBoolean("logged_in", true);
 				editor.putBoolean("is_host", true);
 				editor.commit();
+				askUser();
+				//startActivity(new Intent(getApplicationContext(), TabActivity.class));
+			}else{
+				finish();
 			}
-
-			finish();
 		}
 	}
 
