@@ -24,12 +24,9 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import android.preference.PreferenceManager;
-<<<<<<< HEAD
 import android.support.design.widget.FloatingActionButton;
-=======
 import android.provider.MediaStore;
 import android.provider.Settings;
->>>>>>> e9f754d7115dc1fb48dcb667d6456e40e624dc35
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -49,26 +46,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-<<<<<<< HEAD
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
-=======
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.w3c.dom.Text;
->>>>>>> e9f754d7115dc1fb48dcb667d6456e40e624dc35
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,7 +96,6 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 	private boolean canParticipate;
 	private boolean participatedAlready;
 
-
 	private static final int RESULT_LOAD_IMG = 1;
 	private String imagePath;
 	private Bitmap imageG;
@@ -138,14 +125,14 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarEvent);
 		setSupportActionBar(toolbar);
 
-		title = (TextView) findViewById(R.id.listed_event_title);
+	//	title = (TextView) findViewById(R.id.listed_event_title);
 		eventID = getIntent().getIntExtra("Event_ID", -1);
 		description = (TextView) findViewById(R.id.listed_event_description);
-		//category = (TextView) findViewById(R.id.listed_event_category);
+		category = (TextView) findViewById(R.id.listed_event_category);
 		host = (TextView) findViewById(R.id.listed_event_host);
 		date = (TextView) findViewById(R.id.listed_event_date);
 		times = (TextView) findViewById(R.id.listed_event_times);
-		//participants = (TextView) findViewById(R.id.listed_event_participants);
+		participants = (TextView) findViewById(R.id.listed_event_participants);
 		address = (TextView) findViewById(R.id.listed_event_address);
 		distance = (TextView) findViewById(R.id.listed_event_distance);
 		image = (ImageView) findViewById(R.id.listed_event_image);
@@ -161,7 +148,6 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 		}
 
 		if(event != null) {
-<<<<<<< HEAD
 			canParticipate = true;
 			participatedAlready = false;
 			key = event.getKey();
@@ -177,13 +163,11 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 			firebaseEventUserParticipations.addListenerForSingleValueEvent(this);
 
 			this.setTitle(event.getName());
-=======
-			this.setTitle("");
-			title.setText(event.getName());
->>>>>>> e9f754d7115dc1fb48dcb667d6456e40e624dc35
+		//	this.setTitle("");
+		//	title.setText(event.getName());
 			description.setText(event.getDescription());
-			//String categoryS = event.getCategory().getName().toLowerCase();
-			//category.setText(categoryS.substring(0, 1).toUpperCase() + categoryS.substring(1));
+			String categoryS = event.getCategory().getName().toLowerCase();
+			category.setText(categoryS.substring(0, 1).toUpperCase() + categoryS.substring(1));
 			host.setText(event.getHost().getName());
 			host.setTextColor(Color.parseColor("#33a0ff"));
 			date.setText(event.getDateString());	//ADD multi date
@@ -198,7 +182,6 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 			Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
 			image.setImageBitmap(bitmap);
 
-<<<<<<< HEAD
 			hostEmail = event.getHost().getBusinessEmail();
 
 			key = event.getKey();
@@ -235,7 +218,6 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 				findViewById(R.id.listed_event_final_separator).setVisibility(View.GONE);
 			}
 
-=======
 			image.setOnClickListener(new View.OnClickListener(){
 				@Override
 				public void onClick(View v)
@@ -245,7 +227,6 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 					startActivity(intent);
 				}
 			});
->>>>>>> e9f754d7115dc1fb48dcb667d6456e40e624dc35
 		}else{
 			//error
 		}
@@ -276,9 +257,7 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 		recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false));
 		recyclerView.setAdapter(recyclerAdapter);
 
-<<<<<<< HEAD
 		((FloatingActionButton) findViewById(R.id.listed_event_fab)).setOnClickListener(this);
-=======
 		galArray = new ArrayList<Bitmap>(5);
 		strArray = new ArrayList<String>(5);
 		loadImages = new ArrayList<String>(5);
@@ -313,7 +292,6 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 				Toast.makeText(ListedEventActivity.this, firebaseError.toString(), Toast.LENGTH_SHORT).show();
 			}
 		});
->>>>>>> e9f754d7115dc1fb48dcb667d6456e40e624dc35
 	}
 
 	public void searchMap(View view){
@@ -500,7 +478,6 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 		}
 	}
 
-<<<<<<< HEAD
 	@Override
 	public void onClick(View v) {
 		if(canParticipate && !participatedAlready) {
@@ -547,7 +524,6 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 	@Override
 	public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 		try{
-			//FIX THIS -> there is no eventMap because just first one, query?
 
 			eventMap = dataSnapshot.getValue(HashMap.class);
 			participantsMap = (HashMap) eventMap.get("participants");
@@ -609,7 +585,6 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 
 	}
 
-=======
 	public static Bitmap scaleImage(Context context, Uri photoUri) throws IOException {
 		InputStream is = context.getContentResolver().openInputStream(photoUri);
 		BitmapFactory.Options dbo = new BitmapFactory.Options();
@@ -657,5 +632,4 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 		baos.close();
 		return BitmapFactory.decodeByteArray(bMapArray, 0, bMapArray.length);
 	}
->>>>>>> e9f754d7115dc1fb48dcb667d6456e40e624dc35
 }

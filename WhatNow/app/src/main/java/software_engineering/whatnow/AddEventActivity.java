@@ -35,10 +35,12 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -60,15 +62,12 @@ import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-<<<<<<< HEAD
 import com.firebase.client.utilities.Base64;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-=======
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
->>>>>>> e9f754d7115dc1fb48dcb667d6456e40e624dc35
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -76,6 +75,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 import software_engineering.whatnow.firebase_stuff.Constants;
 import software_engineering.whatnow.utils.Utils;
@@ -208,7 +208,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		});
 	}
 
-	/*public static ArrayList<Event> loadEvents(Context context) {
+	public static ArrayList<Event> loadEvents(Context context) {
 
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -293,7 +293,6 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		editor.apply();
 	}
 
-	*/
 
 	private void initialize(){
 		eventName = (EditText) findViewById(R.id.new_event_name);
@@ -392,18 +391,10 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		}else
 			Log.wtf("HOST ADD EVENT", "email is NULL!!");
 
-<<<<<<< HEAD
 		event = new Event(new Random().nextInt(1000), 0, iHour, iMinute, fHour, fMinute,
 				location.getText().toString(), host, name,
 				description.getText().toString(), new Category(/*tv[4].getText().toString()*/category),
 				iCalendar.getTimeInMillis(), imageAsString, "", false, 0/*, 0*/);
-=======
-		int eventId = new Random().nextInt(1000);
-		event = new Event(eventId, iHour, iMinute, fHour, fMinute,
-				tv[2].getText().toString(), new Host(tv[3].getText().toString()), name,
-				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category),
-				iCalendar.getTimeInMillis(), imageAsString, "", false, 0);
->>>>>>> e9f754d7115dc1fb48dcb667d6456e40e624dc35
 
 		//save to firebase
 		Firebase.setAndroidContext(this);
