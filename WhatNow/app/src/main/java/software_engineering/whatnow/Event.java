@@ -357,12 +357,9 @@ public class Event implements Comparable {
         return timestamp;
     }
 
-<<<<<<< HEAD
-=======
     public void setKey(String key) {
         this.firebaseKey = key;
     }
->>>>>>> usersHostsParticipations
 
     @Override
     public String toString() {

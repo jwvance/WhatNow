@@ -281,6 +281,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 					for(int j = 0; j < eventsEvents.get(i).size(); j++){
 						if(eventsEvents.get(i).get(j).getKey().equals(dataSnapshot.getKey())){
 							eventsEvents.get(i).remove(j);
+
 						}
 					}
 				}

@@ -463,26 +463,16 @@ public class LoginActivity extends BaseActivity{
      * Sign in with Google plus when user clicks "Sign in with Google" textView (button)
      */
     public void onSignInGooglePressed(View view) {
-    	try {
-			google = true;
-			Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-			startActivityForResult(signInIntent, RC_GOOGLE_LOGIN);
-			mAuthProgressDialog.show();
-<<<<<<< HEAD
-        	Log.wtf("LOGIN", "about to save in the preferences");
-        	mSharedPrefEditor.putBoolean("logged_in", true);
-        	mSharedPrefEditor.commit();
-
-
+        try {
+            google = true;
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            startActivityForResult(signInIntent, RC_GOOGLE_LOGIN);
+            mAuthProgressDialog.show();
+            Log.wtf("LOGIN", "loggedin");
         }catch(Exception e){
-=======
-        	Log.wtf("LOGIN", "loggedin");
-		}catch(Exception e){
->>>>>>> usersHostsParticipations
-			Log.wtf("LOGIN PROBLEM", e.getMessage());
-			e.printStackTrace();
-		}
-
+            Log.wtf("LOGIN PROBLEM", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override

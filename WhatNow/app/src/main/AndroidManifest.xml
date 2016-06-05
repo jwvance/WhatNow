@@ -72,7 +72,6 @@
             android:label="New Event"
             android:screenOrientation="portrait">
         </activity>
-<<<<<<< HEAD
         <activity
             android:name=".EditEventActivity"
             android:configChanges="orientation"
@@ -80,8 +79,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/WhatNowTheme">
         </activity>
-=======
->>>>>>> usersHostsParticipations
         <activity
             android:name=".login.MainActivity"
             android:configChanges="orientation"
@@ -136,17 +133,20 @@
         <activity
             android:name=".HostProfileActivity"
             android:label="@string/title_activity_host_profile"
-            android:theme="@style/WhatNowTheme">
+            android:theme="@style/WhatNowTheme"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".HostQActivity"
             android:label="@string/title_activity_host_q"
-            android:theme="@style/WhatNowTheme">
+            android:theme="@style/WhatNowTheme"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".UserQActivity"
             android:label="@string/title_activity_user_q"
-            android:theme="@style/WhatNowTheme">
+            android:theme="@style/WhatNowTheme"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

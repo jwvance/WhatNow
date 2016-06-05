@@ -35,9 +35,9 @@ public class GalleryActivity extends AppCompatActivity {
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         imageView.setImageBitmap(bmp);
 
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+       /* LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(lp);
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);*/
         imageView.setOnClickListener(new View.OnClickListener()
         {
             @Override

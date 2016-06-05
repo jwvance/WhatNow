@@ -79,6 +79,7 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
 	private String imagePath;
 	private Bitmap image;
 	private String imageAsString;
+	private int participants;
 
 	private Spinner spinner;
 	ArrayAdapter<CharSequence> adapter;
@@ -91,6 +92,9 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
 		if(bundle.getString("KEY") != null){
 			key = bundle.getString("KEY");
 		}
+
+		Intent intent = getIntent();
+		participants = intent.getIntExtra("participants", 0);
 
 		setContentView(R.layout.activity_add_event);
 		Toolbar toolbar = (Toolbar) findViewById(R.id.new_event_toolbar);
@@ -243,7 +247,7 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
 			return;
 		}
 
-		newEvent = new Event(new Random().nextInt(1000), iHour, iMinute, fHour, fMinute,
+		newEvent = new Event(new Random().nextInt(1000), participants, iHour, iMinute, fHour, fMinute,
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), tv[0].getText().toString(),
 				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category),
 				iCalendar.getTimeInMillis(), imageAsString, event.getKey(), false, 0);
