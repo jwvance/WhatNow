@@ -54,7 +54,6 @@
         android:id="@+id/fab_new_event"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="addEvent"
         android:src="@drawable/ic_done_black_24dp"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"

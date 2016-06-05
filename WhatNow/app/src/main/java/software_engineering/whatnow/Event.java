@@ -114,6 +114,11 @@ public class Event implements Comparable {
     //Location stuff
     private LatLng myLoc;
 
+    //Image
+    @SerializedName("galleryString")
+    @Expose
+    private String[] galleryString;
+
 
     public Event(){
         //empty constructor
@@ -145,6 +150,7 @@ public class Event implements Comparable {
             npe.printStackTrace();
         }
         this.imageAsString = imageAsString;
+        this.galleryString = galleryString;
 
 
         Calendar calendar = Calendar.getInstance();
@@ -351,9 +357,12 @@ public class Event implements Comparable {
         return timestamp;
     }
 
+<<<<<<< HEAD
     public void setKey(String key) {
         this.firebaseKey = key;
     }
+=======
+>>>>>>> e9f754d7115dc1fb48dcb667d6456e40e624dc35
 
     @Override
     public String toString() {
@@ -364,9 +373,7 @@ public class Event implements Comparable {
     }
 
     public String getFriendlyDate(){
-        String friendlyString;
-
-        //get date and parse
+          //get date and parse
         String currDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         String[] dateSplits = currDate.split("-");
         String currYear = dateSplits[0];

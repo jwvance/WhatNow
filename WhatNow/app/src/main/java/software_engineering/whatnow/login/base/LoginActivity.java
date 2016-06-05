@@ -468,8 +468,17 @@ public class LoginActivity extends BaseActivity{
 			Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
 			startActivityForResult(signInIntent, RC_GOOGLE_LOGIN);
 			mAuthProgressDialog.show();
+<<<<<<< HEAD
         	Log.wtf("LOGIN", "loggedin");
 		}catch(Exception e){
+=======
+        	Log.wtf("LOGIN", "about to save in the preferences");
+        	mSharedPrefEditor.putBoolean("logged_in", true);
+        	mSharedPrefEditor.commit();
+
+
+        }catch(Exception e){
+>>>>>>> e9f754d7115dc1fb48dcb667d6456e40e624dc35
 			Log.wtf("LOGIN PROBLEM", e.getMessage());
 			e.printStackTrace();
 		}
@@ -484,6 +493,8 @@ public class LoginActivity extends BaseActivity{
          */
         mAuthProgressDialog.dismiss();
         showErrorToast(result.toString());
+        Log.wtf("LOGIN", "connection failed");
+
     }
 
     /**
@@ -510,6 +521,8 @@ public class LoginActivity extends BaseActivity{
         Log.d(LOG_TAG, "handleSignInResult:" + result.isSuccess());
         Log.d(LOG_TAG, "handleSignInResult:" + result.getStatus().getStatusCode());
         Log.d(LOG_TAG, "handleSignInResult:" + result.getStatus().getStatusMessage());
+        //status = 10 = DEVELOPER_ERROR
+        //status = 8 = INTERNAL_ERROR
 
 
         if (result.isSuccess()) {

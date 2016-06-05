@@ -12,6 +12,7 @@ public class Constants {
 	public static final String HOSTS_URL = "https://ucscwhatnow.firebaseio.com/hosts/";
 	public static final String USERS_URL = "https://ucscwhatnow.firebaseio.com/users/";
 
+
 	/**
 	 * Constants related to locations in Firebase, such as the name of the node
 	 */

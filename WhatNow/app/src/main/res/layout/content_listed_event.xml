@@ -15,8 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         tools:context=".AddEventActivity">
 
@@ -29,7 +27,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:id="@+id/linearLayout">
+            android:id="@+id/linearLayout"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/listed_event_title"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Event Title"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/imageView8"
+                android:layout_toEndOf="@+id/imageView8"
+                android:textSize="18pt" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -38,15 +49,6 @@
                 android:layout_marginTop="15dp"
                 android:layout_gravity="center_horizontal">
 
-                <ImageView
-                    android:id="@+id/imageView12"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_description_black_24dp"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"/>
-
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -54,9 +56,10 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Description"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/imageView12"
-                    android:layout_toEndOf="@+id/imageView12"
-                    android:layout_marginLeft="10dp"/>
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:textSize="12pt"
+                    android:paddingBottom="40dp" />
             </RelativeLayout>
 
             <View
@@ -66,81 +69,9 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="45dp"
                 android:orientation="horizontal"
-                android:layout_marginTop="5dp">
-
-                <ImageView
-                    android:id="@+id/imageView8"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_style_black_24dp"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/listed_event_category"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Category"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/imageView8"
-                    android:layout_toEndOf="@+id/imageView8"
-                    android:layout_marginLeft="10dp"/>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_marginTop="5dp"
                 android:layout_gravity="center_horizontal">
-
-                <ImageView
-                    android:id="@+id/imageView16"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_people_black_24dp"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/listed_event_participants"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Participants"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/imageView16"
-                    android:layout_toEndOf="@+id/imageView16"
-                    android:layout_marginLeft="10dp"/>
-            </RelativeLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="#e0e0e0"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Click to see Host details..."
-                android:id="@+id/textView3"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
-                android:layout_gravity="center_horizontal"/>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_gravity="center_horizontal"
-                >
 
                 <ImageView
                     android:id="@+id/imageView9"
@@ -152,7 +83,7 @@
                     android:layout_alignParentStart="true"/>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/listed_event_host"
                     android:textAppearance="?android:attr/textAppearanceMedium"
@@ -161,7 +92,23 @@
                     android:layout_toRightOf="@+id/imageView9"
                     android:layout_toEndOf="@+id/imageView9"
                     android:layout_marginLeft="10dp"
-                    android:onClick="viewHost"/>
+                    android:onClick="viewHost"
+                    android:gravity="center_vertical" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textStyle="italic"
+                    android:text="tap for details..."
+                    android:id="@+id/textView3"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="left"
+                    android:layout_marginLeft="9dp"
+                    android:layout_marginStart="9dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/listed_event_host"
+                    android:layout_toEndOf="@+id/listed_event_host" />
             </RelativeLayout>
 
             <View
@@ -169,21 +116,9 @@
                 android:layout_height="2dp"
                 android:background="#e0e0e0"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Click to open in Maps..."
-                android:id="@+id/textView4"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
-                android:layout_gravity="center_horizontal"
-                android:onClick="searchMap"/>
-
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:orientation="horizontal"
                 android:layout_gravity="center_horizontal">
 
@@ -197,7 +132,7 @@
                     android:layout_alignParentStart="true"/>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/listed_event_address"
                     android:textAppearance="?android:attr/textAppearanceMedium"
@@ -207,11 +142,26 @@
                     android:layout_toEndOf="@+id/imageView11"
                     android:layout_marginLeft="10dp"
                     android:onClick="searchMap"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="tap to open in Maps..."
+                    android:textStyle="italic"
+                    android:id="@+id/textView4"
+                    android:layout_gravity="center_horizontal"
+                    android:onClick="searchMap"
+                    android:layout_marginLeft="9dp"
+                    android:layout_marginStart="9dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/listed_event_address"
+                    android:layout_toEndOf="@+id/listed_event_address" />
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:orientation="horizontal"
                 android:layout_gravity="center_horizontal">
 
@@ -246,7 +196,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:orientation="horizontal"
                 android:layout_marginTop="5dp">
 
@@ -273,7 +223,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:orientation="horizontal"
                 android:layout_marginTop="5dp">
 
@@ -306,9 +256,45 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="who else is going..."
+                    android:textStyle="italic"
+                    android:id="@+id/textView8"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:paddingBottom="5dp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/linearLayout"
+            android:layout_centerHorizontal="true"
+            android:foregroundGravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:id="@+id/relativeLayout">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:id="@+id/profile_past_events_layout">
+                android:id="@+id/profile_past_events_layout"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -324,19 +310,15 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/listed_event_recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
+                    android:layout_height="match_parent"
                     android:scrollbars="horizontal"
                     android:layout_below="@+id/listed_event_past_events"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"/>
+                    android:transitionGroup="false" />
 
             </RelativeLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="#e0e0e0"/>
 
+<<<<<<< HEAD
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -382,8 +364,88 @@
         </LinearLayout>
 
         <!--    </ScrollView>   -->
+=======
+        </RelativeLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_below="@+id/gallery_layout"
+            android:layout_alignLeft="@+id/gallery_layout"
+            android:layout_alignStart="@+id/gallery_layout"
+            >
+
+            <Button
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/deleteEvent"
+                android:background="@drawable/ic_delete_black_24dp"
+                android:adjustViewBounds="true"
+                android:onClick="deleteDialogue"
+                android:layout_alignTop="@+id/listed_event_recycler_view"
+                android:layout_centerHorizontal="true"
+                android:layout_marginRight="20dp" />
+
+            <Button
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/editEvent"
+                android:background="@drawable/ic_create_black_24dp"
+                android:adjustViewBounds="true"
+                android:onClick="editEvent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignLeft="@+id/listed_event_past_events"
+                android:layout_alignStart="@+id/listed_event_past_events"
+                android:layout_marginLeft="20dp" />
+        </LinearLayout>
+
+        <!--    </ScrollView>   -->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/gallery_layout"
+            android:layout_below="@+id/relativeLayout"
+
+            >
+            <!--<ImageView-->
+            <!--android:id="@+id/imageViewGallery"-->
+            <!--android:layout_width="25dp"-->
+            <!--android:layout_height="25dp"-->
+            <!--android:src="@drawable/ic_add_a_photo_black_24dp"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:onClick="chooseImageGal"-->
+            <!--/>-->
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Gallery"
+                style="?android:attr/borderlessButtonStyle"
+                android:id="@+id/choose_gallery"
+                android:onClick="chooseImageGal"
+                />
+
+            <HorizontalScrollView
+                android:id="@+id/horizontalScrollView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/choose_gallery"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" >
+                <LinearLayout
+                    android:id="@+id/my_gallery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"/>
+            </HorizontalScrollView>
+        </RelativeLayout>
+>>>>>>> e9f754d7115dc1fb48dcb667d6456e40e624dc35
 
     </RelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>
-

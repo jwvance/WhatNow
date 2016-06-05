@@ -62,7 +62,7 @@ public class TabFragment extends Fragment{
 
 		context = getContext();
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
@@ -70,23 +70,6 @@ public class TabFragment extends Fragment{
 		recyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view);
 		recyclerView.setHasFixedSize(true);
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));
-		//	cardsEventData = AddEventActivity.loadEvents(rootView.getContext());
-
-	//	progressBar = (ProgressBar) rootView.findViewById(R.id.fragmentProgressBar);
-
-		// PLACE HERE CALL TO THE SERVER TO GET EVENTS FROM THE SPECIFIC CATEGORY
-		/*cardsEventData.add("Event 1");
-		cardsEventData.add("Event 2");
-		cardsEventData.add("Event 3");
-		cardsEventData.add("Event 4");
-		cardsEventData.add("Event 5");
-		cardsEventData.add("Event 6");
-		cardsEventData.add("Event 7");
-		cardsEventData.add("Event 8");
-		cardsEventData.add("Event 9");*/
-
-		//	recyclerAdapter = new RecyclerAdapter(cardsEventData);
-
 		recyclerView.setAdapter(recyclerAdapter);	// GIVES TO THE ADAPTER ONLY THE EVENTS RELEVANT TO THIS FRAGMENT
 
 		return rootView;

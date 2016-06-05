@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
     <application
-        android:name=".WhatNowApplication"
+        android:name=".GlobalEvents"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="WhatNow"
@@ -55,7 +55,16 @@
             android:name=".ListedEventActivity"
             android:configChanges="orientation"
             android:label="Event"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            >
+        </activity>
+        <activity
+            android:name=".GalleryActivity"
+            android:configChanges="orientation"
+            android:label="Gallery"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            >
         </activity>
         <activity
             android:name=".AddEventActivity"
@@ -63,6 +72,16 @@
             android:label="New Event"
             android:screenOrientation="portrait">
         </activity>
+<<<<<<< HEAD
+=======
+        <activity
+            android:name=".EditEventActivity"
+            android:configChanges="orientation"
+            android:label="Bookmarks"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhatNowTheme">
+        </activity>
+>>>>>>> e9f754d7115dc1fb48dcb667d6456e40e624dc35
         <activity
             android:name=".login.MainActivity"
             android:configChanges="orientation"

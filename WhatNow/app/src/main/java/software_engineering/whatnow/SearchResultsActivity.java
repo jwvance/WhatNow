@@ -44,7 +44,7 @@ public class SearchResultsActivity extends AppCompatActivity implements View.OnC
 
 		Log.wtf("SEARCH", searchQuery);
 
-		events = AddEventActivity.loadEvents(this);
+		events = ((GlobalEvents) getApplication()).getEventList();
 
 		if(categoryN > 0)
 			categorizeEvents();

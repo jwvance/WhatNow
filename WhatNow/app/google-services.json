@@ -1,64 +1,27 @@
 {
   "project_info": {
-    "project_number": "833911878314",
-    "project_id": "even-dragon-130220"
+    "project_number": "130824505100",
+    "firebase_url": "https://project-8340710839218953106.firebaseio.com",
+    "project_id": "project-8340710839218953106",
+    "storage_bucket": "project-8340710839218953106.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:833911878314:android:10ad2120d7004c4b",
-        "android_client_info": {
-          "package_name": "com.udacity.firebase.shoppinglistplusplus"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "833911878314-qhgmfq704krnvu8p5alv2b63vpaob3i8.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAs10rXNlfSNHmskEQD2u0QQhvms-fusi4"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 1
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:833911878314:android:7bea6c12143ccc76",
+        "mobilesdk_app_id": "1:130824505100:android:7bea6c12143ccc76",
         "android_client_info": {
           "package_name": "software_engineering.whatnow"
         }
       },
       "oauth_client": [
         {
-          "client_id": "833911878314-viib2obk9qkfgiesan0ao5p52dtrr96t.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "software_engineering.whatnow",
-            "certificate_hash": "19AFC3A694292DF55366D4B758328975EC9EB18E"
-          }
-        },
-        {
-          "client_id": "833911878314-qhgmfq704krnvu8p5alv2b63vpaob3i8.apps.googleusercontent.com",
+          "client_id": "130824505100-itptc7prmrf1e66fh63k2rbc55qq38t2.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAs10rXNlfSNHmskEQD2u0QQhvms-fusi4"
+          "current_key": "AIzaSyDvuXtdNx8gdGHErHx4z8QRPNgG6USW1G0"
         }
       ],
       "services": {
@@ -70,7 +33,7 @@
           "other_platform_oauth_client": []
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
