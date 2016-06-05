@@ -66,6 +66,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 		Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
 		holder.cardImage.setImageBitmap(bitmap);
 		holder.cardDistance.setText(event.getDistance()); //test
+		holder.cardParticipants.setText(event.getNumberOfGuests() + " participants");
 
 		//toggle bookmark icon on or off depending on saved preference
 		ImageView img = (ImageView)holder.itemView.findViewById(R.id.card_bookmark_button);

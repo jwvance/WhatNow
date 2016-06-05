@@ -19,7 +19,12 @@ package software_engineering.whatnow;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.util.Log;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -27,7 +32,11 @@ import com.google.gson.annotations.SerializedName;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import software_engineering.whatnow.firebase_stuff.Constants;
 
 /**
  * Created by Francesco on 4/14/2016.
@@ -88,6 +97,10 @@ public class Event implements Comparable {
     @SerializedName("dateEnd")
     @Expose
     private long dateEnd;
+    @SerializedName("numberOfGuests")
+    @Expose
+    private int numberOfGuests = 0;
+
     //test
     LocationToolBox locationIs;
     //
@@ -95,7 +108,6 @@ public class Event implements Comparable {
     private int month;
     private int year;
     private int day;
-    private int numberOfGuests = 0;
     private long timestamp;
     private int sortingCriteria=0;
 
@@ -112,9 +124,10 @@ public class Event implements Comparable {
         //empty constructor
     }
 
-    public Event(int id, int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
-                 Host host, String name, String description, Category category, long dateStart, String imageAsString, String firebaseKey, boolean fromFirebase, long timeStamp) {
+    public Event(int id, int numberOfGuests, int hourStart, int minuteStart, int hourEnd, int minuteEnd, String location,
+                 Host host, String name, String description, Category category, long dateStart, String imageAsString, String firebaseKey, boolean fromFirebase, long timeStamp/*, int numberOfGuests*/) {
         this.id = id;
+        this.numberOfGuests = numberOfGuests;
         this.hourStart = hourStart;
         this.minuteStart = minuteStart;
         this.hourEnd = hourEnd;
@@ -146,6 +159,7 @@ public class Event implements Comparable {
         this.year = calendar.get(Calendar.YEAR);
         this.month = calendar.get(Calendar.MONTH);
         this.day = calendar.get(Calendar.DAY_OF_MONTH);
+        this.numberOfGuests = numberOfGuests;
     }
 
     public long getDateStart() {
@@ -196,22 +210,31 @@ public class Event implements Comparable {
 
     //Carlos's test for getting distance.
     public String getDistance() {
-
-        Double storedLatitude = LocationToolBox.storedLatitude;
-        Double storedLongitude = LocationToolBox.storedLongitude;
-        StringBuilder isKM = new StringBuilder("no");
-        Integer dis = locationIs.distance(storedLatitude, storedLongitude, this.myLoc.latitude, this.myLoc.longitude, isKM);
-        String disIs = ((isKM.toString().equals("yes")) ? dis.toString() + "km" : dis.toString() + "m");
-        return disIs;
+        try {
+            Double storedLatitude = LocationToolBox.storedLatitude;
+            Double storedLongitude = LocationToolBox.storedLongitude;
+            StringBuilder isKM = new StringBuilder("no");
+            Integer dis = locationIs.distance(storedLatitude, storedLongitude, this.myLoc.latitude, this.myLoc.longitude, isKM);
+            String disIs = ((isKM.toString().equals("yes")) ? dis.toString() + "km" : dis.toString() + "m");
+            return disIs;
+        }catch (Exception e){
+            Log.wtf("DISTANCE", "failed");
+            return "err";
+        }
     }
 
     public int getDistanceInMeters(){
-        Double storedLatitude = LocationToolBox.storedLatitude;
-        Double storedLongitude = LocationToolBox.storedLongitude;
-        StringBuilder isKM = new StringBuilder("no");
-        Integer dis = locationIs.distance(storedLatitude, storedLongitude, this.myLoc.latitude, this.myLoc.longitude, isKM);
+        try{
+            Double storedLatitude = LocationToolBox.storedLatitude;
+            Double storedLongitude = LocationToolBox.storedLongitude;
+            StringBuilder isKM = new StringBuilder("no");
+            Integer dis = locationIs.distance(storedLatitude, storedLongitude, this.myLoc.latitude, this.myLoc.longitude, isKM);
 
-        return dis;
+            return dis;
+        }catch (Exception e){
+            Log.wtf("DISTANCE", "failed");
+            return -1;
+        }
     }
 
     public void setLocation(String location) {
@@ -299,22 +322,54 @@ public class Event implements Comparable {
     }
 
     public void increaseGuests(){
-        this.numberOfGuests++;
+        Log.wtf("INCREASING GUESTS KEY", firebaseKey);
+        final Firebase firebaseEvent = new Firebase(Constants.DATABASE_URL + "/" + firebaseKey);
+        firebaseEvent.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                try{
+                    Map<String, Object> eventMap = dataSnapshot.getValue(HashMap.class);
+                    numberOfGuests = Integer.parseInt(eventMap.get("numberOfGuests").toString());
+                    Log.wtf("INCREASING GUESTS, previous #", "" + numberOfGuests);
+                    numberOfGuests++;
+                    firebaseEvent.child("numberOfGuests").setValue("" + (new Integer(numberOfGuests)).toString());
+                    //eventMap.put("numberOfGuests", numberOfGuests++);
+                    //firebaseEvent.updateChildren(eventMap);
+                }catch (Exception e){
+                    Log.wtf("INCREASING GUESTS", e.getMessage());
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+       // this.numberOfGuests++;
+
     }
 
-    public void decreaseGuests(){ this.numberOfGuests--; }
+    public void decreaseGuests(){
+        this.numberOfGuests--;
+    }
 
     public long getTimestamp() {
         return timestamp;
     }
 
+<<<<<<< HEAD
+=======
+    public void setKey(String key) {
+        this.firebaseKey = key;
+    }
+>>>>>>> usersHostsParticipations
 
     @Override
     public String toString() {
-        return id + ":::***:::***:::" + hourStart + ":::***:::***:::" + minuteStart + ":::***:::***:::" +
+        return id + ":::***:::***:::" + numberOfGuests + ":::***:::***:::" +  hourStart + ":::***:::***:::" + minuteStart + ":::***:::***:::" +
                 hourEnd + ":::***:::***:::" + minuteEnd + ":::***:::***:::" + location + ":::***:::***:::" +
-                host.getName() + ":::***:::***:::" + name + ":::***:::***:::" +description + ":::***:::***:::"
-                + category.getName() + ":::***:::***:::" + dateStart + ":::***:::***:::" + imageAsString + ":::***:::***:::" + firebaseKey;
+                host.getName() + ":::***:::***:::" + host.getBusinessEmail() + ":::***:::***:::" + name + ":::***:::***:::" +description + ":::***:::***:::"
+                + category.getName() + ":::***:::***:::" + dateStart + ":::***:::***:::" + imageAsString + ":::***:::***:::" + firebaseKey/* + ":::***:::***:::" + numberOfGuests*/;
     }
 
     public String getFriendlyDate(){
@@ -513,4 +568,5 @@ public class Event implements Comparable {
 
         return result;
     }
+
 }

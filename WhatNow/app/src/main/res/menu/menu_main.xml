@@ -31,6 +31,18 @@
         app:showAsAction="ifRoom"/>
 
     <item
+        android:id="@+id/action_host"
+        android:orderInCategory="98"
+        android:title="Edit Host Info"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_user"
+        android:orderInCategory="97"
+        android:title="Edit User Info"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/action_sort"
         android:icon="@drawable/ic_sort_black_24dp"
         android:orderInCategory="1"
@@ -49,7 +61,5 @@
         android:orderInCategory="99"
         android:title="Saved Events"
         app:showAsAction="never"/>
-
-
 
 </menu>

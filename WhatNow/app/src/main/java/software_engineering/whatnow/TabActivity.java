@@ -131,7 +131,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Log.wtf("LOGIN", "inside TabActivity");
+	//	Log.wtf("LOGIN", "inside TabActivity");
 		mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		if(!mSharedPref.getBoolean("logged_in", false)){
 			Log.wtf("LOGIN", "inside Tab, going to LoginActivity");
@@ -140,6 +140,8 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			finish();
 			return;
 		}
+
+		Log.wtf("LOGIN: logged in as", mSharedPref.getString(Constants.KEY_SIGNUP_EMAIL, null));
 
 		setContentView(R.layout.tab_layout);
 
@@ -207,19 +209,31 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 					HashMap e = dataSnapshot.getValue(HashMap.class);
 
 					Host host = new Host((String) ((HashMap) e.get("host")).get("name"));
+					String email = (String) ((HashMap) e.get("host")).get("businessEmail");
+					if(email == null)
+						email = (String) ((HashMap) e.get("host")).get("email");
+					host.setBusinessEmail(email);
+					Log.wtf("HOST DOWNLOADING", host.getBusinessEmail());
+
 					Category category = new Category(((HashMap) e.get("category")).get("name").toString());
 
 					int categoryN = categories.indexOf(category.getName());
 
 					long timeStamp = Long.parseLong(e.get("timestamp").toString());
 
-					Event event = new Event(Integer.valueOf(e.get("id").toString()), Integer.valueOf(e.get("hourStart").toString()),
+					Event event = new Event(Integer.valueOf(e.get("id").toString()), Integer.parseInt(e.get("numberOfGuests").toString()), Integer.valueOf(e.get("hourStart").toString()),
 							Integer.valueOf(e.get("minuteStart").toString()), Integer.valueOf(e.get("hourEnd").toString()),
 							Integer.valueOf(e.get("minuteEnd").toString()), e.get("location").toString(), host,
 							(String) e.get("name"), (String) e.get("description"), category,
 							Long.parseLong(e.get("dateStart").toString()), (String) e.get("imageAsString"), dataSnapshot.getKey(), true, timeStamp);
 
 					event.setMyLoc(context);
+					int n = Integer.parseInt(e.get("numberOfGuests").toString());
+					if(n > 0)
+						Log.wtf("PARTICIPANTS TAB ACTIVITY #", "" + n);
+					event.setNumberOfGuests(n);
+					Log.wtf("KEYS TABACTIVITY", event.getKey());
+
 					eventsEvents.get(categoryN).add(event);	//specific category
 					eventsEvents.get(0).add(event);
 
@@ -311,6 +325,14 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// PROBABLY WORK IN HERE TO ADD ICONS IN THE TOP BAR (SEARCH, PROFILE, ORDER, ETC)
 		getMenuInflater().inflate(R.menu.menu_main, menu);
+		try {
+			if (mSharedPref.getBoolean("is_host", false))
+				findViewById(R.id.action_host).setVisibility(View.GONE);
+			if (mSharedPref.getBoolean("is_user", false))
+				findViewById(R.id.action_user).setVisibility(View.GONE);
+		}catch(Exception e){
+			Log.wtf("MENU", e.getMessage());
+		}
 		return true;
 	}
 
@@ -345,6 +367,17 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			return true;
 		}else if(id == R.id.action_bookmarks){
 			startActivity(new Intent(this, BookmarkActivity.class));
+			return true;
+		}else if(id == R.id.action_host){
+			Intent intent = new Intent(this, HostQActivity.class);
+			intent.putExtra("from_login", false);
+			startActivity(intent);
+			return true;
+		}else if(id == R.id.action_user){
+			Intent intent = new Intent(this, UserQActivity.class);
+			intent.putExtra("from_login", false);
+			startActivity(intent);
+			return true;
 		}
 
 		return super.onOptionsItemSelected(item);

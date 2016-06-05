@@ -7,13 +7,14 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:focusableInTouchMode="true"
-    tools:context="software_engineering.whatnow.ListedEventActivity">
+    tools:context="software_engineering.whatnow.UserQActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/app_bar_height"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:theme="@style/WhatNowTheme.AppBarOverlay">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
@@ -24,7 +25,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbarEvent"
+                android:id="@+id/user_q_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
@@ -38,28 +39,27 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/listed_event_image"
-                    android:src="@drawable/img_ex"
+                    android:id="@+id/user_q_image"
                     android:adjustViewBounds="true"
-                    android:scaleType="centerCrop"/>
-
+                    android:scaleType="centerCrop"
+                    android:background="@color/material_deep_teal_200"/>
             </RelativeLayout>
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_listed_event"/>
-
-
+    <include layout="@layout/content_user_q"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/listed_event_fab"
+        android:id="@+id/fab_user_q"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="saveHost"
+        android:src="@drawable/ic_done_black_24dp"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_person_add_black_24dp"
         app:layout_anchor="@id/app_bar"
-        app:layout_anchorGravity="bottom|end"
-        android:clickable="true" />
+        app:layout_anchorGravity="bottom|end"/>
 
 </android.support.design.widget.CoordinatorLayout>

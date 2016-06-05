@@ -24,8 +24,12 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import android.preference.PreferenceManager;
+<<<<<<< HEAD
 import android.provider.MediaStore;
 import android.provider.Settings;
+=======
+import android.support.design.widget.FloatingActionButton;
+>>>>>>> usersHostsParticipations
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -45,6 +49,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+<<<<<<< HEAD
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -56,12 +61,22 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.w3c.dom.Text;
+=======
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
+>>>>>>> usersHostsParticipations
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import software_engineering.whatnow.firebase_stuff.Constants;
+import software_engineering.whatnow.utils.Utils;
 
-public class ListedEventActivity extends AppCompatActivity {
+public class ListedEventActivity extends AppCompatActivity implements View.OnClickListener, ChildEventListener, ValueEventListener {
 	private TextView description;
 	private TextView category;
 	private TextView host;
@@ -79,6 +94,19 @@ public class ListedEventActivity extends AppCompatActivity {
 	private RecyclerView recyclerView;
 	private TextView pastHostEventsText;
 	private Firebase firebaseEvents;
+	private String key;
+	private String hostEmail;
+	private String userEmail;
+	private HashMap<String, Object> participationsMap;
+	private HashMap<String, Object> participantsMap;
+	private HashMap<String, Object> eventMap;
+	private int participantsN;
+	private Firebase firebaseEventParticipants;
+	private Firebase firebaseEventUserParticipations;
+	private SharedPreferences preferences;
+	private int partecipations;
+	private boolean canParticipate;
+	private boolean participatedAlready;
 
 
 	private static final int RESULT_LOAD_IMG = 1;
@@ -133,8 +161,26 @@ public class ListedEventActivity extends AppCompatActivity {
 		}
 
 		if(event != null) {
+<<<<<<< HEAD
 			this.setTitle("");
 			title.setText(event.getName());
+=======
+			canParticipate = true;
+			participatedAlready = false;
+			key = event.getKey();
+			preferences = PreferenceManager.getDefaultSharedPreferences(this);
+			userEmail = preferences.getString(Constants.KEY_GOOGLE_EMAIL, "");
+			Log.wtf("KEYS CREATING PARTICIPANTS", key);
+			firebaseEventParticipants = new Firebase(Constants.DATABASE_URL + "/" + key + "/participants");
+			Query query = (new Firebase(Constants.DATABASE_URL)).orderByKey().equalTo(key);
+			query.addChildEventListener(this);
+			/*firebaseEventParticipants.addChildEventListener(this);*/
+			partecipations = preferences.getInt("user_partecipations", 0);
+			firebaseEventUserParticipations = new Firebase(Constants.USERS_URL + Utils.encodeEmail(userEmail) + "/partecipations/");
+			firebaseEventUserParticipations.addListenerForSingleValueEvent(this);
+
+			this.setTitle(event.getName());
+>>>>>>> usersHostsParticipations
 			description.setText(event.getDescription());
 			//String categoryS = event.getCategory().getName().toLowerCase();
 			//category.setText(categoryS.substring(0, 1).toUpperCase() + categoryS.substring(1));
@@ -142,6 +188,8 @@ public class ListedEventActivity extends AppCompatActivity {
 			host.setTextColor(Color.parseColor("#33a0ff"));
 			date.setText(event.getDateString());	//ADD multi date
 			times.setText(event.getStartTime() + " - " + event.getEndTime());
+			int p = event.getNumberOfGuests();
+			participants.setText(event.getNumberOfGuests() + " participants");
 			address.setText(event.getLocation());
 			address.setTextColor(Color.parseColor("#33a0ff"));
 			distance.setText(event.getDistance() + " away");
@@ -150,6 +198,7 @@ public class ListedEventActivity extends AppCompatActivity {
 			Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
 			image.setImageBitmap(bitmap);
 
+<<<<<<< HEAD
 			image.setOnClickListener(new View.OnClickListener(){
 				@Override
 				public void onClick(View v)
@@ -159,6 +208,44 @@ public class ListedEventActivity extends AppCompatActivity {
 					startActivity(intent);
 				}
 			});
+=======
+			hostEmail = event.getHost().getBusinessEmail();
+
+			key = event.getKey();
+			Log.wtf("KEYS LISTED EVENT", key);
+
+			Log.wtf("HOST LISTED EVENT", hostEmail);
+			/*if(event.getHost().getBusinessEmail() != null){
+				String encodedEmail = Utils.encodeEmail(event.getHost().getBusinessEmail());
+				Firebase firebase = new Firebase(Constants.FIREBASE_URL + "users/" + encodedEmail);
+				firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+					@Override
+					public void onDataChange(DataSnapshot dataSnapshot) {
+						//for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+						try{
+							HashMap e = dataSnapshot.getValue(HashMap.class);
+							//User user = dataSnapshot.getValue(User.class);
+							if(e != null)
+								Log.wtf("HOST LISTED EVENT", e.get("name").toString());
+						//}
+						}catch (Exception e){
+							Log.wtf("HOST LISTED EVENT", "no host info");
+						}
+					}
+
+					@Override
+					public void onCancelled(FirebaseError firebaseError) {
+
+					}
+				});
+			}*/
+
+			if(!hostEmail.equals(userEmail)){
+				findViewById(R.id.listed_edit_delete_layout).setVisibility(View.GONE);
+				findViewById(R.id.listed_event_final_separator).setVisibility(View.GONE);
+			}
+
+>>>>>>> usersHostsParticipations
 		}else{
 			//error
 		}
@@ -189,6 +276,7 @@ public class ListedEventActivity extends AppCompatActivity {
 		recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false));
 		recyclerView.setAdapter(recyclerAdapter);
 
+<<<<<<< HEAD
 		galArray = new ArrayList<Bitmap>(5);
 		strArray = new ArrayList<String>(5);
 		loadImages = new ArrayList<String>(5);
@@ -223,6 +311,9 @@ public class ListedEventActivity extends AppCompatActivity {
 				Toast.makeText(ListedEventActivity.this, firebaseError.toString(), Toast.LENGTH_SHORT).show();
 			}
 		});
+=======
+		((FloatingActionButton) findViewById(R.id.listed_event_fab)).setOnClickListener(this);
+>>>>>>> usersHostsParticipations
 	}
 
 	public void searchMap(View view){
@@ -232,7 +323,12 @@ public class ListedEventActivity extends AppCompatActivity {
 	}
 
 	public void viewHost(View view){
-		Intent i = new Intent(this, MyProfileActivity.class);
+		if(hostEmail == null){
+			Toast.makeText(ListedEventActivity.this, "Missing Host...", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		Intent i = new Intent(this, HostProfileActivity.class);
+		i.putExtra("encodedEmail", Utils.encodeEmail(hostEmail));
 		startActivity(i);
 	}
 
@@ -404,6 +500,7 @@ public class ListedEventActivity extends AppCompatActivity {
 		}
 	}
 
+<<<<<<< HEAD
 	public static Bitmap scaleImage(Context context, Uri photoUri) throws IOException {
 		InputStream is = context.getContentResolver().openInputStream(photoUri);
 		BitmapFactory.Options dbo = new BitmapFactory.Options();
@@ -451,4 +548,114 @@ public class ListedEventActivity extends AppCompatActivity {
 		baos.close();
 		return BitmapFactory.decodeByteArray(bMapArray, 0, bMapArray.length);
 	}
+=======
+	@Override
+	public void onClick(View v) {
+		if(canParticipate && !participatedAlready) {
+			try {
+				event.increaseGuests();
+
+				Log.wtf("PARTECIPATIONS for " + userEmail + " #", "" + partecipations);
+				participationsMap.put("partecipation_" + (partecipations + 1), key);
+				firebaseEventUserParticipations.setValue(participationsMap);
+
+				Log.wtf("PARTICIPATIONS", "saved participationsMap");
+
+				//firebaseEventParticipants = firebaseEventParticipants.child("participant_" + participantsN);
+				userEmail = Utils.encodeEmail(userEmail);
+				if (participantsMap == null)
+					participantsMap = new HashMap<String, Object>();
+				//Map<String, Object> newParticipantMap = new HashMap<String, Object>();
+				participantsMap.put("participant_" + participantsN, userEmail);
+				firebaseEventParticipants.setValue(participantsMap);
+
+				Log.wtf("PARTICIPATIONS", "saved participantsMap");
+
+				SharedPreferences.Editor editor = preferences.edit();
+				partecipations++;
+				editor.putInt("user_partecipations", partecipations);
+				editor.commit();
+				Log.wtf("PARTICIPATIONS", "saved in preferences");
+
+				participatedAlready = true;
+
+				Toast.makeText(ListedEventActivity.this, "Participation added!", Toast.LENGTH_SHORT).show();
+
+				//FIX THIS, need updated value
+				//participants.setText((Integer.parseInt(participants.getText().toString()) + 1) + "");
+			} catch (Exception e) {
+				Log.wtf("PARTICIPATION ON CLICK", e.getMessage());
+			}
+		}else
+			Toast.makeText(ListedEventActivity.this, "Sorry, You have already participated...", Toast.LENGTH_SHORT).show();
+			//finish();
+	}
+
+	//for event
+	@Override
+	public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+		try{
+			//FIX THIS -> there is no eventMap because just first one, query?
+
+			eventMap = dataSnapshot.getValue(HashMap.class);
+			participantsMap = (HashMap) eventMap.get("participants");
+			if(participantsMap != null && participantsMap.containsValue(Utils.encodeEmail(userEmail))){
+				canParticipate = false;
+				return;
+			}
+		}catch (Exception e){
+			Log.wtf("PARTICIPATIONS EVENT map, maybe because no participants yet", e.getMessage());
+		}
+		if(participantsMap == null)
+			participantsMap = new HashMap<String, Object>();
+		Log.wtf("PARTICIPATIONS", "got participantsMap");
+		try{
+			participantsN = participantsMap.size();
+		}catch (Exception e){
+			Log.wtf("PARTICIPATIONS EVENT", e.getMessage() + "\tno number");
+		}
+	}
+
+	@Override
+	public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+		try{
+			participantsMap = dataSnapshot.getValue(HashMap.class);
+		}catch (Exception e){
+			Log.wtf("PARTICIPATIONS EVENT map", e.getMessage());
+		}
+		if(participantsMap == null)
+			participantsMap = new HashMap<String, Object>();
+		Log.wtf("PARTICIPATIONS", "updated participantsMap");
+		try{
+			participantsN = Integer.parseInt(participantsMap.get("number").toString());
+		}catch (Exception e){
+			Log.wtf("PARTICIPATIONS EVENT", e.getMessage() + "\tno number");
+		}
+	}
+
+	@Override
+	public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+	}
+
+	@Override
+	public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+	}
+
+	//for user
+	@Override
+	public void onDataChange(DataSnapshot dataSnapshot) {
+		participationsMap = dataSnapshot.getValue(HashMap.class);
+		Log.wtf("PARTICIPATIONS", "got participationsMap");
+		if(participationsMap == null)
+			participationsMap = new HashMap<String, Object>();
+	}
+
+	@Override
+	public void onCancelled(FirebaseError firebaseError) {
+
+	}
+
+>>>>>>> usersHostsParticipations
 }
