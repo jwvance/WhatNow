@@ -129,8 +129,13 @@ public class UserQActivity extends AppCompatActivity implements View.OnClickList
 
 		encodedEmail = preferences.getString(Constants.KEY_ENCODED_EMAIL, "");
 		firebaseUser = new Firebase(Constants.USERS_URL + encodedEmail);
-		Firebase firebaseLogIn = new Firebase(Constants.FIREBASE_URL + "users/" + encodedEmail);
-		firebaseLogIn.addListenerForSingleValueEvent(this);
+		if(fromLogIn) {
+			Firebase firebaseLogIn = new Firebase(Constants.FIREBASE_URL + "users/" + encodedEmail);
+			firebaseLogIn.addListenerForSingleValueEvent(this);
+		}else{
+			userAccountEmail = preferences.getString("user_account_email", "");
+			userAccountName = preferences.getString("user_account_name", "");
+		}
 	}
 
 	private boolean saveInfo() {

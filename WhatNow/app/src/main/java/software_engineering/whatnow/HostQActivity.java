@@ -109,8 +109,14 @@ public class HostQActivity extends AppCompatActivity implements View.OnClickList
 
 		encodedEmail = preferences.getString(Constants.KEY_ENCODED_EMAIL, "");
 		firebaseHost = new Firebase(Constants.HOSTS_URL + encodedEmail);
-		Firebase firebaseUser = new Firebase(Constants.FIREBASE_URL + "users/" + encodedEmail);
-		firebaseUser.addListenerForSingleValueEvent(this);
+
+		if(fromLogIn) {
+			Firebase firebaseUser = new Firebase(Constants.FIREBASE_URL + "users/" + encodedEmail);
+			firebaseUser.addListenerForSingleValueEvent(this);
+		}else{
+			hostAccountEmail = preferences.getString("host_account_email", "");
+			hostAccountName = preferences.getString("host_account_name", "");
+		}
 	}
 
 	private boolean saveInfo() {
@@ -142,6 +148,8 @@ public class HostQActivity extends AppCompatActivity implements View.OnClickList
 		hostInfoMap.put("host_phone", phoneET.getText().toString());
 		hostInfoMap.put("host_picture", imageAsString);
 
+		editor.putString("host_account_email", hostAccountEmail);
+		editor.putString("host_account_name", hostAccountName);
 		editor.putString("host_name", hostNameET.getText().toString());
 		editor.putString("host_address", addressET.getText().toString());
 		editor.putString("host_phone", phoneET.getText().toString());
