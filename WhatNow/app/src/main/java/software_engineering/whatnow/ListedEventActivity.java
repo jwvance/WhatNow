@@ -144,11 +144,13 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 		image = (ImageView) findViewById(R.id.listed_event_image);
 		imageGallery = (LinearLayout)findViewById(R.id.my_gallery);
 
+		events = AddEventActivity.loadEvents(getApplicationContext());
+		Log.wtf("LISTED events size", events.size() + "");
 		event = null;
-		events = ((GlobalEvents) this.getApplication()).getEventList();
-		for (Event currEvent : events) {
-			if(currEvent.getId() == eventID) {
-				event = currEvent;
+		for (int i = 0; i < events.size(); i++) {
+			if(events.get(i).getId() == eventID) {
+				event = events.get(i);
+				events.remove(i);    //TO FILL THE LIST LATER!
 				break;
 			}
 		}
@@ -652,6 +654,11 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 	@Override
 	public void onCancelled(FirebaseError firebaseError) {
 
+	}
+
+	public void onBackPressed(){
+		finish();
+		super.onBackPressed();
 	}
 
 }
