@@ -77,6 +77,11 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -93,7 +98,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TabActivity extends AppCompatActivity implements DialogInterface.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
+public class TabActivity extends AppCompatActivity implements GeoQueryEventListener, DialogInterface.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
 	//Test for location
 	public static Context con;
@@ -103,10 +108,19 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	private ViewPager viewPager;
 	private RecyclerView recyclerView;
 	private Context context;
+	private float maximumDistance = -1.0f;
+	private int cont =0;
+	private int cont1 =0;
 
 	//testing distance
 	private LocationToolBox locTool;
 	private LocationListener locListener;
+
+	private ArrayList<String> closeEventsKeys = new ArrayList<String>();
+
+	private GeoLocation myPosition = null;
+	GeoQuery geoQuery = null;
+
 	//private LocationData locationData = LocationData.getLocationData();
 	//More testing
 	public static String LOG_TAG = "MyMapApplication";
@@ -125,11 +139,13 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 	private int sortingCriteria;
 	private ArrayList<ArrayList<Event>> eventsEvents;
 	//String[] categories = new String[{"ALL","BARS","CLUBS","FOOD","SHOPS","OTHERS"}];
+	private Bundle savedInstanceState;
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.savedInstanceState = savedInstanceState;
 
 	//	Log.wtf("LOGIN", "inside TabActivity");
 		mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -166,6 +182,8 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			return;
 		}
 
+
+		//Stefi snippet----------------------
 		mLastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
 		if (mLastLocation != null){
@@ -179,6 +197,8 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			LocationToolBox.storedLongitude =  locationData.getLocation().getLongitude();
 		}
 		//-------------------------------------------------
+
+		this.myPosition = new GeoLocation(LocationToolBox.storedLatitude, LocationToolBox.storedLongitude);
 		categories = Category.getCategories();
 
 		eventsEvents = new ArrayList<ArrayList<Event>>();
@@ -200,12 +220,31 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		tabLayout = (TabLayout) findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(viewPager);
 
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = preferences.edit();
+
+		maximumDistance = preferences.getFloat("maximumDistance", 50);
+
 		Firebase.setAndroidContext(context);
-		final Firebase firebase = new Firebase(Constants.DATABASE_URL);
-		firebase.addChildEventListener(new ChildEventListener() {
+
+		GeoFire geoFire = new GeoFire(new Firebase(Constants.GEOFIRE_URL));
+		this.geoQuery = geoFire.queryAtLocation(myPosition, maximumDistance);
+
+		this.geoQuery.addGeoQueryEventListener(this);
+	}
+
+
+	@Override
+	public void onKeyEntered(String key, GeoLocation location) {
+		//Firebase firebase = new Firebase(Constants.DATABASE_URL);
+
+
+		Query query = (new Firebase(Constants.DATABASE_URL)).orderByKey().equalTo(key);
+
+		query.addChildEventListener(new ChildEventListener() {
 			@Override
 			public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-				try{
+				try {
 					HashMap e = dataSnapshot.getValue(HashMap.class);
 
 					Host host = new Host((String) ((HashMap) e.get("host")).get("name"));
@@ -221,55 +260,59 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 					long timeStamp = Long.parseLong(e.get("timestamp").toString());
 
-					Event event = new Event(Integer.valueOf(e.get("id").toString()), Integer.parseInt(e.get("numberOfGuests").toString()), Integer.valueOf(e.get("hourStart").toString()),
+					Event event = new Event(Integer.valueOf(e.get("id").toString()), Integer.valueOf(e.get("numberOfGuests").toString()), Integer.valueOf(e.get("hourStart").toString()),
 							Integer.valueOf(e.get("minuteStart").toString()), Integer.valueOf(e.get("hourEnd").toString()),
 							Integer.valueOf(e.get("minuteEnd").toString()), e.get("location").toString(), host,
 							(String) e.get("name"), (String) e.get("description"), category,
-							Long.parseLong(e.get("dateStart").toString()), (String) e.get("imageAsString"), dataSnapshot.getKey(), true, timeStamp);
+							Long.parseLong(e.get("dateStart").toString()),Long.parseLong(e.get("dateEnd").toString()), (String) e.get("imageAsString"), dataSnapshot.getKey(), true, timeStamp);
 
 					event.setMyLoc(context);
-					int n = Integer.parseInt(e.get("numberOfGuests").toString());
-					if(n > 0)
-						Log.wtf("PARTICIPANTS TAB ACTIVITY #", "" + n);
-					event.setNumberOfGuests(n);
-					Log.wtf("KEYS TABACTIVITY", event.getKey());
-
-					eventsEvents.get(categoryN).add(event);	//specific category
+					eventsEvents.get(categoryN).add(event);    //specific category
 					eventsEvents.get(0).add(event);
 
-					((GlobalEvents) getApplication()).appendEvent(event);
-					Log.wtf("LOGGED?", event.getKey());
+					if (event.getDateEnd()>System.currentTimeMillis()) {
+						((GlobalEvents) getApplication()).appendEvent(event);
+						Log.wtf("LOGGED?", event.getKey());
 
-					setupViewPager(viewPager);
+
+						setupViewPager(viewPager);
+
+					}
 
 
-				}catch(Exception e){
-					Log.wtf("FIREBASE error", e.getMessage());
-				}
-				if(eventsEvents.get(0).size() > 0 && eventsEvents.get(0).get(0) == null) {
-					eventsEvents.clear();
-					Log.wtf("TabActivity", "Clearing events!");
-				}
+					}catch(Exception e){
+						Log.wtf("FIREBASE error", e.getMessage());
+					}
+					if (eventsEvents.get(0).size() > 0 && eventsEvents.get(0).get(0) == null) {
+						eventsEvents.clear();
+						Log.wtf("TabActivity", "Clearing events!");
+					}
+
 			}
 
 			@Override
 			public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-				//refresh cards
-				try {
-					for (int i = 0; i < eventsEvents.size(); i++) {
-						for (int j = 0; j < eventsEvents.get(i).size(); j++) {
-							if (eventsEvents.get(i).get(j).getKey().equals(dataSnapshot.getKey())) {
+                //refresh cards
+				try{
+					Event event = dataSnapshot.getValue(Event.class);
+					((GlobalEvents) getApplication()).updateEvent(dataSnapshot.getKey(), event);
+
+
+					for(int i = 0; i < eventsEvents.size(); i++){
+						for(int j = 0; j < eventsEvents.get(i).size(); j++){
+							if(eventsEvents.get(i).get(j).getKey().equals(dataSnapshot.getKey())){
 								eventsEvents.get(i).remove(j);
 							}
 						}
 					}
 
+					GeoFire geoFire = new GeoFire(new Firebase(Constants.GEOFIRE_URL));
+
+					geoFire.setLocation(dataSnapshot.getKey(), new GeoLocation(event.getMyLoc().latitude, event.getMyLoc().longitude));
+
 					setupViewPager(viewPager);
-
-
-				} catch (Exception e) {
-					e.printStackTrace();
-					Toast.makeText(TabActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
+				}catch(Exception e){
+					Log.wtf("EDIT EVENTS", e.getMessage());
 				}
 			}
 
@@ -277,14 +320,18 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 			public void onChildRemoved(DataSnapshot dataSnapshot) {
 				((GlobalEvents) getApplication()).deleteEvent(dataSnapshot.getKey());
 
+
 				for(int i = 0; i < eventsEvents.size(); i++){
 					for(int j = 0; j < eventsEvents.get(i).size(); j++){
 						if(eventsEvents.get(i).get(j).getKey().equals(dataSnapshot.getKey())){
 							eventsEvents.get(i).remove(j);
-
 						}
 					}
 				}
+
+				GeoFire geoFire = new GeoFire(new Firebase(Constants.GEOFIRE_URL));
+
+				geoFire.removeLocation(dataSnapshot.getKey());
 
 				setupViewPager(viewPager);
 			}
@@ -299,13 +346,39 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 			}
 		});
+
+	}
+
+	@Override
+	public void onKeyExited(String key) {
+
+	}
+
+	@Override
+	public void onKeyMoved(String key, GeoLocation location) {
+
+	}
+
+	@Override
+	public void onGeoQueryReady() {
+
+	}
+
+	@Override
+	public void onGeoQueryError(FirebaseError error) {
+
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		//setupViewPager(viewPager);
-		setSorting(sortingCriteria);
+		try {
+			setSorting(sortingCriteria);
+		}catch(Exception e){
+			Log.wtf("TAB ACTIVITY, calling onCreate", e.getMessage());
+			onCreate(savedInstanceState);
+		}
 	//	tabLayout.setupWithViewPager(viewPager);
 		locTool.requestLocationUpdate();
 		if(locationData.getLocation() != null){
@@ -348,6 +421,8 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		int id = item.getItemId();
 
 		if (id == R.id.action_settings) {
+			Intent intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
 			return true;
 
 		}else if(id == R.id.action_addEvent){
@@ -377,7 +452,12 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		}else if(id == R.id.action_user){
 			Intent intent = new Intent(this, UserQActivity.class);
 			intent.putExtra("from_login", false);
-			startActivity(intent);
+			try{
+				startActivity(intent);
+			}catch(Exception e){
+				Log.wtf("USER INFO", e.getMessage());
+				Toast.makeText(TabActivity.this, "Sorry, unable to retrieve info", Toast.LENGTH_SHORT).show();
+			}
 			return true;
 		}
 
@@ -507,37 +587,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Sort by...");
 		builder.setSingleChoiceItems(items, -1, this);
-		/*new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int item) {
-				SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-				SharedPreferences.Editor editor = preferences.edit();
-				editor.putInt("itemSelected", item);
-				editor.commit();
-				switch (item) {
-					final ArrayList<TabFragment>
 
-					// PROBABLY THE BEST OPTION TO SOLVE THIS IS THAT EVENT IS COMPARABLE OR COMPARATOR
-					// AND THEN INSIDE COMPARETO THERE IS AN INT CHECK (BASED ON THIS, DEFAULT RECENT)
-					// SO THAT IT CAN APPLY DIFFERENT CRITERIA
-					case 0:
-						// popularity
-						for (int i = 0; i < fragments; i++) {
-
-						}
-						break;
-					case 1:
-						// incoming
-						break;
-					case 2:
-						// distance
-						break;
-					case 3:
-						// recent
-						break;
-				}
-				dialog.dismiss();
-			}
-		});*/
 		levelDialog = builder.create();
 		levelDialog.show();
 	}
@@ -571,28 +621,7 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 		editor.putInt("itemSelected", which);
 		editor.commit();
 		setSorting(which);
-	/*	switch (which) {
 
-			// PROBABLY THE BEST OPTION TO SOLVE THIS IS THAT EVENT IS COMPARABLE OR COMPARATOR
-			// AND THEN INSIDE COMPARETO THERE IS AN INT CHECK (BASED ON THIS, DEFAULT RECENT)
-			// SO THAT IT CAN APPLY DIFFERENT CRITERIA
-			case 0:
-				// popularity
-				setSorting(0);
-				break;
-			case 1:
-				// incoming
-				setSorting(1);
-				break;
-			case 2:
-				// distance
-				setSorting(2);
-				break;
-			case 3:
-				// recent
-				setSorting(3);
-				break;
-		}*/
 		dialog.dismiss();
 	}
 
@@ -604,8 +633,9 @@ public class TabActivity extends AppCompatActivity implements DialogInterface.On
 
 	@Override
 	public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+		Log.wtf("OnConnectionFailed", connectionResult.getErrorMessage());
 	}
+
 
 	class ViewPagerAdapter extends FragmentPagerAdapter {
 		private final List<Fragment> mFragmentList = new ArrayList<>();

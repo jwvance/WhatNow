@@ -26,6 +26,9 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.Profile;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,7 +59,10 @@ import software_engineering.whatnow.utils.*;
 import software_engineering.whatnow.model.User;
 
 import java.io.IOException;
+
 import java.io.InputStream;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -250,7 +256,7 @@ public class LoginActivity extends BaseActivity{
         mAuthProgressDialog.setCancelable(false);
 
         setupGoogleSignIn();
-        setupFacebookSignIn();
+        //setupFacebookSignIn();
     }
     /**
      * Handle user authentication that was initiated with mFirebaseRef.authWithPassword
@@ -426,7 +432,8 @@ public class LoginActivity extends BaseActivity{
         });
     }
 
-    private void setupFacebookSignIn(){
+    /*private void setupFacebookSignIn(){
+        FacebookSdk.sdkInitialize(getApplicationContext());
         loginButton = (LoginButton) findViewById(R.id.login_with_facebook);
         final AccessToken facebookToken = AccessToken.getCurrentAccessToken();
         RC_FACEBOOK_LOGIN = loginButton.getRequestCode();
@@ -436,7 +443,12 @@ public class LoginActivity extends BaseActivity{
         loginButton.registerCallback(callBack, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                //Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                Intent loginIntent = new Intent(LoginActivity.this, TabActivity.class);
+                FacebookLoginActivity.setProfile(Profile.getCurrentProfile());
+                FacebookLoginActivity.setToken(loginResult.getAccessToken());
+                mSharedPrefEditor.putBoolean("logged_in", true);
+                mSharedPrefEditor.commit();
                 startActivity(loginIntent);
 				facebook = true;
             }
@@ -454,10 +466,16 @@ public class LoginActivity extends BaseActivity{
 				facebook = false;
             }
         });
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "user_location", "user_hometown"));
+            }
+        });
 
 
 
-    }
+    }*/
 
     /**
      * Sign in with Google plus when user clicks "Sign in with Google" textView (button)
@@ -503,6 +521,8 @@ public class LoginActivity extends BaseActivity{
 
         if(requestCode == RC_FACEBOOK_LOGIN) {
             callBack.onActivityResult(requestCode, resultCode, data);
+            Intent loginIntent = new Intent(LoginActivity.this, TabActivity.class);
+            startActivity(loginIntent);
         }
 
     }

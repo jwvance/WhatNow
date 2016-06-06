@@ -98,13 +98,15 @@ public class UserQActivity extends AppCompatActivity implements View.OnClickList
 
 		nameET.setText(preferences.getString("user_name",""));
 		// FIX (maybe with boolean in preferences if logged in properly)
-		if(fromLogIn){
+		if(preferences.getString(Constants.KEY_ENCODED_EMAIL, "").equals("")){
 			emailTV.setVisibility(View.GONE);
 			emailET.setVisibility(View.VISIBLE);
+			Log.wtf("USER", "has no email");
 		}else{
 			emailTV.setVisibility(View.VISIBLE);
 			emailET.setVisibility(View.GONE);
-			emailTV.setText(preferences.getString("user_email",""));
+			emailTV.setText(Utils.decodeEmail(preferences.getString(Constants.KEY_ENCODED_EMAIL, "")));
+			Log.wtf("USER", "has email: " + emailTV.getText().toString());
 		}
 		cityET.setText(preferences.getString("user_city",""));
 		nationalityET.setText(preferences.getString("user_nationality",""));
@@ -141,6 +143,10 @@ public class UserQActivity extends AppCompatActivity implements View.OnClickList
 	private boolean saveInfo() {
 		if(nameET.getText().toString().equals("")){
 			Toast.makeText(UserQActivity.this, "Set Name first...", Toast.LENGTH_SHORT).show();
+			return false;
+		}
+		if(preferences.getString(Constants.KEY_ENCODED_EMAIL, "").equals("") && emailET.getText().toString().equals("")){
+			Toast.makeText(UserQActivity.this, "Set Email first...", Toast.LENGTH_SHORT).show();
 			return false;
 		}
 		if(cityET.getText().toString().equals("")){
@@ -182,6 +188,11 @@ public class UserQActivity extends AppCompatActivity implements View.OnClickList
 		editor.putString("user_account_email", userAccountEmail);
 		editor.putString("user_name", nameET.getText().toString());
 		editor.putString("user_email", emailET.getText().toString());
+		if(preferences.getString(Constants.KEY_ENCODED_EMAIL, "").equals("")){
+			editor.putString(Constants.KEY_ENCODED_EMAIL, emailET.getText().toString());
+			editor.commit();
+			Log.wtf("USER", "saved email situation");
+		}
 		editor.putString("user_city", cityET.getText().toString());
 		editor.putString("user_nationality", nationalityET.getText().toString());
 		editor.putString("user_sex", sexET.getText().toString());

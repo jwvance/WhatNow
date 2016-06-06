@@ -170,8 +170,8 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 
 			this.setTitle(event.getName());
 			description.setText(event.getDescription());
-			//String categoryS = event.getCategory().getName().toLowerCase();
-			//category.setText(categoryS.substring(0, 1).toUpperCase() + categoryS.substring(1));
+			String categoryS = event.getCategory().getName().toLowerCase();
+			category.setText(categoryS.substring(0, 1).toUpperCase() + categoryS.substring(1));
 			host.setText(event.getHost().getName());
 			host.setTextColor(Color.parseColor("#33a0ff"));
 			date.setText(event.getDateString());	//ADD multi date
@@ -239,6 +239,10 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 		pastHostEventsText = (TextView) findViewById(R.id.listed_event_past_events);
 		//pastHostEventsText.setGravity(View.TEXT_ALIGNMENT_CENTER);
 
+		for (int i = events.size() - 1; i > 0; i--) {
+			if(events.get(i).getHost().getBusinessEmail() == null || !events.get(i).getHost().getBusinessEmail().equals(hostEmail))
+				events.remove(i);
+		}
 		if(events.size() == 0) {
 			recyclerView.setVisibility(View.GONE);
 			pastHostEventsText.setText("This is the only event by this host:");
@@ -278,7 +282,7 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 			public void onDataChange(DataSnapshot dataSnapshot) {
 				for (DataSnapshot child : dataSnapshot.getChildren()) {
 					//key should be the event key, val is image String
-					if(child.getKey().equals(event.getKey())) {
+					if(event != null && child.getKey().equals(event.getKey())) {
 						for (DataSnapshot c : child.getChildren()) {
 							imageVal = c.getValue().toString();
 							galleryAsBytes = Base64.decode(imageVal, Base64.DEFAULT);
@@ -433,18 +437,22 @@ public class ListedEventActivity extends AppCompatActivity implements View.OnCli
 				});
 
 				//add image to firebase
-				eventRef.child(event.getKey()).setValue(strArray);
-				strArray.clear();
+				try{
+					eventRef.child(event.getKey()).setValue(strArray);
+					strArray.clear();
 
-				//add images to gallery
-				galArray.add(imageG);
-				for(Bitmap image: galArray){
-					imageGallery.addView(getImages(image, byteArray));
+					//add images to gallery
+					galArray.add(imageG);
+					for(Bitmap image: galArray){
+						imageGallery.addView(getImages(image, byteArray));
+					}
+
+					//clear array
+					galArray.clear();
+					((Button) findViewById(R.id.choose_gallery)).setText("Add image");
+				}catch(Exception e){
+					Log.wtf("GALLERY", e.getMessage());
 				}
-
-				//clear array
-				galArray.clear();
-				((Button) findViewById(R.id.choose_gallery)).setText("Add image");
 			} catch (IOException e) {
 				e.printStackTrace();
 				Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
