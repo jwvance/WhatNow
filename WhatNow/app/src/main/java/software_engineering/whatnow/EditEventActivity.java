@@ -250,7 +250,7 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
 		newEvent = new Event(new Random().nextInt(1000), participants, iHour, iMinute, fHour, fMinute,
 				tv[2].getText().toString(), new Host(tv[3].getText().toString()), tv[0].getText().toString(),
 				tv[1].getText().toString(), new Category(/*tv[4].getText().toString()*/category),
-				iCalendar.getTimeInMillis(), imageAsString, event.getKey(), false, 0);
+				iCalendar.getTimeInMillis(), fCalendar.getTimeInMillis(), imageAsString, event.getKey(), false, 0);
 
 
 		Log.wtf("key", newEvent.getKey());

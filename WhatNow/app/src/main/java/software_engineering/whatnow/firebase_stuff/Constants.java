@@ -13,6 +13,8 @@ public class Constants {
 	public static final String USERS_URL = "https://ucscwhatnow.firebaseio.com/users/";
 
 
+	public static final String GEOFIRE_URL = "https://geowhatnow.firebaseio.com/";
+
 	/**
 	 * Constants related to locations in Firebase, such as the name of the node
 	 */

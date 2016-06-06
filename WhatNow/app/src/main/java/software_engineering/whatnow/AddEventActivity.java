@@ -62,6 +62,7 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -70,12 +71,21 @@ import com.firebase.client.utilities.Base64;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.utilities.Base64;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.StringTokenizer;
 
@@ -96,6 +106,8 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 	private Event event;
 	private ArrayList<Event> events;
 	private String name;
+	private String key;
+	private final Firebase fb = new Firebase(Constants.DATABASE_URL);
 
 	//Stuff
 	public static Context conEvent;
@@ -223,7 +235,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 				output.add(new Event(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
 						Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), st.nextToken(),
 						new Host(st.nextToken(), st.nextToken()), st.nextToken(), st.nextToken(), new Category(st.nextToken()),
-						Long.parseLong(st.nextToken()), st.nextToken(), st.nextToken(), false, 0/*, Integer.parseInt(st.nextToken())*/));
+						Long.parseLong(st.nextToken()),Long.parseLong(st.nextToken()), st.nextToken(), st.nextToken(), false, 0/*, Integer.parseInt(st.nextToken())*/));
 			}catch(Exception e){
 				Log.wtf("LOAD", "Problem loading events: " + e.getMessage());
 			}
@@ -294,6 +306,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 
 		editor.apply();
 	}
+
 
 
 
@@ -397,21 +410,58 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		event = new Event(new Random().nextInt(1000), 0, iHour, iMinute, fHour, fMinute,
 				location.getText().toString(), host, name,
 				description.getText().toString(), new Category(/*tv[4].getText().toString()*/category),
-				iCalendar.getTimeInMillis(), imageAsString, "", false, 0/*, 0*/);
+				iCalendar.getTimeInMillis(),fCalendar.getTimeInMillis(), imageAsString, "", false, 0/*, 0*/);
 
 		//save to firebase
 		Firebase.setAndroidContext(this);
-		Firebase mRef = new Firebase(Constants.DATABASE_URL);
-//		Firebase eventRef = mRef.child("event");
-//		eventRef.child(Integer.toString(eventId)).setValue(event);
-		mRef.push().setValue(event);
 
+		key = null;
 
-		mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+		fb.push().setValue(event);
+
+		fb.addChildEventListener(new ChildEventListener() {
 			@Override
-			public void onDataChange(DataSnapshot dataSnapshot) {
-				String val = (String) dataSnapshot.getKey();
-				Log.wtf("val", val);
+			public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+				try{
+					HashMap e = dataSnapshot.getValue(HashMap.class);
+
+					int thisID = Integer.parseInt(e.get("id").toString());
+					if(thisID != event.getId())
+						return;
+
+					key = dataSnapshot.getKey();
+
+					//fb.child("id").setValue(key);
+
+					GeoFire geoFire = new GeoFire(new Firebase(Constants.GEOFIRE_URL));
+
+					Map<String, Object> geoMap = new HashMap<String, Object>();
+					//geoMap.put()
+
+					geoFire.setLocation(key, new GeoLocation(event.getMyLoc().latitude, event.getMyLoc().longitude));
+
+					//Thread.sleep(300);
+
+				}catch(Exception e){
+					Log.wtf("FIREBASE error", e.getMessage());
+				}
+				fb.removeEventListener(this);
+			}
+
+			@Override
+			public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+			}
+
+			@Override
+			public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+			}
+
+			@Override
+			public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+
 			}
 
 			@Override
