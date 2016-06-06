@@ -119,12 +119,14 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 	private Button finalTime;
 	private int iYear;
 	private int iMonth;
+	private int iMonthDP;
 	private int iDay;
 	private int iHour;
 	private int iMinute;
 	private boolean initial;
 	private int fYear;
 	private int fMonth;
+	private int fMonthDP;
 	private int fDay;
 	private int fHour;
 	private int fMinute;
@@ -399,7 +401,8 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		String email = preferences.getString(Constants.KEY_GOOGLE_EMAIL, null);
 		if(email == null) {
 			email = preferences.getString(Constants.KEY_ENCODED_EMAIL, null);
-			email = Utils.decodeEmail(email);
+			if(email != null)
+				email = Utils.decodeEmail(email);
 		}
 		if(email != null) {
 			host.setBusinessEmail(email);
@@ -407,7 +410,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 		}else
 			Log.wtf("HOST ADD EVENT", "email is NULL!!");
 
-		event = new Event(new Random().nextInt(1000), 0, iHour, iMinute, fHour, fMinute,
+		event = new Event(new Random().nextInt(65000), 0, iHour, iMinute, fHour, fMinute,
 				location.getText().toString(), host, name,
 				description.getText().toString(), new Category(/*tv[4].getText().toString()*/category),
 				iCalendar.getTimeInMillis(),fCalendar.getTimeInMillis(), imageAsString, "", false, 0/*, 0*/);
@@ -434,9 +437,6 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 					//fb.child("id").setValue(key);
 
 					GeoFire geoFire = new GeoFire(new Firebase(Constants.GEOFIRE_URL));
-
-					Map<String, Object> geoMap = new HashMap<String, Object>();
-					//geoMap.put()
 
 					geoFire.setLocation(key, new GeoLocation(event.getMyLoc().latitude, event.getMyLoc().longitude));
 
@@ -516,15 +516,18 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 	public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 		if(initial){
 			iMonth = monthOfYear + 1;
+			iMonthDP = monthOfYear;
 			iDay = dayOfMonth;
 			iYear = year;
 			initialDate.setText(Event.getDateString(iYear,iMonth,iDay));
 			fMonth = monthOfYear + 1;
+			fMonthDP = monthOfYear;
 			fDay = dayOfMonth;
 			fYear = year;
 			finalDate.setText(Event.getDateString(fYear,fMonth,fDay));
 		}else{
 			fMonth = monthOfYear + 1;
+			fMonthDP = monthOfYear;
 			fDay = dayOfMonth;
 			fYear = year;
 			finalDate.setText(Event.getDateString(fYear,fMonth,fDay));
@@ -534,11 +537,11 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 	public void chooseDate(View v) {
 		DatePickerDialog mDatePicker;
 		if(v.getId() == R.id.new_event_initialDate){
-			mDatePicker = new DatePickerDialog(this, this, iYear, iMonth, iDay);
+			mDatePicker = new DatePickerDialog(this, this, iYear, (iMonthDP == 0 ? iMonth -1 : iMonthDP), iDay);
 			initial = true;
 			mDatePicker.setTitle("Starting Date:");
 		}else{
-			mDatePicker = new DatePickerDialog(this, this, fYear, fMonth, fDay);
+			mDatePicker = new DatePickerDialog(this, this, fYear, (fMonthDP == 0 ? fMonth -1 : fMonthDP), fDay);
 			initial = false;
 			mDatePicker.setTitle("Ending Date:");
 		}

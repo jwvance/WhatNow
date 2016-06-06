@@ -139,11 +139,13 @@ public class TabActivity extends AppCompatActivity implements GeoQueryEventListe
 	private int sortingCriteria;
 	private ArrayList<ArrayList<Event>> eventsEvents;
 	//String[] categories = new String[{"ALL","BARS","CLUBS","FOOD","SHOPS","OTHERS"}];
+	private Bundle savedInstanceState;
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.savedInstanceState = savedInstanceState;
 
 	//	Log.wtf("LOGIN", "inside TabActivity");
 		mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -246,13 +248,19 @@ public class TabActivity extends AppCompatActivity implements GeoQueryEventListe
 					HashMap e = dataSnapshot.getValue(HashMap.class);
 
 					Host host = new Host((String) ((HashMap) e.get("host")).get("name"));
+					String email = (String) ((HashMap) e.get("host")).get("businessEmail");
+					if(email == null)
+						email = (String) ((HashMap) e.get("host")).get("email");
+					host.setBusinessEmail(email);
+					Log.wtf("HOST DOWNLOADING", host.getBusinessEmail());
+
 					Category category = new Category(((HashMap) e.get("category")).get("name").toString());
 
 					int categoryN = categories.indexOf(category.getName());
 
 					long timeStamp = Long.parseLong(e.get("timestamp").toString());
 
-					Event event = new Event(Integer.valueOf(e.get("id").toString()), Integer.valueOf(e.get("numberOfPartecipants").toString()), Integer.valueOf(e.get("hourStart").toString()),
+					Event event = new Event(Integer.valueOf(e.get("id").toString()), Integer.valueOf(e.get("numberOfGuests").toString()), Integer.valueOf(e.get("hourStart").toString()),
 							Integer.valueOf(e.get("minuteStart").toString()), Integer.valueOf(e.get("hourEnd").toString()),
 							Integer.valueOf(e.get("minuteEnd").toString()), e.get("location").toString(), host,
 							(String) e.get("name"), (String) e.get("description"), category,
@@ -285,23 +293,27 @@ public class TabActivity extends AppCompatActivity implements GeoQueryEventListe
 			@Override
 			public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 //refresh cards
-				Event event = dataSnapshot.getValue(Event.class);
-				((GlobalEvents) getApplication()).updateEvent(dataSnapshot.getKey(), event);
+				try{
+					Event event = dataSnapshot.getValue(Event.class);
+					((GlobalEvents) getApplication()).updateEvent(dataSnapshot.getKey(), event);
 
 
-				for(int i = 0; i < eventsEvents.size(); i++){
-					for(int j = 0; j < eventsEvents.get(i).size(); j++){
-						if(eventsEvents.get(i).get(j).getKey().equals(dataSnapshot.getKey())){
-							eventsEvents.get(i).remove(j);
+					for(int i = 0; i < eventsEvents.size(); i++){
+						for(int j = 0; j < eventsEvents.get(i).size(); j++){
+							if(eventsEvents.get(i).get(j).getKey().equals(dataSnapshot.getKey())){
+								eventsEvents.get(i).remove(j);
+							}
 						}
 					}
+
+					GeoFire geoFire = new GeoFire(new Firebase(Constants.GEOFIRE_URL));
+
+					geoFire.setLocation(dataSnapshot.getKey(), new GeoLocation(event.getMyLoc().latitude, event.getMyLoc().longitude));
+
+					setupViewPager(viewPager);
+				}catch(Exception e){
+					Log.wtf("EDIT EVENTS", e.getMessage());
 				}
-
-				GeoFire geoFire = new GeoFire(new Firebase(Constants.GEOFIRE_URL));
-
-				geoFire.setLocation(dataSnapshot.getKey(), new GeoLocation(event.getMyLoc().latitude, event.getMyLoc().longitude));
-
-				setupViewPager(viewPager);
 			}
 
 			@Override
@@ -361,7 +373,12 @@ public class TabActivity extends AppCompatActivity implements GeoQueryEventListe
 	protected void onResume() {
 		super.onResume();
 		//setupViewPager(viewPager);
-		setSorting(sortingCriteria);
+		try {
+			setSorting(sortingCriteria);
+		}catch(Exception e){
+			Log.wtf("TAB ACTIVITY, calling onCreate", e.getMessage());
+			onCreate(savedInstanceState);
+		}
 	//	tabLayout.setupWithViewPager(viewPager);
 		locTool.requestLocationUpdate();
 		if(locationData.getLocation() != null){
@@ -435,7 +452,12 @@ public class TabActivity extends AppCompatActivity implements GeoQueryEventListe
 		}else if(id == R.id.action_user){
 			Intent intent = new Intent(this, UserQActivity.class);
 			intent.putExtra("from_login", false);
-			startActivity(intent);
+			try{
+				startActivity(intent);
+			}catch(Exception e){
+				Log.wtf("USER INFO", e.getMessage());
+				Toast.makeText(TabActivity.this, "Sorry, unable to retrieve info", Toast.LENGTH_SHORT).show();
+			}
 			return true;
 		}
 

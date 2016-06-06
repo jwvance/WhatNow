@@ -256,7 +256,7 @@ public class LoginActivity extends BaseActivity{
         mAuthProgressDialog.setCancelable(false);
 
         setupGoogleSignIn();
-        setupFacebookSignIn();
+        //setupFacebookSignIn();
     }
     /**
      * Handle user authentication that was initiated with mFirebaseRef.authWithPassword
@@ -432,7 +432,7 @@ public class LoginActivity extends BaseActivity{
         });
     }
 
-    private void setupFacebookSignIn(){
+    /*private void setupFacebookSignIn(){
         FacebookSdk.sdkInitialize(getApplicationContext());
         loginButton = (LoginButton) findViewById(R.id.login_with_facebook);
         final AccessToken facebookToken = AccessToken.getCurrentAccessToken();
@@ -475,7 +475,7 @@ public class LoginActivity extends BaseActivity{
 
 
 
-    }
+    }*/
 
     /**
      * Sign in with Google plus when user clicks "Sign in with Google" textView (button)

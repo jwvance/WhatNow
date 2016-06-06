@@ -50,13 +50,13 @@
             android:paddingBottom="15dp"
             android:textAlignment="center" />
 
-        <com.facebook.login.widget.LoginButton
+    <!--    <com.facebook.login.widget.LoginButton
             android:id="@+id/login_with_facebook"
             android:paddingBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="SignIn" />
+            android:text="SignIn" />-->
 
     </LinearLayout>
 
